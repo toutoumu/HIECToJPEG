@@ -1,0 +1,131 @@
+PODS:
+  - CocoaLumberjack (2.2.0):
+    - CocoaLumberjack/Default (= 2.2.0)
+    - CocoaLumberjack/Extensions (= 2.2.0)
+  - CocoaLumberjack/Core (2.2.0)
+  - CocoaLumberjack/Default (2.2.0):
+    - CocoaLumberjack/Core
+  - CocoaLumberjack/Extensions (2.2.0):
+    - CocoaLumberjack/Default
+  - DACircularProgress (2.3.1)
+  - GPUImage (HEAD based on 0.1.7)
+  - Lockbox (2.1.0)
+  - LumberjackConsole (2.4.3):
+    - CocoaLumberjack (>= 2.0.0)
+    - NBUCore (>= 2.0.3)
+  - MBProgressHUD (0.9.2)
+  - MotionOrientation@PTEz (1.1.0)
+  - MWPhotoBrowser (1.2.0):
+    - DACircularProgress
+    - MBProgressHUD
+    - PSTCollectionView (~> 1.2)
+    - SDWebImage (~> 3.5)
+  - NBUCore (2.0.4)
+  - NBUImagePicker (1.5.3):
+    - NBUImagePicker/Assets (= 1.5.3)
+    - NBUImagePicker/Base (= 1.5.3)
+    - NBUImagePicker/Camera (= 1.5.3)
+    - NBUImagePicker/Filters (= 1.5.3)
+    - NBUImagePicker/Gallery (= 1.5.3)
+    - NBUImagePicker/Image (= 1.5.3)
+    - NBUImagePicker/MediaInfo (= 1.5.3)
+    - NBUImagePicker/Picker (= 1.5.3)
+    - NBUImagePicker/Resources (= 1.5.3)
+    - NBUKit (>= 2.4.1)
+  - NBUImagePicker/Assets (1.5.3):
+    - NBUImagePicker/Base
+    - NBUKit (>= 2.4.1)
+  - NBUImagePicker/Base (1.5.3):
+    - NBUKit (>= 2.4.1)
+  - NBUImagePicker/Camera (1.5.3):
+    - NBUImagePicker/Assets
+    - NBUKit (>= 2.4.1)
+    - RBVolumeButtons@PTEz
+  - NBUImagePicker/Filters (1.5.3):
+    - GPUImage (>= 0.1.5)
+    - NBUImagePicker/Base
+    - NBUKit (>= 2.4.1)
+  - NBUImagePicker/Gallery (1.5.3):
+    - NBUImagePicker/Assets
+    - NBUImagePicker/MediaInfo
+    - NBUKit (>= 2.4.1)
+  - NBUImagePicker/Image (1.5.3):
+    - NBUImagePicker/MediaInfo
+    - NBUKit (>= 2.4.1)
+  - NBUImagePicker/MediaInfo (1.5.3):
+    - NBUImagePicker/Assets
+    - NBUKit (>= 2.4.1)
+  - NBUImagePicker/Picker (1.5.3):
+    - NBUImagePicker/Camera
+    - NBUImagePicker/Gallery
+    - NBUImagePicker/Image
+    - NBUImagePicker/Resources
+    - NBUKit (>= 2.4.1)
+  - NBUImagePicker/Resources (1.5.3):
+    - NBUKit (>= 2.4.1)
+  - NBUKit (2.4.1):
+    - Lockbox (>= 1.4.6)
+    - NBUCore (>= 2.0.3)
+    - NBUKit/Additions (= 2.4.1)
+    - NBUKit/Base (= 2.4.1)
+    - NBUKit/Library (= 2.4.1)
+    - NBUKit/UI (= 2.4.1)
+  - NBUKit/Additions (2.4.1):
+    - Lockbox (>= 1.4.6)
+    - NBUCore (>= 2.0.3)
+    - NBUKit/Base
+  - NBUKit/Base (2.4.1):
+    - Lockbox (>= 1.4.6)
+    - NBUCore (>= 2.0.3)
+  - NBUKit/Library (2.4.1):
+    - Lockbox (>= 1.4.6)
+    - NBUCore (>= 2.0.3)
+    - NBUKit/Base
+    - NBUKit/Library/RestKitSupport (= 2.4.1)
+  - NBUKit/Library/RestKitSupport (2.4.1):
+    - Lockbox (>= 1.4.6)
+    - NBUCore (>= 2.0.3)
+    - NBUKit/Base
+  - NBUKit/UI (2.4.1):
+    - Lockbox (>= 1.4.6)
+    - MotionOrientation@PTEz (>= 1.1.0)
+    - NBUCore (>= 2.0.3)
+    - NBUKit/Additions
+    - NBUKit/Library/RestKitSupport
+  - NBULog (1.2.4):
+    - CocoaLumberjack (>= 2.0.0)
+  - PSTCollectionView (1.2.3)
+  - RBVolumeButtons@PTEz (0.1.1)
+  - SDWebImage (3.7.5):
+    - SDWebImage/Core (= 3.7.5)
+  - SDWebImage/Core (3.7.5)
+
+DEPENDENCIES:
+  - GPUImage (HEAD)
+  - LumberjackConsole
+  - MWPhotoBrowser
+  - NBUImagePicker (from `../`)
+  - NBULog
+
+EXTERNAL SOURCES:
+  NBUImagePicker:
+    :path: ../
+
+SPEC CHECKSUMS:
+  CocoaLumberjack: 17fe8581f84914d5d7e6360f7c70022b173c3ae0
+  DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
+  GPUImage: 733a5f0fab92df9de1c37ba9df520a833ccb406d
+  Lockbox: 16442da35d9d4286966936763be728a931d589c3
+  LumberjackConsole: 81bad3312fea315b8a17e53926b014f032ec1f44
+  MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
+  MotionOrientation@PTEz: 5c92c6c1fe6c2cb6c60348ec66b42d466668037f
+  MWPhotoBrowser: 93e542a2354da6ac201661e2f5f81120e4ec5d56
+  NBUCore: 89cbf3976cae47c358fd0ed8562ef66d79a8904a
+  NBUImagePicker: cbc8f4aae1bdbaf755a4e82debbe112cf2e18d12
+  NBUKit: 9aa8a86e56754808083ca6fb5fa79d56de25a2eb
+  NBULog: 4003be6706b97a7e376ab4171c666ac7c2fbc2b2
+  PSTCollectionView: 6749df92885353521f55279a7ce2b293762e2be4
+  RBVolumeButtons@PTEz: e1fcc6cf368f908437a2ba91cfec9cb27b723894
+  SDWebImage: 69c6303e3348fba97e03f65d65d4fbc26740f461
+
+COCOAPODS: 0.39.0
