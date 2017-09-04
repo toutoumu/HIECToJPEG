@@ -1,0 +1,1 @@
+../../../../../MWPhotoBrowser/Classes/MWTapDetectingView.h

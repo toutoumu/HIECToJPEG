@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="PickerDemo" type="AppleRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="PickerDemo" TARGET_NAME="PickerDemo" CONFIG_NAME="Debug" SCHEME_NAME="PickerDemo" RUN_TARGET_PROJECT_NAME="PickerDemo" RUN_TARGET_NAME="PickerDemo" MAKE_ACTIVE="TRUE">
+    <envs>
+      <env name="XcodeColors" value="YES" />
+    </envs>
+    <EXTENSION ID="org.jetbrains.appcode.reveal.RevealRunConfigurationExtension">
+      <REVEAL_SETTINGS autoInject="false" autoInstall="true" askToEnableAutoInstall="true" />
+    </EXTENSION>
+    <method />
+  </configuration>
+</component>

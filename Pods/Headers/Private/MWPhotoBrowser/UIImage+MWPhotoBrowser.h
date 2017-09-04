@@ -1,0 +1,1 @@
+../../../../../MWPhotoBrowser/Classes/UIImage+MWPhotoBrowser.h

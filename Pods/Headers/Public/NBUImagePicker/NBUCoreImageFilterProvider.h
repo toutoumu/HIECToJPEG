@@ -1,0 +1,1 @@
+../../../../../NBUImagePicker/Filters/NBUCoreImageFilterProvider.h

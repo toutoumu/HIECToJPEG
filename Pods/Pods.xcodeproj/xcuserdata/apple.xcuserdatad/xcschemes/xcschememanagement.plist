@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+		<key>CocoaLumberjack.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>DACircularProgress.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+		<key>GPUImage.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
+		<key>Lockbox.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
+		<key>LumberjackConsole.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>5</integer>
+		</dict>
+		<key>MBProgressHUD.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>6</integer>
+		</dict>
+		<key>MWPhotoBrowser-MWPhotoBrowser.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>7</integer>
+		</dict>
+		<key>MWPhotoBrowser.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>8</integer>
+		</dict>
+		<key>MotionOrientation@PTEz.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>9</integer>
+		</dict>
+		<key>NBUCore.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>10</integer>
+		</dict>
+		<key>NBUImagePicker-NBUImagePicker.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>11</integer>
+		</dict>
+		<key>NBUImagePicker.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>12</integer>
+		</dict>
+		<key>NBUKit-NBUKit.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>13</integer>
+		</dict>
+		<key>NBUKit.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>14</integer>
+		</dict>
+		<key>NBULog.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>15</integer>
+		</dict>
+		<key>Pods-PickerDemo.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>16</integer>
+		</dict>
+		<key>RBVolumeButtons@PTEz.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>17</integer>
+		</dict>
+		<key>RNCryptor.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>18</integer>
+		</dict>
+		<key>SDWebImage.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false />
+			<key>orderHint</key>
+			<integer>19</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>175B076ED45EB1A3E40F58BA14036467</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+		<key>1B9891708D9F9B504F2482EDDB834F6C</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+		<key>2596169E954907C07413FA0DF674480A</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+		<key>2E17B552468823F773D9026B9D93698A</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+		<key>39AD934057370C961EBFCCF124F93673</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+		<key>3EB2FAD81BDEB22BCF46F47CED290BAA</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+		<key>3FBA1D474DFF9323282D9D1566C5B418</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+		<key>449F075A8751455DAD46F2CEA3550A7A</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+		<key>4B0A0D8B43C0E142ED76163D5867840A</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+		<key>4F69F82C1EEBC0A05686A3B0FECD2FDB</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+		<key>674954BD5AF378F6AB07B36189A8601D</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+		<key>8D59C642B7A181D38A211156F7943FE6</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+		<key>8DFD90A49DF034619E341C999DA608D1</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+		<key>9F91DAC52B92E0A7E323DF852770A2F3</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+		<key>A93866BA6DB59F76E578F7B4FFB37D38</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+		<key>A9D9DCCE5442795D0AD9E99D86389328</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+		<key>C791F0A928C1A8FE97074DFC9ACF4E75</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+		<key>CC76F666A3B156F642E6D7168B0C726C</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+		<key>D31F2E1140FD881D5FEB76F35D954576</key>
+		<dict>
+			<key>primary</key>
+			<true />
+		</dict>
+	</dict>
+</dict>
+</plist>

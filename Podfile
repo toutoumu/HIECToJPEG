@@ -1,21 +1,25 @@
+target 'PickerDemo' do
 
-platform :ios, '5.0'
+  platform :ios, '7.0'
 
 # Recommended to keep GPUImage up-to-date
-pod 'GPUImage', :head
-
-# For regular projects
-#pod 'NBUImagePicker'
+#pod 'GPUImage', :head
+  pod 'GPUImage'
 
 # Optional for dynamic logging
-pod 'NBULog'
+  pod 'NBULog'
 
 # Optional for on-device log console
-pod 'LumberjackConsole'
+  pod 'LumberjackConsole'
 
-# 图片浏览器
-pod "MWPhotoBrowser"
+# 加密
+  pod 'RNCryptor'
 
 # For development
-pod 'NBUImagePicker', :path => '../'
+  pod 'NBUImagePicker' ,:path => '../'
+  
+# 图片浏览器
+  pod 'MWPhotoBrowser' ,:path => '../'
+
+end
 
