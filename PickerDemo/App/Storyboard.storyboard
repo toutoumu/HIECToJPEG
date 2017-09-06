@@ -520,11 +520,11 @@
                     </userDefinedRuntimeAttributes>
                     <connections>
                         <outlet property="accessDeniedView" destination="ihf-ia-SMN" id="QKA-kV-luv"/>
-                        <outlet property="bottomContener" destination="V0m-8S-Xur" id="f4a-TZ-Y0G"/>
+                        <outlet property="bottomContainer" destination="V0m-8S-Xur" id="f4a-TZ-Y0G"/>
                         <outlet property="cameraView" destination="RYj-Wu-bMD" id="P7d-Xs-iUc"/>
                         <outlet property="picture" destination="HBw-CY-TK4" id="7lh-R6-GY1"/>
                         <outlet property="shootButton" destination="JiF-pd-Awt" id="kRt-Vz-obY"/>
-                        <outlet property="topContener" destination="rzO-va-zJc" id="K32-ap-d2G"/>
+                        <outlet property="topContainer" destination="rzO-va-zJc" id="K32-ap-d2G"/>
                         <outlet property="video" destination="baq-KS-wfq" id="xM2-ve-X3G"/>
                         <outlet property="views" destination="dHu-te-CEh" id="KAi-1W-OLv"/>
                     </connections>
@@ -689,7 +689,7 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="XcR-R3-inZ"/>
                                     <barButtonItem systemItem="trash" id="umT-ae-nPR">
                                         <connections>
-                                            <action selector="deleteImag:" destination="TyK-Kh-HgG" id="moD-HD-RQu"/>
+                                            <action selector="deleteImage:" destination="TyK-Kh-HgG" id="moD-HD-RQu"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>

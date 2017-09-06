@@ -1,1 +1,1 @@
-../../../../../MWPhotoBrowser/Classes/MWTapDetectingImageView.h
+../../../../DevelopmentPods/MWPhotoBrowser/Classes/MWTapDetectingImageView.h

@@ -1,1 +1,1 @@
-../../../../../NBUImagePicker/Gallery/NBUGalleryViewController.h
+../../../../DevelopmentPods/NBUImagePicker/Gallery/NBUGalleryViewController.h

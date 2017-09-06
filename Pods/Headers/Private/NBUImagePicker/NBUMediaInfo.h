@@ -1,1 +1,1 @@
-../../../../../NBUImagePicker/MediaInfo/NBUMediaInfo.h
+../../../../DevelopmentPods/NBUImagePicker/MediaInfo/NBUMediaInfo.h

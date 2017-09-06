@@ -1,1 +1,1 @@
-../../../../../MWPhotoBrowser/Classes/MWZoomingScrollView.h
+../../../../DevelopmentPods/MWPhotoBrowser/Classes/MWZoomingScrollView.h

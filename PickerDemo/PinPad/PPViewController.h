@@ -9,9 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "PPPinPadViewController.h"
 
-@interface PPViewController : UIViewController<PinPadPasswordProtocol>
+@interface PPViewController : UIViewController <PinPadPasswordProtocol>
 
 // 密码默认字段名称
-+(NSString *)pwdKey;
++ (NSString *)pwdKey;
 
 @end

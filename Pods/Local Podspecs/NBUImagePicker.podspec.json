@@ -132,8 +132,8 @@
       "name": "Resources",
       "resource_bundles": {
         "NBUImagePicker": [
-          "Resources/*.{png,lproj}",
-          "Resources/filters",
+          "NBUImagePicker/Resources/*.{png,lproj}",
+          "NBUImagePicker/Resources/filters",
           "NBUImagePicker/**/*.{storyboard,xib}"
         ]
       }

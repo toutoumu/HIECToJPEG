@@ -12,11 +12,16 @@
 
 @required
 - (BOOL)checkPin:(NSString *)pin;
-- (NSInteger)pinLenght;
+
+- (NSInteger)pinLength;
+
 @optional
 - (void)pinPadSuccessPin;
+
 - (void)pinPadWillHide;
+
 - (void)pinPadDidHide;
+
 - (void)userPassCode:(NSString *)newPassCode;
 @end
 
@@ -33,15 +38,15 @@
     NSMutableArray *_circleViewList;
 }
 
-@property (nonatomic,assign) id<PinPadPasswordProtocol> delegate;
+@property(nonatomic, assign) id <PinPadPasswordProtocol> delegate;
 
 
-@property (nonatomic, strong) NSString *errorTitle;
-@property (nonatomic, strong) NSString *pinTitle;
-@property (nonatomic, assign) BOOL cancelButtonHidden;
-@property (nonatomic, strong) UIImage *backgroundImage;
-@property (nonatomic, strong) UIColor *backgroundColor;
+@property(nonatomic, strong) NSString *errorTitle;
+@property(nonatomic, strong) NSString *pinTitle;
+@property(nonatomic, assign) BOOL cancelButtonHidden;
+@property(nonatomic, strong) UIImage *backgroundImage;
+@property(nonatomic, strong) UIColor *backgroundColor;
 
-@property (nonatomic) BOOL isSettingPinCode;
+@property(nonatomic) BOOL isSettingPinCode;
 
 @end

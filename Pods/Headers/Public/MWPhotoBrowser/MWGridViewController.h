@@ -1,1 +1,1 @@
-../../../../../MWPhotoBrowser/Classes/MWGridViewController.h
+../../../../DevelopmentPods/MWPhotoBrowser/Classes/MWGridViewController.h

@@ -1,1 +1,1 @@
-../../../../../NBUImagePicker/Filters/NBUFilterThumbnailView.h
+../../../../DevelopmentPods/NBUImagePicker/Filters/NBUFilterThumbnailView.h

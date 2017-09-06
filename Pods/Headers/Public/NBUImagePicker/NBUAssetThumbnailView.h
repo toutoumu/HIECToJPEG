@@ -1,1 +1,1 @@
-../../../../../NBUImagePicker/Assets/NBUAssetThumbnailView.h
+../../../../DevelopmentPods/NBUImagePicker/Assets/NBUAssetThumbnailView.h

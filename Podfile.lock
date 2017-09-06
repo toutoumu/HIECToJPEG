@@ -100,16 +100,16 @@ PODS:
 DEPENDENCIES:
   - GPUImage
   - LumberjackConsole
-  - MWPhotoBrowser (from `../`)
-  - NBUImagePicker (from `../`)
+  - MWPhotoBrowser (from `DevelopmentPods/`)
+  - NBUImagePicker (from `DevelopmentPods/`)
   - NBULog
   - RNCryptor
 
 EXTERNAL SOURCES:
   MWPhotoBrowser:
-    :path: ../
+    :path: DevelopmentPods/
   NBUImagePicker:
-    :path: ../
+    :path: DevelopmentPods/
 
 SPEC CHECKSUMS:
   CocoaLumberjack: 2800c03334042fe80589423c8d80e582dcaec482
@@ -119,15 +119,15 @@ SPEC CHECKSUMS:
   LumberjackConsole: 8cfc0f8c1c3459b2b88f9abfa3dc68a6810a3708
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
   MotionOrientation@PTEz: 5c92c6c1fe6c2cb6c60348ec66b42d466668037f
-  MWPhotoBrowser: c7622825306097aa95de0a6c50c4693d904f7db0
+  MWPhotoBrowser: f44dcae661266d4e09d0bb3c195bdaa606bf045b
   NBUCore: bfdce78c97f2a9566c97082f44157547223b22a6
-  NBUImagePicker: 52e67042275af2bf2159f1ce2ae2848e5a147c8a
+  NBUImagePicker: fbe388dab8d84c3d5ecb8d21fa297740b9fd05be
   NBUKit: 918f6f494c2053b61edd1d9d650a1ae82ba464ac
   NBULog: 3450f827248abd4ca70dfc10b7e7deb355bf3b2f
   RBVolumeButtons@PTEz: e1fcc6cf368f908437a2ba91cfec9cb27b723894
   RNCryptor: 761fc3ed94d1a0e409ba5b8e5dbef6a8f69352a7
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
 
-PODFILE CHECKSUM: ed61495f96b910f9df9c0a7bfec4adcb3e652a3f
+PODFILE CHECKSUM: eebc4856c6e41cb0b19414e727287149c8d107e7
 
 COCOAPODS: 1.2.1

@@ -16,10 +16,10 @@ target 'PickerDemo' do
   pod 'RNCryptor'
 
 # For development
-  pod 'NBUImagePicker' ,:path => '../'
-  
+  pod 'NBUImagePicker', :path => 'DevelopmentPods/'
+
 # 图片浏览器
-  pod 'MWPhotoBrowser' ,:path => '../'
+  pod 'MWPhotoBrowser', :path => 'DevelopmentPods/'
 
 end
 

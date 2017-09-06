@@ -1,1 +1,1 @@
-../../../../../NBUImagePicker/Image/NBUEditImageViewController.h
+../../../../DevelopmentPods/NBUImagePicker/Image/NBUEditImageViewController.h

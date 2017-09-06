@@ -1,1 +1,1 @@
-../../../../../NBUImagePicker/NBUImagePickerPrivate.h
+../../../../DevelopmentPods/NBUImagePicker/NBUImagePickerPrivate.h

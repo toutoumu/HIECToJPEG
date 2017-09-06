@@ -19,18 +19,18 @@
 //
 
 #import <UIKit/UIKit.h>
-//#import "RTRootNavigationController.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
-@property (strong, nonatomic) UIWindow *window;
+@property(strong, nonatomic) UIWindow *window;
 
-@property (strong, nonatomic) UINavigationController *navController;
+@property(strong, nonatomic) UINavigationController *navController;
 
 #pragma mark 是否为管理员
-@property (assign ,nonatomic) BOOL isAdmin;
+@property(assign, nonatomic) BOOL isAdmin;
 
 #pragma mark 获取应用打开之前的屏幕亮度
-+ (CGFloat) getScreenBrightness;
+
++ (CGFloat)getScreenBrightness;
 
 @end

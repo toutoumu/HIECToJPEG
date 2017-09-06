@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.dependencies =	pod 'GPUImage', :head
   s.dependencies =	pod 'NBULog'
   s.dependencies =	pod 'LumberjackConsole'
-  s.dependencies =	pod "MWPhotoBrowser"
-  s.dependencies =	pod 'NBUImagePicker', :path => '../'
+  s.dependencies =	pod "MWPhotoBrowser", :path => 'DevelopmentPods/'
+  s.dependencies =	pod 'NBUImagePicker', :path => 'DevelopmentPods/'
 
 end

@@ -8,15 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
-@interface GalleryViewController :  NBUGalleryViewController <UIAlertViewDelegate>//<NBUImageLoader>
+@interface GalleryViewController : NBUGalleryViewController <UIAlertViewDelegate>//<NBUImageLoader>
 
 //是否有数据更新
 @property(nonatomic) BOOL isUpdated;
 
 //删除按钮
-@property (strong, nonatomic) IBOutlet UIBarButtonItem * deleteButton;
+@property(strong, nonatomic) IBOutlet UIBarButtonItem *deleteButton;
 
 //导出按钮
-@property (strong, nonatomic) IBOutlet UIBarButtonItem * exportButton;
+@property(strong, nonatomic) IBOutlet UIBarButtonItem *exportButton;
 
 @end

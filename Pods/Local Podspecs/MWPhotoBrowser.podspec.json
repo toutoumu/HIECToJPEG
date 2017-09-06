@@ -27,7 +27,7 @@
   "source_files": "MWPhotoBrowser/Classes/**/*",
   "resource_bundles": {
     "MWPhotoBrowser": [
-      "MWPhotoBrowser/Assets/*.png"
+      "MWPhotoBrowser/MWPhotoBrowser.bundle/*.png"
     ]
   },
   "requires_arc": true,

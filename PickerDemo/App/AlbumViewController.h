@@ -11,11 +11,11 @@
 #import <MBProgressHUD/MBProgressHUD.h>
 
 //  相册列表页面,显示所有相册
-@interface AlbumViewController : NBUAssetsLibraryViewController <MWPhotoBrowserDelegate,UIActionSheetDelegate,UIAlertViewDelegate>
+@interface AlbumViewController : NBUAssetsLibraryViewController <MWPhotoBrowserDelegate, UIActionSheetDelegate, UIAlertViewDelegate>
 
 // Actions
 - (IBAction)accessInfo:(id)sender;
 
-@property(nonatomic) MBProgressHUD * progressHUD;
+@property(nonatomic) MBProgressHUD *progressHUD;
 
 @end
