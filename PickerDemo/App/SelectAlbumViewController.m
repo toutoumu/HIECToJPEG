@@ -15,19 +15,23 @@
         // 注册沙盒相册
         NSString *docDir = [NBUAssetUtils documentsDirectory];
         NSArray *array = [NBUAssetUtils getAllAlbums];
-        for (NSString *alubm in array) {
-            NSURL *url = [NSURL URLWithString:[docDir stringByAppendingPathComponent:alubm]];
-            [[NBUAssetsLibrary sharedLibrary] registerDirectoryGroupforURL:url name:alubm];
+        for (NSString *album in array) {
+            NSURL *url = [NSURL URLWithString:[docDir stringByAppendingPathComponent:album]];
+            [[NBUAssetsLibrary sharedLibrary] registerDirectoryGroupforURL:url name:album];
         }
     }
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+    }
+    return self;
 }
 
 #pragma mark - 生命周期方法
 
 - (void)viewDidLoad {
-    // 只加载沙盒相册,必须在 [super viewDidLoad];之前才有效
-    self.onlyLoadDocument = YES;
-
     [super viewDidLoad];
 
     // 相册列表每一项的布局文件 Configure grid view
@@ -40,44 +44,19 @@
     __weak MWPhotoBrowser *weakPhotoBrowser = _photoBrowser;
     // 设置相册点击事件, 设置了之后上面的图片列表将会失效
     self.groupSelectedBlock = ^(NBUAssetsGroup *group) {
-        if (group) {
-            // 移动照片
-            if (_action == 1) {//1:导出选中项 2: 导出指定索引
-                [[[UIAlertView alloc] initWithTitle:@"警告"
-                                            message:[NSString stringWithFormat:@"确定要移动到 %@", group.name]
-                                   cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{
-                                   }]
-                                   otherButtonItems:[RIButtonItem itemWithLabel:@"确定" action:^{
-                                       [weakPhotoBrowser.delegate photoBrowser:weakPhotoBrowser moveSelectedToAlbum:group.name];
-                                   }], nil] show];
-
-
-//                UIActionSheet * sheet = [[UIActionSheet alloc] initWithTitle:@"选择操作"
-//                                                            cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{}]
-//                                                       destructiveButtonItem:[RIButtonItem itemWithLabel:@"移动" action:^{
-//                    [weakPhotoBrowser.delegate photoBrowser:weakPhotoBrowser moveSelectedToAlbum:group.name] ;
-//                }]
-//                                                            otherButtonItems:nil];
-//                [sheet showInView:weakSelf.view];
-            } else if (_action == 2) {//1:导出选中项 2: 导出指定索引
-                [[[UIAlertView alloc] initWithTitle:@"警告"
-                                            message:[NSString stringWithFormat:@"确定要移动到 %@", group.name]
-                                   cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{
-                                   }]
-                                   otherButtonItems:[RIButtonItem itemWithLabel:@"确定" action:^{
-                                       [weakPhotoBrowser.delegate photoBrowser:weakPhotoBrowser moveAtIndex:weakPhotoBrowser.currentIndex toAlbum:group.name];
-                                   }], nil] show];
-
-//                UIActionSheet * sheet = [[UIActionSheet alloc] initWithTitle:@"选择操作"
-//                                                            cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{}]
-//                                                       destructiveButtonItem:[RIButtonItem itemWithLabel:@"移动" action:^{
-//                    [weakPhotoBrowser.delegate photoBrowser:weakPhotoBrowser moveAtIndex:weakPhotoBrowser.currentIndex toAlbum:group.name];
-//                }]
-//                                                            otherButtonItems:nil];
-//                [sheet showInView:weakSelf.view];
-            }
-            [weakSelf.navigationController popViewController:weakSelf];
-        }
+        // 移动照片
+        [[[UIAlertView alloc] initWithTitle:@"警告"
+                                    message:[NSString stringWithFormat:@"确定要移动到 %@", group.name]
+                           cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{
+                           }]
+                           otherButtonItems:[RIButtonItem itemWithLabel:@"确定" action:^{
+                               if (_action == 1) {//1:导出选中项 2: 导出指定索引
+                                   [weakPhotoBrowser.delegate photoBrowser:weakPhotoBrowser moveSelectedToAlbum:group.name];
+                               } else if (_action == 2) {
+                                   [weakPhotoBrowser.delegate photoBrowser:weakPhotoBrowser moveAtIndex:weakPhotoBrowser.currentIndex toAlbum:group.name];
+                               }
+                           }], nil] show];
+        [weakSelf.navigationController popViewController:weakSelf];
     };
 }
 
@@ -85,23 +64,19 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
-//    // 获取前一项(UIViewcontrol)因为是count所以,减一是代表自己,减二代表前一个页面 We're not first so show back button
-//    UIViewController *previousViewController = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
-//    UIBarButtonItem *newBackButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:nil action:nil];
-//    // Appearance
-//    [newBackButton setBackButtonBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-//    [newBackButton setBackButtonBackgroundImage:nil forState:UIControlStateNormal barMetrics:UIBarMetricsCompact];
-//    [newBackButton setBackButtonBackgroundImage:nil forState:UIControlStateHighlighted barMetrics:UIBarMetricsDefault];
-//    [newBackButton setBackButtonBackgroundImage:nil forState:UIControlStateHighlighted barMetrics:UIBarMetricsCompact];
-//    [newBackButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateNormal];
-//    [newBackButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateHighlighted];
-//    previousViewController.navigationItem.backBarButtonItem = newBackButton;
-
-    // 状态栏样式
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:animated];
-    [self setNavBarAppearance:animated];
     // 显示标题栏
-    [self.navigationController setNavigationBarHidden:NO animated:YES];
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
+
+    // 设置状态栏样式
+    //[self setNavBarAppearance:animated];
+}
+
+/**
+ * 状态栏文字样式
+ * @return UIStatusBarStyle
+ */
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -118,15 +93,16 @@
 #pragma mark 设置导航栏样式
 
 - (void)setNavBarAppearance:(BOOL)animated {
+    // 显示标题栏
     [self.navigationController setNavigationBarHidden:NO animated:animated];
-    UINavigationBar *navBar = self.navigationController.navigationBar;
-    navBar.tintColor = [UIColor whiteColor];
-    navBar.barTintColor = nil;
-    navBar.shadowImage = nil;
-    navBar.translucent = YES;
-    navBar.barStyle = UIBarStyleBlackTranslucent;
-    [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
-    [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsCompact];
+    UINavigationBar *navigationBar = self.navigationController.navigationBar;
+    navigationBar.tintColor = [UIColor whiteColor];
+    navigationBar.barTintColor = nil;
+    navigationBar.shadowImage = nil;
+    navigationBar.translucent = YES;
+    navigationBar.barStyle = UIBarStyleBlack;
+    [navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
+    [navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsCompact];
 }
 
 #pragma mark 递归导出
@@ -144,7 +120,7 @@
 //        if(index == data.count){//导出或解密成功
 //            dispatch_async(dispatch_get_main_queue(), ^ {
 //                NSString *message = @"解密";
-//                if([photoBrowser.currentAlbulName isEqualToString:@"Decrypted"]){
+//                if([photoBrowser.currentAlbumName isEqualToString:@"Decrypted"]){
 //                    message = @"导出";
 //                }
 //                [photoBrowser showProgressHUDCompleteMessage:[NSString stringWithFormat:@"%@成功",message]];
@@ -156,7 +132,7 @@
 //    NBUAsset * asset = [data objectAtIndex:index];
 //    if ([asset isMemberOfClass:[NBUFileAsset class]] ) {
 //        // 处理解密文件夹文件---导出解密文件
-//        if([photoBrowser.currentAlbulName isEqualToString:@"Decrypted"]){
+//        if([photoBrowser.currentAlbumName isEqualToString:@"Decrypted"]){
 //            [[NBUAssetsLibrary sharedLibrary] saveImageToCameraRoll: [NBUAssetUtils fixOrientation:asset.fullResolutionImage]
 //                                                           metadata:nil
 //                                           addToAssetsGroupWithName:@"test"
@@ -229,8 +205,8 @@
 //    // 如果不是最后一项
 //    NBUAsset * asset = [data objectAtIndex:index];
 //    // 如果是 [沙箱] 文件且不是Deleted或Decrypted相册文件夹,移动文件到Deleted相册文件夹
-//    if([asset isMemberOfClass:[NBUFileAsset class]] && ![photoBrowser.currentAlbulName isEqualToString:@"Deleted"]&& ![photoBrowser.currentAlbulName isEqualToString:@"Decrypted"]){
-//        BOOL b = [NBUAssetUtils moveFile:(NBUFileAsset *)asset from:photoBrowser.currentAlbulName toAlbum:@"Deleted"];
+//    if([asset isMemberOfClass:[NBUFileAsset class]] && ![photoBrowser.currentAlbumName isEqualToString:@"Deleted"]&& ![photoBrowser.currentAlbumName isEqualToString:@"Decrypted"]){
+//        BOOL b = [NBUAssetUtils moveFile:(NBUFileAsset *)asset from:photoBrowser.currentAlbumName toAlbum:@"Deleted"];
 //        if (b) {
 //            _isUpdated = YES;
 //            [_asses removeObject:asset];

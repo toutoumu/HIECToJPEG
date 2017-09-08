@@ -35,38 +35,32 @@ static NSString *_pwdKey;//密码存储对应的字段名称
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-
-    PPPinPadViewController *pinViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PPPinPadViewController"];
-    //[[PPPinPadViewController alloc] init];
+    PPPinPadViewController *pinController = [self.storyboard instantiateViewControllerWithIdentifier:@"PPPinPadViewController"];
     NSString *pwd = [[NSUserDefaults standardUserDefaults] objectForKey:_pwdKey];// 读取设置的密码
     if (!pwd || [pwd stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].length == 0) {
-        pinViewController.isSettingPinCode = YES;//如果没有设置密码那么,设置模式为 设置密码模式
+        pinController.isSettingPinCode = YES;//如果没有设置密码那么,设置模式为 设置密码模式
     }
 
-    pinViewController.delegate = self;
-    pinViewController.pinTitle = @"请输入密码";
-    pinViewController.errorTitle = @"密码正确再来一次";
-    pinViewController.cancelButtonHidden = NO; //default is False
-    //pinViewController.backgroundImage = [UIImage imageNamed:@"pinViewImage"];
-    //if you need remove the background set a empty UIImage ([UIImage new]) or set a background color
-    //pinViewController.backgroundColor = [UIColor blueColor]; //default is a darkGrayColor
-    // 将pinViewController作为当前ViewController的视图
-    [self presentViewController:pinViewController animated:YES completion:NULL];
+    pinController.delegate = self;
+    pinController.pinTitle = @"请输入密码";
+    pinController.errorTitle = @"密码正确再来一次";
+    pinController.cancelButtonHidden = NO; //是否隐藏取消按钮
+    // 将pinController作为当前ViewController的视图
+    [self presentViewController:pinController animated:YES completion:NULL];
 }
 
 - (BOOL)checkPin:(NSString *)pin {//密码验证
     _inputCount++;
     NSString *pwd = [[NSUserDefaults standardUserDefaults] objectForKey:_pwdKey];
     if ([pin isEqualToString:pwd]) {
-        [NBUAssetUtils setPassword:pin];// 全局密码缓存密码
+        [NBUAssetUtils setPassword:pwd];// 全局密码缓存密码
         return YES;
     }
     if (_inputCount >= 1) {//如果输错了三次,进入访客模式
         _inputCount = 0;
         [NBUAssetUtils setPassword:@"198868"];
-        //UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Storyboard" bundle:nil];
-        VideoViewController *cameraController = [self.storyboard instantiateViewControllerWithIdentifier:@"VideoViewController"];
-        [self.navigationController pushViewController:cameraController animated:YES];
+        VideoViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"VideoViewController"];
+        [self.navigationController pushViewController:controller animated:YES];
         [self dismissViewControllerAnimated:YES completion:nil];
         //退出应用
         //[NBUAssetUtils exitApplication];
@@ -78,27 +72,19 @@ static NSString *_pwdKey;//密码存储对应的字段名称
     return 6;
 }
 
-- (void)pinPadSuccessPin {//密码输入正确后 optional, when the user set a correct pin
+- (void)pinPadSuccessPin {//密码输入正确后
     AppDelegate *appDelegate = (AppDelegate *) [UIApplication sharedApplication].delegate;
     appDelegate.isAdmin = YES;
-    //UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Storyboard" bundle:nil];
-    CameraViewController *cameraView = [self.storyboard instantiateViewControllerWithIdentifier:@"CameraViewController"];
-    cameraView.albumName = @"Album";//设置默认相册
-    [self.navigationController pushViewController:cameraView animated:YES];
+    CameraViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CameraViewController"];
+    controller.albumName = @"Album";//设置默认相册
+    [self.navigationController pushViewController:controller animated:YES];
 }
 
-- (void)pinPadWillHide {//optional, before the pin pad hide
-}
-
-- (void)pinPadDidHide {//optional, after pin pad hide
-}
-
-- (void)userPassCode:(NSString *)newPassCode { //设置新密码 optional, set new user passcode
+- (void)userPassCode:(NSString *)newPassCode { //设置新密码
     NBULogInfo(@"%@", newPassCode);
     NSUserDefaults *accountDefaults = [NSUserDefaults standardUserDefaults];
     [accountDefaults setObject:newPassCode forKey:_pwdKey];
     [accountDefaults synchronize];
 }
-
 
 @end

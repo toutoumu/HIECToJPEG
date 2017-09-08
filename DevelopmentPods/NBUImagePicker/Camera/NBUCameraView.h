@@ -279,6 +279,6 @@ typedef NS_ENUM(NSInteger, NBUCameraOutPutType)
 @property (weak, nonatomic) IBOutlet UIImageView * lastPictureImageView;
 
 #pragma mark 相机切换遮罩层容器,必须保证这个容器包含CameraView
-@property (weak, nonatomic) IBOutlet UIView* maskViewContiner;
+@property (weak, nonatomic) IBOutlet UIView* maskViewContainer;
 
 @end

@@ -13,15 +13,17 @@
 
 @interface NBUAssetUtils : NSObject
 
-+ (NSString *) getPassword;
++ (NSString *)getPassword;
 
-+ (void) setPassword:(NSString *)password;
++ (void)setPassword:(NSString *)password;
 
 #pragma mark 退出应用
-+(void) exitApplication;
+
++ (void)exitApplication;
 
 #pragma mark 获取Document目录
-+(NSString*) documentsDirectory;
+
++ (NSString *)documentsDirectory;
 
 /**
  *  在document目录下创建相册
@@ -30,14 +32,14 @@
  *
  *  @return 相册路径
  */
-+ (NSString *) createAlbum:(NSString *)albumName;
++ (NSString *)createAlbum:(NSString *)albumName;
 
 /**
  *  获取所有相册名称
  *
  *  @return 相册名称列表
  */
-+(NSArray *) getAllAlbums;
++ (NSArray *)getAllAlbums;
 
 /**
  *  保存图片
@@ -47,9 +49,9 @@
  *
  *  @return 保存是否成功
  */
-+(BOOL) saveImage:(UIImage*)image toAlubm:(NSString*) albumName ;
++ (BOOL)saveImage:(UIImage *)image toAlubm:(NSString *)albumName;
 
-+(BOOL) saveVideo:(UIImage*)image toAlubm:(NSString*) albumName fileName:(NSString*) fileName;
++ (BOOL)saveVideo:(UIImage *)image toAlubm:(NSString *)albumName fileName:(NSString *)fileName;
 
 
 /**
@@ -60,7 +62,7 @@
  *
  *  @return 是否成功
  */
-+(BOOL)dencryImage:(NBUFileAsset *) image toAlubm:(NSString *)albumName;
++ (BOOL)dencryImage:(NBUFileAsset *)image toAlubm:(NSString *)albumName;
 
 /**
  * 移动文件到指定相册
@@ -69,13 +71,7 @@
  * @param destAlbumName 目标相册名称
  * @return 是否成功
  */
-+(BOOL)moveFile:(NBUFileAsset *)assert from:(NSString *)srcAlbumName toAlbum:(NSString *)destAlbumName;
-
-/**
- *  旋转照片到正确的方向
- *  可以使用 UIImage+MultiFormat 中扩展的 imageWithOrientationUp方法代替
- */
-+ (UIImage *)fixOrientation:(UIImage *)aImage;
++ (BOOL)moveFile:(NBUFileAsset *)assert from:(NSString *)srcAlbumName toAlbum:(NSString *)destAlbumName;
 
 
 + (UIImage *)getScreenShotImageFromVideoPath:(NSString *)filePath;

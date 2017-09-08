@@ -12,7 +12,7 @@
         <!--Navigation Controller-->
         <scene sceneID="UsC-pu-mwT">
             <objects>
-                <navigationController id="ukS-Zu-KTb" sceneMemberID="viewController">
+                <navigationController id="ukS-Zu-KTb" customClass="NavigationController" sceneMemberID="viewController">
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <navigationItem key="navigationItem" id="fdn-HR-N0k"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="CrW-td-18n">
@@ -329,7 +329,7 @@
                                             <outlet property="flashButton" destination="oPt-vr-5qE" id="nSs-3Y-3BN"/>
                                             <outlet property="focusButton" destination="ofu-Xk-DEd" id="KcN-si-b6y"/>
                                             <outlet property="lastPictureImageView" destination="roz-U0-n3U" id="VAB-fe-Tzx"/>
-                                            <outlet property="maskViewContiner" destination="4VF-7l-N9c" id="DDT-o0-yXu"/>
+                                            <outlet property="maskViewContainer" destination="4VF-7l-N9c" id="DDT-o0-yXu"/>
                                             <outlet property="toggleCameraButton" destination="yDS-jR-fqm" id="Hex-VL-eTb"/>
                                             <outlet property="whiteBalanceButton" destination="U4W-s8-X7K" id="gYc-7i-Fpe"/>
                                         </connections>

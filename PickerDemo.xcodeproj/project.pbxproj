@@ -45,7 +45,8 @@
 		4039F3211CE33FE90073F9E9 /* camera_flash@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4039F31F1CE33FE90073F9E9 /* camera_flash@2x.png */; };
 		403CDE5C1C48E04D00806269 /* nocontent.png in Resources */ = {isa = PBXBuildFile; fileRef = 403CDE5A1C48E04D00806269 /* nocontent.png */; };
 		403CDE5D1C48E04D00806269 /* nocontent@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 403CDE5B1C48E04D00806269 /* nocontent@2x.png */; };
-		7E0C051CC5B174A36640EE97 /* libPods-PickerDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C214832A7E9D52C32C216646 /* libPods-PickerDemo.a */; };
+		58B83763C0C97EBF47F1D832 /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B83C4E50B5955682D64ABA /* BaseViewController.m */; };
+		58B83EE4515F2C9715843F48 /* NavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B8398033FF461E57269445 /* NavigationController.m */; };
 		E58DA585184339C100D60BBC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E58DA584184339C100D60BBC /* Foundation.framework */; };
 		E58DA587184339C100D60BBC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E58DA586184339C100D60BBC /* CoreGraphics.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		E58DA589184339C100D60BBC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E58DA588184339C100D60BBC /* UIKit.framework */; };
@@ -53,6 +54,7 @@
 		E58DA591184339C100D60BBC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E58DA590184339C100D60BBC /* main.m */; };
 		E58DA595184339C100D60BBC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E58DA594184339C100D60BBC /* AppDelegate.m */; };
 		E58DA5A3184339C100D60BBC /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E58DA5A2184339C100D60BBC /* Images.xcassets */; };
+		FBE58867A78F9C5644B5D243 /* libPods-PickerDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D87DEDBA7F14FB68F11C198 /* libPods-PickerDemo.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -111,8 +113,12 @@
 		403CDE5A1C48E04D00806269 /* nocontent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nocontent.png; sourceTree = "<group>"; };
 		403CDE5B1C48E04D00806269 /* nocontent@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nocontent@2x.png"; sourceTree = "<group>"; };
 		569D6C800BE5F3E8E279073B /* Pods-PickerDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PickerDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PickerDemo/Pods-PickerDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		58B8398033FF461E57269445 /* NavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavigationController.m; sourceTree = "<group>"; };
+		58B83C4E50B5955682D64ABA /* BaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseViewController.m; sourceTree = "<group>"; };
+		58B83E7305E7C50A11278E7F /* NavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationController.h; sourceTree = "<group>"; };
+		58B83F8A68385906D7C02AC4 /* BaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseViewController.h; sourceTree = "<group>"; };
 		8077FEE0B936D6CD5149EC11 /* Pods-PickerDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PickerDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-PickerDemo/Pods-PickerDemo.release.xcconfig"; sourceTree = "<group>"; };
-		C214832A7E9D52C32C216646 /* libPods-PickerDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PickerDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D87DEDBA7F14FB68F11C198 /* libPods-PickerDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PickerDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E57FDDF519CAC50A0011B4E5 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E58DA581184339C100D60BBC /* PickerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PickerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E58DA584184339C100D60BBC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -138,7 +144,7 @@
 				E58DA587184339C100D60BBC /* CoreGraphics.framework in Frameworks */,
 				E58DA589184339C100D60BBC /* UIKit.framework in Frameworks */,
 				E58DA585184339C100D60BBC /* Foundation.framework in Frameworks */,
-				7E0C051CC5B174A36640EE97 /* libPods-PickerDemo.a in Frameworks */,
+				FBE58867A78F9C5644B5D243 /* libPods-PickerDemo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -165,6 +171,10 @@
 				18FD371C1F1E07F4001FE220 /* CustomAssetsGroupView.xib */,
 				18FD371D1F1E07F4001FE220 /* CustomAssetThumbnailView.xib */,
 				18FD36F91F1DF9CC001FE220 /* Storyboard.storyboard */,
+				58B8398033FF461E57269445 /* NavigationController.m */,
+				58B83E7305E7C50A11278E7F /* NavigationController.h */,
+				58B83F8A68385906D7C02AC4 /* BaseViewController.h */,
+				58B83C4E50B5955682D64ABA /* BaseViewController.m */,
 			);
 			name = App;
 			sourceTree = "<group>";
@@ -260,7 +270,7 @@
 				E58DA586184339C100D60BBC /* CoreGraphics.framework */,
 				E58DA588184339C100D60BBC /* UIKit.framework */,
 				E58DA5A9184339C100D60BBC /* XCTest.framework */,
-				C214832A7E9D52C32C216646 /* libPods-PickerDemo.a */,
+				8D87DEDBA7F14FB68F11C198 /* libPods-PickerDemo.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -321,7 +331,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "CyberAgent Inc.";
 				TargetAttributes = {
 					E58DA580184339C100D60BBC = {
@@ -405,9 +415,20 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-PickerDemo/Pods-PickerDemo-resources.sh",
+				"${PODS_ROOT}/GPUImage/framework/Resources/lookup.png",
+				"${PODS_ROOT}/GPUImage/framework/Resources/lookup_amatorka.png",
+				"${PODS_ROOT}/GPUImage/framework/Resources/lookup_miss_etikate.png",
+				"${PODS_ROOT}/GPUImage/framework/Resources/lookup_soft_elegance_1.png",
+				"${PODS_ROOT}/GPUImage/framework/Resources/lookup_soft_elegance_2.png",
+				"${PODS_ROOT}/LumberjackConsole/Source/LumberjackConsole.storyboard",
+				"$PODS_CONFIGURATION_BUILD_DIR/MWPhotoBrowser/MWPhotoBrowser.bundle",
+				"$PODS_CONFIGURATION_BUILD_DIR/NBUImagePicker/NBUImagePicker.bundle",
+				"$PODS_CONFIGURATION_BUILD_DIR/NBUKit/NBUKit.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -420,13 +441,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-PickerDemo-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -453,6 +477,8 @@
 				1848CEE41F29E55E0006466C /* VideoViewController.m in Sources */,
 				18FD36FF1F1DF9CC001FE220 /* PhotosViewController.m in Sources */,
 				E58DA591184339C100D60BBC /* main.m in Sources */,
+				58B83EE4515F2C9715843F48 /* NavigationController.m in Sources */,
+				58B83763C0C97EBF47F1D832 /* BaseViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -509,9 +535,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos9.3;
+				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
@@ -550,9 +576,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos9.3;
+				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "arm64 armv7 armv7s";
@@ -566,7 +592,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: tou_tou_mu@icloud.com (ZA8BE99EHX)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = U6N4EJ8787;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -576,7 +602,7 @@
 					"DEBUG=1",
 				);
 				INFOPLIST_FILE = "PickerDemo/PickerDemo-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.co.cyberagent.nbu.PickerDemo;
@@ -596,7 +622,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: tou_tou_mu@icloud.com (ZA8BE99EHX)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = U6N4EJ8787;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -606,7 +632,7 @@
 					"TESTING=1",
 				);
 				INFOPLIST_FILE = "PickerDemo/PickerDemo-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.co.cyberagent.nbu.PickerDemo;

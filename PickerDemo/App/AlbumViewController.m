@@ -4,17 +4,12 @@
 #import "UINavigationController+FDFullscreenPopGesture.h"
 
 // 相册列表,图片列表,图片浏览
-@interface AlbumViewController () {
+@implementation AlbumViewController {
     BOOL _isUpdated;// 相册数据,是否已经更新,如果已经更新那么需要重新加载数据
     NSMutableArray *_asses;// 图片数据集合
     NSMutableArray *_selections;// 与图片数据集合一一对应,是否选中
     NBUAssetsGroup *_group;// 当前相册引用
 }
-
-@end
-
-// 相册列表,图片列表,图片浏览
-@implementation AlbumViewController
 
 // 类初始化
 + (void)initialize {
@@ -29,23 +24,23 @@
     }
 }
 
-// 对象初始化
-- (void)setUp {
-    _group = nil;
-    _isUpdated = NO;
-    _asses = [NSMutableArray new];
-    _selections = [NSMutableArray new];
+#pragma mark 从storyboard初始化默认会调用这个方法
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        _group = nil;
+        _isUpdated = NO;
+        _asses = [NSMutableArray new];
+        _selections = [NSMutableArray new];
+    }
+    return self;
 }
 
 #pragma mark - 生命周期方法
 
 - (void)viewDidLoad {
-    self.onlyLoadDocument = YES;// 只显示沙盒相册
-
     [super viewDidLoad];
-
-    // 初始化各种值
-    [self setUp];
 
     // 相册列表每一项的布局文件 Configure grid view
     self.objectTableView.nibNameForViews = @"CustomAssetsGroupView";
@@ -75,7 +70,7 @@
             browser.startOnGrid = YES;//从网格列表显示
             browser.enableSwipeToDismiss = YES;
             browser.autoPlayOnAppear = NO;//显示时播放
-            browser.currentAlbulName = group.name;//当前相册名称
+            browser.currentAlbumName = group.name;//当前相册名称
             browser.optionButtonClickBlock = optionButtonClickBlock;//图片列表页面右上角按钮点击事件block
             [browser setCurrentPhotoIndex:0];
 
@@ -90,7 +85,6 @@
                                _asses = (NSMutableArray *) assets;
                                // 跳转到相片列表页面
                                [weakSelf.navigationController pushViewController:browser animated:YES];
-                               //[weakSelf presentViewController:_browser animated:YES completion:nil];
                                // 重置选中集合 Reset selections
                                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                                    if (finished) {//数据已经全部加载完成
@@ -109,19 +103,19 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
-    // 状态栏样式
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:animated];
-    [self setNavBarAppearance:animated];
-
+    // [self setNavBarAppearance:animated];//设置导航栏样式
+    // 显示导航栏
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
     // 内容被状态栏挡住
     self.automaticallyAdjustsScrollViewInsets = NO;
+}
 
-    //原来的图片列表页面
-    /*PhotosViewController *controller = (PhotosViewController *) self.assetsGroupController;
-     if (controller.isUpdated) {
-     controller.isUpdated = NO;
-     [self loadGroups];
-     }*/
+/**
+ * 状态栏样式
+ * @return
+ */
+- (UIStatusBarStyle)preferredStatusBarStyle {//
+    return UIStatusBarStyleLightContent;//UIStatusBarStyleDefault;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -143,21 +137,6 @@
         self.navigationController.interactivePopGestureRecognizer.enabled = NO;
     }
 }
-
-#pragma mark 设置导航栏样式
-
-- (void)setNavBarAppearance:(BOOL)animated {
-    [self.navigationController setNavigationBarHidden:NO animated:animated];
-    UINavigationBar *navBar = self.navigationController.navigationBar;
-    navBar.tintColor = [UIColor whiteColor];
-    navBar.barTintColor = nil;
-    navBar.shadowImage = nil;
-    navBar.translucent = YES;
-    navBar.barStyle = UIBarStyleBlackTranslucent;
-    [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
-    [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsCompact];
-}
-
 
 #pragma mark - 图片浏览器协议实现 MWPhotoBrowserDelegate
 /**
@@ -190,16 +169,6 @@
 - (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
     if (_asses && _asses.count > 0 && index < _asses.count) {
         NBUAsset *data = _asses[index];
-        ALAsset *asset = data.ALAsset;
-        if (asset) {//8.x以下系统,如果是访问相册图片那么使用url可以异步加载
-            //MWPhoto *photo = [MWPhoto photoWithURL: asset.defaultRepresentation.url];
-            MWPhoto *photo = [MWPhoto photoWithALAsset:asset isThumb:NO];
-            if ([asset valueForProperty:ALAssetPropertyType] == ALAssetTypeVideo) {
-                photo.videoURL = asset.defaultRepresentation.url;
-            }
-            return photo;
-        }
-
         PHAsset *phAsset = data.PHAsset;
         if (phAsset) {//8.x以上系统,如果是访问相册图片那么使用url可以异步加载
             //注意这里不需要判断是否为视频,初始化方法里面会判断
@@ -229,21 +198,11 @@
  *
  *  @return 缩略图
  */
-#pragma mark构建缩略图
+#pragma mark 构建缩略图
 
 - (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser thumbPhotoAtIndex:(NSUInteger)index {
     if (_asses && _asses.count > 0 && index < _asses.count) {
         NBUAsset *data = _asses[index];
-
-        ALAsset *asset = data.ALAsset;
-        if (asset) {//8.x以下系统,如果是访问相册图片那么使用url可以异步加载
-            MWPhoto *photo = [MWPhoto photoWithALAsset:asset isThumb:YES];
-            if ([asset valueForProperty:ALAssetPropertyType] == ALAssetTypeVideo) {
-                photo.videoURL = asset.defaultRepresentation.url;
-            }
-            return photo;
-        }
-
         PHAsset *phAsset = data.PHAsset;
         if (phAsset) {//8.x以上系统,如果是访问相册图片那么使用url可以异步加载
             //注意这里不需要判断是否为视频,初始化方法里面会判断
@@ -284,6 +243,8 @@
  *  @param photoBrowser 图片浏览器引用
  *  @param index        图片索引
  */
+#pragma mark 第index张图片将要显示
+
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser didDisplayPhotoAtIndex:(NSUInteger)index {
     NBULogInfo(@"Did start viewing photo at index %lu", (unsigned long) index);
 }
@@ -296,6 +257,8 @@
  *
  *  @return 是否选择
  */
+#pragma mark 根据索引判断图片是否选中
+
 - (BOOL)photoBrowser:(MWPhotoBrowser *)photoBrowser isPhotoSelectedAtIndex:(NSUInteger)index {
     if (_asses == nil || _asses.count == 0 || _selections == nil || _selections.count == 0 || _selections[index] == nil) {
         return NO;
@@ -311,6 +274,7 @@
  *
  *  @return 标题
  */
+#pragma mark 第index张图片的标题
 //- (NSString *)photoBrowser:(MWPhotoBrowser *)photoBrowser titleForPhotoAtIndex:(NSUInteger)index {
 //  return [NSString stringWithFormat:@"Photo %lu", (unsigned long)index+1];
 //}
@@ -322,6 +286,8 @@
  *  @param index        图片索引
  *  @param selected     是否被选中
  */
+#pragma mark 图片选择状态改变事件
+
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index selectedChanged:(BOOL)selected {
     _selections[index] = @(selected);
     NBULogInfo(@"Photo at index %lu selected %@", (unsigned long) index, selected ? @"YES" : @"NO");
@@ -332,6 +298,8 @@
  *
  *  @param photoBrowser 图片浏览器引用
  */
+#pragma mark 模态窗口呈现完成之后的回调
+
 - (void)photoBrowserDidFinishModalPresentation:(MWPhotoBrowser *)photoBrowser {
     // If we subscribe to this method we must dismiss the view controller ourselves
     NBULogInfo(@"Did finish modal presentation");
@@ -393,7 +361,7 @@
 
 - (void)exportSelected:(MWPhotoBrowser *)photoBrowser {
     NSString *message = @"解密";
-    if ([photoBrowser.currentAlbulName isEqualToString:@"Decrypted"]) {
+    if ([photoBrowser.currentAlbumName isEqualToString:@"Decrypted"]) {
         message = @"导出";
     }
     // 不是沙盒文件夹文件不能执行操作
@@ -422,7 +390,7 @@
                 });
                 return;
             }
-            if ([photoBrowser.currentAlbulName isEqualToString:@"Decrypted"]) {//导出到系统相册
+            if ([photoBrowser.currentAlbumName isEqualToString:@"Decrypted"]) {//导出到系统相册
                 //NSMutableArray * array = [[NSMutableArray alloc]init];
                 //for (NBUFileAsset *asset in selectedAssets) {
                 //    [array addObject:asset.fullResolutionImage];
@@ -504,7 +472,7 @@
             NBUAsset *asset = movedArray[i];
             // 如果是document文件且不是Deleted相册,移动文件到目标文件夹
             if ([asset isMemberOfClass:[NBUFileAsset class]]) {
-                BOOL success = [NBUAssetUtils moveFile:(NBUFileAsset *) asset from:photoBrowser.currentAlbulName toAlbum:destAlbumName];
+                BOOL success = [NBUAssetUtils moveFile:(NBUFileAsset *) asset from:photoBrowser.currentAlbumName toAlbum:destAlbumName];
                 if (success) {
                     _isUpdated = YES;
                     [_asses removeObject:asset];
@@ -544,8 +512,8 @@
     // 沙盒文件夹中的加密相册,删除操作直接移动到Deleteed相册
     // 如果是 [沙箱] 文件且不是Deleted或Decrypted相册文件夹,移动文件到Deleted相册文件夹
     if ([_group isMemberOfClass:[NBUDirectoryAssetsGroup class]] &&//是沙盒
-            ![photoBrowser.currentAlbulName isEqualToString:@"Deleted"] &&//不是回收站
-            ![photoBrowser.currentAlbulName isEqualToString:@"Decrypted"]) {//不是解密文件夹
+            ![photoBrowser.currentAlbumName isEqualToString:@"Deleted"] &&//不是回收站
+            ![photoBrowser.currentAlbumName isEqualToString:@"Decrypted"]) {//不是解密文件夹
         [self photoBrowser:photoBrowser moveSelectedToAlbum:@"Deleted"];
         return;
     }
@@ -627,7 +595,7 @@
 
 - (BOOL)photoBrowser:(MWPhotoBrowser *)photoBrowser exportAtIndex:(NSUInteger)index {
     NSString *message = @"解密";
-    if ([photoBrowser.currentAlbulName isEqualToString:@"Decrypted"]) {
+    if ([photoBrowser.currentAlbumName isEqualToString:@"Decrypted"]) {
         message = @"导出";
     }
     // 如果当前不是沙盒相册
@@ -650,8 +618,8 @@
 
     [photoBrowser showProgressHUDWithMessage:[NSString stringWithFormat:@"正在%@", message]];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if ([photoBrowser.currentAlbulName isEqualToString:@"Decrypted"]) {//导出---解密相册导出到系统相册
-            [[NBUAssetsLibrary sharedLibrary] saveImageToCameraRoll:[NBUAssetUtils fixOrientation:asset.fullResolutionImage]
+        if ([photoBrowser.currentAlbumName isEqualToString:@"Decrypted"]) {//导出---解密相册导出到系统相册
+            [[NBUAssetsLibrary sharedLibrary] saveImageToCameraRoll:[asset.fullResolutionImage imageWithOrientationUp]
                                                            metadata:nil
                                            addToAssetsGroupWithName:@"test"
                                                         resultBlock:^(NSURL *assetURL, NSError *error) {
@@ -709,7 +677,7 @@
             [photoBrowser showProgressHUDWithMessage:@"正在移动..."];
         });
         NBUFileAsset *temp = (NBUFileAsset *) asset;
-        BOOL success = [NBUAssetUtils moveFile:temp from:photoBrowser.currentAlbulName toAlbum:destAlbumName];
+        BOOL success = [NBUAssetUtils moveFile:temp from:photoBrowser.currentAlbumName toAlbum:destAlbumName];
         dispatch_async(dispatch_get_main_queue(), ^{
             if (success) {
                 _isUpdated = YES;
@@ -760,7 +728,7 @@
 
             // 移动文件
             NBUFileAsset *temp = (NBUFileAsset *) asset;
-            BOOL success = [NBUAssetUtils moveFile:temp from:photoBrowser.currentAlbulName toAlbum:@"Deleted"];
+            BOOL success = [NBUAssetUtils moveFile:temp from:photoBrowser.currentAlbumName toAlbum:@"Deleted"];
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (success) {
                     _isUpdated = YES;
@@ -820,7 +788,7 @@
     };
 
     if ([_group isMemberOfClass:[NBUDirectoryAssetsGroup class]]) {
-        if ([photoBrowser.currentAlbulName isEqualToString:@"Deleted"] || [photoBrowser.currentAlbulName isEqualToString:@"Decrypted"]) {
+        if ([photoBrowser.currentAlbumName isEqualToString:@"Deleted"] || [photoBrowser.currentAlbumName isEqualToString:@"Decrypted"]) {
             // 如果是 Deleted ,或者 Decrypted 相册,删除文件
             [self showAlertWithTitle:@"警告" message:@"确定要删除,删除后文件将不可恢复?" okTitle:@"删除" action:deleteBlock];
         } else {// 移动到 Deleted 相册
@@ -848,7 +816,7 @@
 #pragma mark 网格列表页面, 显示移动对话框
 
 - (void)showMove:(MWPhotoBrowser *)photoBrowser action:(int)action {
-    if (![_group isMemberOfClass:[NBUDirectoryAssetsGroup class]] || [photoBrowser.currentAlbulName isEqualToString:@"Decrypted"]) {
+    if (![_group isMemberOfClass:[NBUDirectoryAssetsGroup class]] || [photoBrowser.currentAlbumName isEqualToString:@"Decrypted"]) {
         [photoBrowser showProgressHUDWithMessage:@""];
         [photoBrowser showProgressHUDCompleteMessage:@"该相册文件不能移动"];
         return;
@@ -862,21 +830,23 @@
         }
     }
 
-    SelectAlbumViewController *controll = [self.storyboard instantiateViewControllerWithIdentifier:@"SelectAlbumViewController"];
-    controll.onlyLoadDocument = YES;// 只加载沙盒
+    SelectAlbumViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"SelectAlbumViewController"];
+    controller.action = action;// 1:导出选中项 2: 导出指定索引
+    controller.photoBrowser = photoBrowser;
+
+    controller.onlyLoadDocument = YES;// 只加载沙盒
     // 排除当前相册和Deleted相册
-    controll.action = action;// 1:导出选中项 2: 导出指定索引
-    controll.photoBrowser = photoBrowser;
-    controll.excludeAlbumNames = [[NSMutableArray alloc] init];
-    [controll.excludeAlbumNames insertObject:photoBrowser.currentAlbulName atIndex:0];
-    [controll.excludeAlbumNames insertObject:@"Deleted" atIndex:0];
-    [controll.excludeAlbumNames insertObject:@"Decrypted" atIndex:0];
+    controller.excludeAlbumNames = [[NSMutableArray alloc] init];
+    [controller.excludeAlbumNames insertObject:photoBrowser.currentAlbumName atIndex:0];
+    [controller.excludeAlbumNames addObject:photoBrowser.currentAlbumName];
+    [controller.excludeAlbumNames addObject:@"Deleted"];
+    [controller.excludeAlbumNames addObject:@"Decrypted"];
     // 设置选择相册页面返回按钮文字
     photoBrowser.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
                                                                                      style:UIBarButtonItemStylePlain
                                                                                     target:self
                                                                                     action:nil];
-    [self.navigationController pushViewController:controll animated:YES];
+    [self.navigationController pushViewController:controller animated:YES];
 }
 
 /**
@@ -900,7 +870,7 @@
     };
 
     NSString *message = @"解密";
-    if ([photoBrowser.currentAlbulName isEqualToString:@"Decrypted"]) {
+    if ([photoBrowser.currentAlbumName isEqualToString:@"Decrypted"]) {
         message = @"导出";
     }
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"导出到相册"
@@ -914,6 +884,20 @@
 }
 
 #pragma mark - ------私有方法
+
+#pragma mark 设置导航栏样式
+
+- (void)setNavBarAppearance:(BOOL)animated {
+    UINavigationBar *navBar = self.navigationController.navigationBar;
+    navBar.tintColor = [UIColor whiteColor];
+    navBar.barTintColor = nil;
+    navBar.shadowImage = nil;
+    navBar.translucent = YES;
+    navBar.barStyle = UIBarStyleBlack;
+    [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
+    [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsCompact];
+}
+
 #pragma mark 是否有选择的文件
 
 - (BOOL)hasSelectedItem {
@@ -1042,7 +1026,7 @@
 void (^optionButtonClickBlock)(MWPhotoBrowser *) = ^(MWPhotoBrowser *photoBrowser) {
 
     NSString *exp = @"解密选中项";
-    if ([photoBrowser.currentAlbulName isEqualToString:@"Decrypted"]) {
+    if ([photoBrowser.currentAlbumName isEqualToString:@"Decrypted"]) {
         exp = @"导出选中项";
     }
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"导出到相册"
@@ -1062,7 +1046,7 @@ void (^optionButtonClickBlock)(MWPhotoBrowser *) = ^(MWPhotoBrowser *photoBrowse
             }], [RIButtonItem itemWithLabel:@"全不选" action:^{
                 [photoBrowser.delegate photoBrowser:photoBrowser toggleSelect:NO];
             }], [RIButtonItem itemWithLabel:@"移动选择项到" action:^{
-                if ([photoBrowser.currentAlbulName isEqualToString:@"Decrypted"]) {//解密(Decrypted)文件夹文件不许移动
+                if ([photoBrowser.currentAlbumName isEqualToString:@"Decrypted"]) {//解密(Decrypted)文件夹文件不许移动
                     [photoBrowser showProgressHUDWithMessage:@""];
                     [photoBrowser showProgressHUDCompleteMessage:@"该相册文件不能移动"];
                 } else {//1:导出选中项 2: 导出指定索引

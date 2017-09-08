@@ -15,7 +15,7 @@
 
 
 typedef NS_ENUM(NSInteger, settingNewPinState) {
-    settingMewPinStateFisrt = 0,
+    settingMewPinStateFirst = 0,
     settingMewPinStateConfirm = 1
 };
 
@@ -24,7 +24,7 @@ typedef NS_ENUM(NSInteger, settingNewPinState) {
     NSInteger _direction;
 }
 @property(nonatomic) settingNewPinState newPinState;
-@property(nonatomic, strong) NSString *fisrtPassCode;
+@property(nonatomic, strong) NSString *firstPassCode;
 @property(weak, nonatomic) IBOutlet    UILabel *laInstructionsLabel;
 @end
 
@@ -144,7 +144,7 @@ static CGFloat kVTPinPadViewControllerCircleRadius = 6.0f;
 - (void)setIsSettingPinCode:(BOOL)isSettingPinCode {
     _isSettingPinCode = isSettingPinCode;
     if (isSettingPinCode) {
-        self.newPinState = settingMewPinStateFisrt;
+        self.newPinState = settingMewPinStateFirst;
     }
 }
 
@@ -156,7 +156,7 @@ static CGFloat kVTPinPadViewControllerCircleRadius = 6.0f;
 
 - (IBAction)resetClick:(id)sender {
     [self addCircles];
-    self.newPinState = settingMewPinStateFisrt;
+    self.newPinState = settingMewPinStateFirst;
     self.laInstructionsLabel.text = NSLocalizedString(@"Enter PassCode", @"");
     _inputPin = [NSMutableString string];
 }
@@ -173,9 +173,9 @@ static CGFloat kVTPinPadViewControllerCircleRadius = 6.0f;
     [self fillingCircle:_inputPin.length - 1];
 
     if (self.isSettingPinCode) {
-        if ([self pinLenght] == _inputPin.length) {
-            if (self.newPinState == settingMewPinStateFisrt) {
-                self.fisrtPassCode = _inputPin;
+        if ([self pinLength] == _inputPin.length) {
+            if (self.newPinState == settingMewPinStateFirst) {
+                self.firstPassCode = _inputPin;
                 // reset and prepare for confirmation stage
                 [self resetClick:Nil];
                 self.newPinState = settingMewPinStateConfirm;
@@ -183,10 +183,10 @@ static CGFloat kVTPinPadViewControllerCircleRadius = 6.0f;
                 self.laInstructionsLabel.text = NSLocalizedString(@"Confirm PassCode", @"");
             } else {
                 // we are at confirmation stage check this pin with original one
-                if ([self.fisrtPassCode isEqualToString:_inputPin]) {
+                if ([self.firstPassCode isEqualToString:_inputPin]) {
                     // every thing is ok
                     if ([self.delegate respondsToSelector:@selector(userPassCode:)]) {
-                        [self.delegate userPassCode:self.fisrtPassCode];
+                        [self.delegate userPassCode:self.firstPassCode];
                     }
                     [self dismissPinPad];
                 } else {
@@ -201,7 +201,7 @@ static CGFloat kVTPinPadViewControllerCircleRadius = 6.0f;
             }
         }
     } else {
-        if ([self pinLenght] == _inputPin.length && [self checkPin:_inputPin]) {
+        if ([self pinLength] == _inputPin.length && [self checkPin:_inputPin]) {
             double delayInSeconds = 0.3;
             dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t) (delayInSeconds * NSEC_PER_SEC));
             dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
@@ -213,7 +213,7 @@ static CGFloat kVTPinPadViewControllerCircleRadius = 6.0f;
                 [self dismissPinPad];
             });
 
-        } else if ([self pinLenght] == _inputPin.length) {
+        } else if ([self pinLength] == _inputPin.length) {
             _direction = 1;
             _shakes = 0;
             [self shakeCircles:_pinCirclesView];
@@ -239,7 +239,7 @@ static CGFloat kVTPinPadViewControllerCircleRadius = 6.0f;
     return NO;
 }
 
-- (NSInteger)pinLenght {
+- (NSInteger)pinLength {
     if ([self.delegate respondsToSelector:@selector(pinLength)]) {
         return [self.delegate pinLength];
     }
@@ -247,7 +247,6 @@ static CGFloat kVTPinPadViewControllerCircleRadius = 6.0f;
 }
 
 #pragma mark Circles
-
 
 - (void)addCircles {
     if ([self isViewLoaded] && self.delegate) {
@@ -258,14 +257,14 @@ static CGFloat kVTPinPadViewControllerCircleRadius = 6.0f;
         [_circleViewList removeAllObjects];
         _circleViewList = [NSMutableArray array];
 
-        CGFloat neededWidth = [self pinLenght] * kVTPinPadViewControllerCircleRadius;
-        CGFloat shiftBetweenCircle = (/*_pinCirclesView.frame.size.width*/bound.size.width - neededWidth) / ([self pinLenght] + 2);
+        CGFloat neededWidth = [self pinLength] * kVTPinPadViewControllerCircleRadius;
+        CGFloat shiftBetweenCircle = (/*_pinCirclesView.frame.size.width*/bound.size.width - neededWidth) / ([self pinLength] + 2);
         CGFloat indent = (CGFloat) (1.5 * shiftBetweenCircle);//第一项与左边间距
         if (shiftBetweenCircle > kVTPinPadViewControllerCircleRadius * 5.0f) {
             shiftBetweenCircle = kVTPinPadViewControllerCircleRadius * 5.0f;
-            indent = (/*_pinCirclesView.frame.size.width*/bound.size.width - neededWidth - shiftBetweenCircle * ([self pinLenght] > 1 ? [self pinLenght] - 1 : 0)) / 2;
+            indent = (/*_pinCirclesView.frame.size.width*/bound.size.width - neededWidth - shiftBetweenCircle * ([self pinLength] > 1 ? [self pinLength] - 1 : 0)) / 2;
         }
-        for (int i = 0; i < [self pinLenght]; i++) {
+        for (int i = 0; i < [self pinLength]; i++) {
             PPPinCircleView *circleView = [PPPinCircleView circleView:kVTPinPadViewControllerCircleRadius];
             CGRect circleFrame = circleView.frame;
             circleFrame.origin.x = indent + i * kVTPinPadViewControllerCircleRadius + i * shiftBetweenCircle;
@@ -283,6 +282,8 @@ static CGFloat kVTPinPadViewControllerCircleRadius = 6.0f;
     PPPinCircleView *circleView = _circleViewList[symbolIndex];
     circleView.backgroundColor = [UIColor whiteColor];
 }
+
+#pragma mark 摇一摇
 
 - (void)shakeCircles:(UIView *)theOneYouWannaShake {
     [UIView animateWithDuration:0.05 animations:^{

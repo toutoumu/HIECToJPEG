@@ -127,7 +127,7 @@
 @property (nonatomic, strong) NSString *customImageSelectedIconName;
 @property (nonatomic, strong) NSString *customImageSelectedSmallIconName;
 // 当前选中的相册名称
-@property (nonatomic, strong) NSString *currentAlbulName;
+@property (nonatomic, strong) NSString *currentAlbumName;
 
 /// 选项按钮点击--图片列表页面右上角按钮点击事件
 @property (nonatomic, copy)   void (^optionButtonClickBlock)(MWPhotoBrowser *);

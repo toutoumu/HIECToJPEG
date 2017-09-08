@@ -15,7 +15,7 @@
     NSMutableDictionary *_vibeDictionary;//震动相关
     int _inputCount;// 密码输入次数
     int _clickCount;// 点击打开相册的次数
-    BOOL _parameterSetted;//参数是否已经设置完成
+    BOOL _parameterSet;//参数是否已经设置完成
     BOOL _prefersStatusBarHidden;//是否隐藏状态栏
     UITapGestureRecognizer *_tapGesture;// 触摸手势
 }
@@ -28,7 +28,7 @@
         _inputCount = 0; //重置密码输入次数
         _clickCount = 0; //重置点击次数
         _tapGesture = nil;// 触摸手势
-        _parameterSetted = NO;// 没有设置参数
+        _parameterSet = NO;// 没有设置参数
         _prefersStatusBarHidden = NO;//进入页面时不隐藏状态栏
 
         // 初始化震动配置
@@ -120,6 +120,8 @@
     [self setNeedsStatusBarAppearanceUpdate];
 }
 
+#pragma mark 状态栏文字样式
+
 - (UIStatusBarStyle)preferredStatusBarStyle {
     return UIStatusBarStyleLightContent;
 }
@@ -139,11 +141,11 @@
     if (self.cameraView.shootAfterFocus) {// 如果是触摸后拍摄直接调用tapped方法
         [self.cameraView tapped:gesture];
     } else {
-        if (_parameterSetted) {// 如果拍摄参数已经设置好
+        if (_parameterSet) {// 如果拍摄参数已经设置好
             [self.cameraView takePicture:_shootButton];
         } else {// 触摸操作对焦,设置好相机参数
             [self.cameraView tapped:gesture];
-            _parameterSetted = YES;
+            _parameterSet = YES;
         }
     }
 }
@@ -157,21 +159,17 @@
     }
     _clickCount = 0;
     // 显示密码输入框
-    //PPPinPadViewController * pinViewController = [[PPPinPadViewController alloc] init];
-    PPPinPadViewController *pinViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PPPinPadViewController"];
+    PPPinPadViewController *pinController = [self.storyboard instantiateViewControllerWithIdentifier:@"PPPinPadViewController"];
     NSString *pwd = [[NSUserDefaults standardUserDefaults] objectForKey:[PPViewController pwdKey]];
     if (pwd == nil || [pwd stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].length == 0) {
-        pinViewController.isSettingPinCode = YES;//如果没有设置密码,设置为设置密码模式
+        pinController.isSettingPinCode = YES;//如果没有设置密码,设置为设置密码模式
     }
-    pinViewController.delegate = self;
-    pinViewController.pinTitle = @"请输入密码";
-    pinViewController.errorTitle = @"密码正确再来一次";
-    pinViewController.cancelButtonHidden = NO; //default is False
-    //pinViewController.backgroundImage = [UIImage imageNamed:@"pinViewImage"];
-    //if you need remove the background set a empty UIImage ([UIImage new]) or set a background color
-    //pinViewController.backgroundColor = [UIColor blueColor]; //default is a darkGrayColor
-    //显示密码输入框
-    [self presentViewController:pinViewController animated:YES completion:NULL];
+    pinController.delegate = self;
+    pinController.pinTitle = @"请输入密码";
+    pinController.errorTitle = @"密码正确再来一次";
+    pinController.cancelButtonHidden = NO; //default is False
+    //弹出密码输入界面
+    [self presentViewController:pinController animated:YES completion:NULL];
 }
 
 #pragma mark - 密码输入框对应的协议方法实现
@@ -201,22 +199,11 @@
     _inputCount = 0;
 
     AlbumViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"AlbumViewController"];
+    controller.onlyLoadDocument = YES;
     [self.navigationController pushViewController:controller animated:YES];
 }
 
-#pragma mark 密码输入框将要隐藏
-
-- (void)pinPadWillHide {//optional, before the pin pad hide
-}
-
-#pragma mark 密码输入框隐藏
-
-- (void)pinPadDidHide {//optional, after pin pad hide
-}
-
-#pragma mark 密码设置成功
-
-- (void)userPassCode:(NSString *)newPassCode { //设置新密码 optional, set new user passcode
+- (void)userPassCode:(NSString *)newPassCode { //设置新密码
     NBULogInfo(@"新的密码:%@", newPassCode);
     NSUserDefaults *accountDefaults = [NSUserDefaults standardUserDefaults];
     [accountDefaults setObject:newPassCode forKey:[PPViewController pwdKey]];

@@ -43,6 +43,7 @@
     UIBarButtonItem *_gridPreviousRightNavItem;
     
     // Appearance
+    UIStatusBarStyle _statusBarStyle;//将要设置的导航栏文字样式
     BOOL _previousNavBarHidden;
     BOOL _previousNavBarTranslucent;
     UIBarStyle _previousNavBarStyle;
