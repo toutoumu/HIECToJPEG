@@ -1,6 +1,7 @@
 target 'PickerDemo' do
 
   platform :ios, '8.0'
+  #use_frameworks!
 
 # Recommended to keep GPUImage up-to-date
 #pod 'GPUImage', :head
@@ -12,7 +13,7 @@ target 'PickerDemo' do
 # Optional for on-device log console
   pod 'LumberjackConsole', "3.0.1"
 
-# 加密
+# 加密,这个是Object_C的最后一个版本,只能使用这个之前的版本
   pod 'RNCryptor',"3.0.1"
 
 # For development

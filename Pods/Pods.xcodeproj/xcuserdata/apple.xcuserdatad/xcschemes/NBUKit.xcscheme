@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '2E17B552468823F773D9026B9D93698A'
+               BlueprintIdentifier = '861F7BA3888C3E1FD20A357A50ED808D'
                BlueprintName = 'NBUKit'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'libNBUKit.a'>

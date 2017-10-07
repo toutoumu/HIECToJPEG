@@ -34,6 +34,9 @@
   "dependencies": {
     "NBUKit": [
       ">= 2.4.1"
+    ],
+    "RNCryptor": [
+      "3.0.1"
     ]
   },
   "subspecs": [

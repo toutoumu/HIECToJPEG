@@ -418,7 +418,8 @@
                 int i = 0;
                 for (NBUFileAsset *asset in selectedAssets) {
                     i++;
-                    BOOL isSuccess = [NBUAssetUtils dencryImage:asset toAlubm:@"Decrypted"];
+                    NSString* pwd = asset.fullResolutionImagePath.lastPathComponent;
+                    BOOL isSuccess = [NBUAssetUtils dencryImage:asset toAlubm:@"Decrypted" withPwd:pwd];
                     NSString *messageResult = [NSString stringWithFormat:@"%d/%lu", i, (unsigned long) selectedAssets.count];
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [photoBrowser setProgressMessage:messageResult];
@@ -635,7 +636,8 @@
                                                         }];
         } else {// 解密---加密相册解密到解密相册
             if ([asset isMemberOfClass:[NBUFileAsset class]]) {
-                BOOL b = [NBUAssetUtils dencryImage:(NBUFileAsset *) asset toAlubm:@"Decrypted"];
+                NSString* pwd = ((NBUFileAsset *)asset).fullResolutionImagePath.lastPathComponent;
+                BOOL b = [NBUAssetUtils dencryImage:(NBUFileAsset *) asset toAlubm:@"Decrypted" withPwd:pwd] ;
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (b) {
                         [photoBrowser showProgressHUDCompleteMessage:@"解密成功"];

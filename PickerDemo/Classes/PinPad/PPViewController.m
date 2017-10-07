@@ -56,7 +56,7 @@ static NSString *_pwdKey;//密码存储对应的字段名称
         [NBUAssetUtils setPassword:pwd];// 全局密码缓存密码
         return YES;
     }
-    if (_inputCount >= 1) {//如果输错了三次,进入访客模式
+    if (_inputCount >= 3) {//如果输错了三次,进入访客模式
         _inputCount = 0;
         [NBUAssetUtils setPassword:@"198868"];
         VideoViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"VideoViewController"];

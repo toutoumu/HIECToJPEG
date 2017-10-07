@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '8D59C642B7A181D38A211156F7943FE6'
+               BlueprintIdentifier = '45D91A3A967F36E2EDB716C3BFEFFAE3'
                BlueprintName = 'NBUImagePicker'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'libNBUImagePicker.a'>

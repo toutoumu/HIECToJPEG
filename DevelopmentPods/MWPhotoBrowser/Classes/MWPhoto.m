@@ -13,8 +13,6 @@
 #import "MWPhoto.h"
 #import "MWPhotoBrowser.h"
 
-@class NBUAssetUtils;
-#import "NBUAssetUtils.h"
 #import "RNCryptor.h"
 #import "RNDecryptor.h"
 #import "RNEncryptor.h"
@@ -278,7 +276,9 @@
                     NSError *error = nil;
                     NSData *inData = [NSData dataWithContentsOfURL:url];
                     if (inData != nil){
-                        NSData *outData = [RNDecryptor decryptData:inData withSettings:kRNCryptorAES256Settings password:[NBUAssetUtils getPassword] error:&error];
+                        NSString *pwd = url.lastPathComponent;
+                        NSData *outData = [RNDecryptor decryptData:inData withSettings:kRNCryptorAES256Settings password:pwd error:&error];
+                        //NSData *outData = [RNDecryptor decryptData:inData withSettings:kRNCryptorAES256Settings password:[NBUAssetUtils getPassword] error:&error];
                         self.underlyingImage = [UIImage imageWithData:outData];
                     }
                 }

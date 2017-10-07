@@ -45,6 +45,9 @@
     "DACircularProgress": [
       "~> 2.3"
     ],
+    "RNCryptor": [
+      "3.0.1"
+    ],
     "SDWebImage": [
       "~> 3.7",
       "!= 3.7.2"

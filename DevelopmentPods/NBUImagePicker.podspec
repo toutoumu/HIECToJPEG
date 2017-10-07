@@ -21,6 +21,7 @@ Pod::Spec.new do |s|
     s.preserve_paths = "README.md", "NOTICE"
     
     s.dependency 'NBUKit',      '>= 2.4.1'
+    s.dependency 'RNCryptor',   '3.0.1'
     
     s.subspec 'Base' do |sub|
         sub.source_files  = 'NBUImagePicker/*.{h,m}'

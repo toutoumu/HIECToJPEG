@@ -6,10 +6,8 @@
 //  Copyright © 2016年 CyberAgent Inc. All rights reserved.
 //  生成文件名,创建相册,获取所有相册,保存相片,删除相片,
 
-#import "NBUAssetUtils.h"
 #import "NBUAsset.h"
-#import "UIImage+NBUAdditions.h"
-#import "NBULog.h"
+#import "NBUAssetUtils.h"
 
 #import "RNCryptor.h"
 #import "RNDecryptor.h"
@@ -118,21 +116,21 @@ static NSString *_password;//密码
     //原图
     fullName = [albumPath stringByAppendingPathComponent:fileName];// 相册名+文件名
     //[image writeToFile:fullName];
-    [self encryImage:image toPath:fullName];
+    [self encryImage:image toPath:fullName withPwd:fileName];
 
     //预览图
     UIImage *fullScreenImage = [image imageDonwsizedToFill:[NBUFileAsset fullScreenSize]];//预览图图片对象
     NSString *fullScreenDir = [albumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];//预览图文件夹 相册名+预览图文件夹名称
     fullName = [fullScreenDir stringByAppendingPathComponent:fileName];//预览图全路径文件名
     //[fullScreenImage writeToFile:fullName];
-    [self encryImage:fullScreenImage toPath:fullName];
+    [self encryImage:fullScreenImage toPath:fullName withPwd:fileName];
 
     //缩略图
     UIImage *thumbImage = [fullScreenImage thumbnailWithSize:[NBUFileAsset thumbnailSize]];
-    NSString *thumbpath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
-    fullName = [thumbpath stringByAppendingPathComponent:fileName];
+    NSString *thumbPath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
+    fullName = [thumbPath stringByAppendingPathComponent:fileName];
     //[thumbImage writeToFile:fullName];
-    [self encryImage:thumbImage toPath:fullName];
+    [self encryImage:thumbImage toPath:fullName withPwd:fileName];
 
     return YES;
 }
@@ -148,14 +146,14 @@ static NSString *_password;//密码
     NSString *fullScreenDir = [albumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];//预览图文件夹 相册名+预览图文件夹名称
     fullName = [fullScreenDir stringByAppendingPathComponent:fileName];//预览图全路径文件名
     //[fullScreenImage writeToFile:fullName];
-    [self encryImage:fullScreenImage toPath:fullName];
+    [self encryImage:fullScreenImage toPath:fullName withPwd:fileName];
 
     //缩略图
     UIImage *thumbImage = [fullScreenImage thumbnailWithSize:[NBUFileAsset thumbnailSize]];
     NSString *thumbpath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
     fullName = [thumbpath stringByAppendingPathComponent:fileName];
     //[thumbImage writeToFile:fullName];
-    [self encryImage:thumbImage toPath:fullName];
+    [self encryImage:thumbImage toPath:fullName withPwd:fileName];
 
     return YES;
 }
@@ -199,7 +197,7 @@ static NSString *_password;//密码
 
 #pragma mark 解密数据到指定相册
 
-+ (BOOL)dencryImage:(NBUFileAsset *)image toAlubm:(NSString *)albumName {
++ (BOOL)dencryImage:(NBUFileAsset *)image toAlubm:(NSString *)albumName withPwd:(NSString *)pwd {
     NSString *fileName = [image.fullResolutionImagePath lastPathComponent];//文件名
     NSString *albumPath = [_documentsDirectory stringByAppendingPathComponent:albumName];//保存到的相册路径
     NSString *fullName; //临时存储保存的文件全路径名称
@@ -226,18 +224,18 @@ static NSString *_password;//密码
             return NO;
         }
     } else {
-        [self dencryImage:image.fullResolutionImagePath toPath:fullName];
+        [self dencryImage:image.fullResolutionImagePath toPath:fullName withPwd:pwd];
     }
 
     //预览图
     NSString *fullScreenDir = [albumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];//预览图文件夹 相册名+预览图文件夹名称
     fullName = [fullScreenDir stringByAppendingPathComponent:fileName];//预览图全路径文件名
-    [self dencryImage:image.fullScreenImagePath toPath:fullName];
+    [self dencryImage:image.fullScreenImagePath toPath:fullName withPwd:pwd];
 
     //缩略图
-    NSString *thumbpath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
-    fullName = [thumbpath stringByAppendingPathComponent:fileName];
-    [self dencryImage:image.thumbnailImagePath toPath:fullName];
+    NSString *thumbPath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
+    fullName = [thumbPath stringByAppendingPathComponent:fileName];
+    [self dencryImage:image.thumbnailImagePath toPath:fullName withPwd:pwd];
 
     return YES;
 }
@@ -249,13 +247,14 @@ static NSString *_password;//密码
  *
  *  @param filePath 需要解密的文件
  *  @param path     保存路径
+ *  @pwd            密码
  *
  *  @return 是否成功
  */
-+ (BOOL)dencryImage:(NSString *)filePath toPath:(NSString *)path {
-    NSData *inData = [NSData dataWithContentsOfFile:filePath];
++ (BOOL)dencryImage:(NSString *)filePath toPath:(NSString *)path withPwd:(NSString *)pwd {
     NSError *error;
-    NSData *outData = [RNDecryptor decryptData:inData withSettings:kRNCryptorAES256Settings password:_password error:&error];
+    NSData *inData = [NSData dataWithContentsOfFile:filePath];
+    NSData *outData = [RNDecryptor decryptData:inData withSettings:kRNCryptorAES256Settings password:pwd error:&error];
 
     if (error != nil) {
         NBULogInfo(@"Error: %@", error);
@@ -273,17 +272,18 @@ static NSString *_password;//密码
  *
  *  @param image 需要加密的图片
  *  @param path  保存路径
+ *  @param pwd   密码
  *
  *  @return 是否成功
  */
-+ (BOOL)encryImage:(UIImage *)image toPath:(NSString *)path {
++ (BOOL)encryImage:(UIImage *)image toPath:(NSString *)path withPwd:(NSString *)pwd {
     //    NSDate* tmpStartData = [NSDate date];
     //    NBULogInfo(@"执行时间 = %f",  [[NSDate date] timeIntervalSinceDate:tmpStartData]);
     NSData *data = UIImageJPEGRepresentation(image, 0.8);
     NSError *error;
     NSData *encryptedData = [RNEncryptor encryptData:data
                                         withSettings:kRNCryptorAES256Settings
-                                            password:_password
+                                            password:pwd
                                                error:&error];
 
     if (error != nil) {

@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '674954BD5AF378F6AB07B36189A8601D'
+               BlueprintIdentifier = 'FB42E665A4BF18F924B9AB21F274F72F'
                BlueprintName = 'RBVolumeButtons@PTEz'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'libRBVolumeButtons@PTEz.a'>

@@ -6,8 +6,9 @@
 //  Copyright © 2016年 CyberAgent Inc. All rights reserved.
 //
 
+#import "NBUImagePicker.h"
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import "NBUImagePickerPrivate.h"
 
 @class NBUFileAsset;
 
@@ -59,10 +60,11 @@
  *
  *  @param image     图片数据
  *  @param albumName 目标相册
+ *  @param pwd 密码
  *
  *  @return 是否成功
  */
-+ (BOOL)dencryImage:(NBUFileAsset *)image toAlubm:(NSString *)albumName;
++ (BOOL)dencryImage:(NBUFileAsset *)image toAlubm:(NSString *)albumName withPwd:(NSString *)pwd;
 
 /**
  * 移动文件到指定相册
