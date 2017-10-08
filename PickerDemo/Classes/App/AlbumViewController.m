@@ -19,7 +19,7 @@
         NSArray *array = [NBUAssetUtils getAllAlbums];
         for (NSString *album in array) {
             NSURL *url = [NSURL URLWithString:[docDir stringByAppendingPathComponent:album]];
-            [[NBUAssetsLibrary sharedLibrary] registerDirectoryGroupforURL:url name:album];
+            [[NBUAssetsLibrary sharedLibrary] registerDirectoryGroupForURL:url name:album];
         }
     }
 }
@@ -418,8 +418,8 @@
                 int i = 0;
                 for (NBUFileAsset *asset in selectedAssets) {
                     i++;
-                    NSString* pwd = asset.fullResolutionImagePath.lastPathComponent;
-                    BOOL isSuccess = [NBUAssetUtils dencryImage:asset toAlubm:@"Decrypted" withPwd:pwd];
+                    NSString *pwd = asset.fullResolutionImagePath.lastPathComponent;
+                    BOOL isSuccess = [NBUAssetUtils decryImage:asset toAlubm:@"Decrypted" withPwd:pwd];
                     NSString *messageResult = [NSString stringWithFormat:@"%d/%lu", i, (unsigned long) selectedAssets.count];
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [photoBrowser setProgressMessage:messageResult];
@@ -576,11 +576,7 @@
     if ([_group isKindOfClass:[NBUDirectoryAssetsGroup class]]) {//如果是沙盒相册
         [self showAlertWithTitle:@"警告" message:@"确定要删除,删除后文件将不可恢复?" okTitle:@"删除" action:deleteBlock];
     } else {//系统相册
-        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0")) {// 8.0以上系统
-            deleteBlock();
-        } else {
-            [self showAlertWithTitle:@"警告" message:@"确定要删除,删除后文件将不可恢复?" okTitle:@"删除" action:deleteBlock];
-        }
+        deleteBlock();
     }
 }
 
@@ -636,8 +632,8 @@
                                                         }];
         } else {// 解密---加密相册解密到解密相册
             if ([asset isMemberOfClass:[NBUFileAsset class]]) {
-                NSString* pwd = ((NBUFileAsset *)asset).fullResolutionImagePath.lastPathComponent;
-                BOOL b = [NBUAssetUtils dencryImage:(NBUFileAsset *) asset toAlubm:@"Decrypted" withPwd:pwd] ;
+                NSString *pwd = ((NBUFileAsset *) asset).fullResolutionImagePath.lastPathComponent;
+                BOOL b = [NBUAssetUtils decryImage:(NBUFileAsset *) asset toAlubm:@"Decrypted" withPwd:pwd];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (b) {
                         [photoBrowser showProgressHUDCompleteMessage:@"解密成功"];
@@ -797,11 +793,7 @@
             moveToDeleteBlock();
         }
     } else {//系统相册
-        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0")) {// 8.0以上系统
-            deleteBlock();
-        } else {
-            [self showAlertWithTitle:@"警告" message:@"确定要删除?" okTitle:@"删除" action:deleteBlock];
-        }
+        deleteBlock();
     }
     return YES;
 }

@@ -4863,22 +4863,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		00B57C44D2386F24203DF3E1B68D64A9 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 45CCF6BD024303D27CC952B482D000CE /* MWPhotoBrowser.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/MWPhotoBrowser";
-				INFOPLIST_FILE = "Target Support Files/MWPhotoBrowser/ResourceBundle-MWPhotoBrowser-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				PRODUCT_NAME = MWPhotoBrowser;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Release;
-		};
 		085D249A60E5FDE386E832BB62ECF696 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BE95DCB4E45D2E51F5EECAAE3B248E3F /* NBUKit.xcconfig */;
@@ -4965,22 +4949,6 @@
 			};
 			name = Release;
 		};
-		100E5588613EA98602663630DA424594 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 45CCF6BD024303D27CC952B482D000CE /* MWPhotoBrowser.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/MWPhotoBrowser";
-				INFOPLIST_FILE = "Target Support Files/MWPhotoBrowser/ResourceBundle-MWPhotoBrowser-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				PRODUCT_NAME = MWPhotoBrowser;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Debug;
-		};
 		1B832CF1EC9F9CA97C84F068F0C9C6ED /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A1D139180575C5D5B09293D5544A8D0C /* GPUImage.xcconfig */;
@@ -5000,6 +4968,22 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		1B946A7E2FF32A87A211F8C7821A587F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 45CCF6BD024303D27CC952B482D000CE /* MWPhotoBrowser.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/MWPhotoBrowser";
+				INFOPLIST_FILE = "Target Support Files/MWPhotoBrowser/ResourceBundle-MWPhotoBrowser-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				PRODUCT_NAME = MWPhotoBrowser;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;
 		};
@@ -5132,7 +5116,7 @@
 			};
 			name = Debug;
 		};
-		3C5D434B6CE94E444539A5030CB8E66F /* Debug */ = {
+		3C7ED52116FCD77B34E33BE6553B5479 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 45CCF6BD024303D27CC952B482D000CE /* MWPhotoBrowser.xcconfig */;
 			buildSettings = {
@@ -5141,7 +5125,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				GCC_PREFIX_HEADER = "Target Support Files/MWPhotoBrowser/MWPhotoBrowser-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PRIVATE_HEADERS_FOLDER_PATH = "";
@@ -5217,22 +5201,6 @@
 			};
 			name = Debug;
 		};
-		53E6D4280B00A24D558228D8D55D9D28 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = C76940042BB92BAD4C054A4A873FA9DB /* NBUImagePicker.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/NBUImagePicker";
-				INFOPLIST_FILE = "Target Support Files/NBUImagePicker/ResourceBundle-NBUImagePicker-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				PRODUCT_NAME = NBUImagePicker;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Debug;
-		};
 		553EE71F2E77CEC7F2A2DF7F16B09362 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EDABBBDB9EB056C0D8597C72826CD026 /* NBULog.xcconfig */;
@@ -5296,37 +5264,32 @@
 			};
 			name = Debug;
 		};
-		6CAB7D560A59B68C6C98D7BE966447A4 /* Debug */ = {
+		69A022CA5AB3B821285EA6A65CE5CBBE /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C76940042BB92BAD4C054A4A873FA9DB /* NBUImagePicker.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				GCC_PREFIX_HEADER = "Target Support Files/NBUImagePicker/NBUImagePicker-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PUBLIC_HEADERS_FOLDER_PATH = "";
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/NBUImagePicker";
+				INFOPLIST_FILE = "Target Support Files/NBUImagePicker/ResourceBundle-NBUImagePicker-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				PRODUCT_NAME = NBUImagePicker;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
 			};
-			name = Debug;
+			name = Release;
 		};
-		7F81D34F4C1305EB4D89C92052AE2CBE /* Release */ = {
+		7CE50BFB5D9B7A876C1DE2577EFD92DB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C76940042BB92BAD4C054A4A873FA9DB /* NBUImagePicker.xcconfig */;
+			baseConfigurationReference = 45CCF6BD024303D27CC952B482D000CE /* MWPhotoBrowser.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				GCC_PREFIX_HEADER = "Target Support Files/NBUImagePicker/NBUImagePicker-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				GCC_PREFIX_HEADER = "Target Support Files/MWPhotoBrowser/MWPhotoBrowser-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PRIVATE_HEADERS_FOLDER_PATH = "";
@@ -5396,6 +5359,28 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
+		};
+		92EB08919A3174AE30A1210A51FB063D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C76940042BB92BAD4C054A4A873FA9DB /* NBUImagePicker.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/NBUImagePicker/NBUImagePicker-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
 		};
 		934EA4DDADCCB9A41F3226C84CE437C5 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -5560,16 +5545,32 @@
 			};
 			name = Release;
 		};
-		BED572F1133C945C8282C1282605FB50 /* Release */ = {
+		B6378D9C5AC86C587FAD45F21839B3F3 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 45CCF6BD024303D27CC952B482D000CE /* MWPhotoBrowser.xcconfig */;
+			baseConfigurationReference = C76940042BB92BAD4C054A4A873FA9DB /* NBUImagePicker.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/NBUImagePicker";
+				INFOPLIST_FILE = "Target Support Files/NBUImagePicker/ResourceBundle-NBUImagePicker-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				PRODUCT_NAME = NBUImagePicker;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		DD6D5337DB7DEC772A0A3DD4A24BC75F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C76940042BB92BAD4C054A4A873FA9DB /* NBUImagePicker.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				GCC_PREFIX_HEADER = "Target Support Files/MWPhotoBrowser/MWPhotoBrowser-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				GCC_PREFIX_HEADER = "Target Support Files/NBUImagePicker/NBUImagePicker-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PRIVATE_HEADERS_FOLDER_PATH = "";
@@ -5578,25 +5579,8 @@
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
 			};
-			name = Release;
-		};
-		D1ACA968637E5A36A2D432429BF0D1D1 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = C76940042BB92BAD4C054A4A873FA9DB /* NBUImagePicker.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/NBUImagePicker";
-				INFOPLIST_FILE = "Target Support Files/NBUImagePicker/ResourceBundle-NBUImagePicker-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				PRODUCT_NAME = NBUImagePicker;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Release;
+			name = Debug;
 		};
 		DFCD4B134C984E48E27EC85BC47261FC /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -5717,6 +5701,22 @@
 			};
 			name = Release;
 		};
+		E82A16FBE00D16144133A50538F99DAF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 45CCF6BD024303D27CC952B482D000CE /* MWPhotoBrowser.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/MWPhotoBrowser";
+				INFOPLIST_FILE = "Target Support Files/MWPhotoBrowser/ResourceBundle-MWPhotoBrowser-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				PRODUCT_NAME = MWPhotoBrowser;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
 		EA89B39C7E0AF271E7888A9EF737A6F4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 192142934D8C29E18607CE0CE8E751FE /* RNCryptor.xcconfig */;
@@ -5766,8 +5766,8 @@
 		0049FFF6E468DA38C41581B0513D626A /* Build configuration list for PBXNativeTarget "NBUImagePicker-NBUImagePicker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				53E6D4280B00A24D558228D8D55D9D28 /* Debug */,
-				D1ACA968637E5A36A2D432429BF0D1D1 /* Release */,
+				B6378D9C5AC86C587FAD45F21839B3F3 /* Debug */,
+				69A022CA5AB3B821285EA6A65CE5CBBE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -5820,8 +5820,8 @@
 		345E54BC2B50E2964FDE7EA2A6369FB7 /* Build configuration list for PBXNativeTarget "MWPhotoBrowser-MWPhotoBrowser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				100E5588613EA98602663630DA424594 /* Debug */,
-				00B57C44D2386F24203DF3E1B68D64A9 /* Release */,
+				E82A16FBE00D16144133A50538F99DAF /* Debug */,
+				1B946A7E2FF32A87A211F8C7821A587F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -5847,8 +5847,8 @@
 		79007069E31330C3B99FB33BC78D0665 /* Build configuration list for PBXNativeTarget "NBUImagePicker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				6CAB7D560A59B68C6C98D7BE966447A4 /* Debug */,
-				7F81D34F4C1305EB4D89C92052AE2CBE /* Release */,
+				DD6D5337DB7DEC772A0A3DD4A24BC75F /* Debug */,
+				92EB08919A3174AE30A1210A51FB063D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -5865,8 +5865,8 @@
 		7CE6A3285B206A0B0C23946415085B2F /* Build configuration list for PBXNativeTarget "MWPhotoBrowser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3C5D434B6CE94E444539A5030CB8E66F /* Debug */,
-				BED572F1133C945C8282C1282605FB50 /* Release */,
+				3C7ED52116FCD77B34E33BE6553B5479 /* Debug */,
+				7CE50BFB5D9B7A876C1DE2577EFD92DB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

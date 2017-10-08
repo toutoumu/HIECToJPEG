@@ -22,7 +22,7 @@
     "tag": "2.1.1"
   },
   "platforms": {
-    "ios": "7.0"
+    "ios": "8.0"
   },
   "source_files": "MWPhotoBrowser/Classes/**/*",
   "resource_bundles": {

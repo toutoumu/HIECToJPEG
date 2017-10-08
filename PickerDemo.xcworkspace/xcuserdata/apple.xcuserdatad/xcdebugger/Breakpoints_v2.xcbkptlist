@@ -138,7 +138,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "PickerDemo/Classes/App/AlbumViewController.m"
-            timestampString = "528973413.869029"
+            timestampString = "529122269.367257"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "422"
@@ -154,28 +154,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "PickerDemo/Classes/App/AlbumViewController.m"
-            timestampString = "528973413.869392"
+            timestampString = "529122269.367661"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "640"
             endingLineNumber = "640"
             landmarkName = "-photoBrowser:exportAtIndex:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "DevelopmentPods/MWPhotoBrowser/Classes/MWPhotoBrowser.m"
-            timestampString = "528973266.384739"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1365"
-            endingLineNumber = "1365"
-            landmarkName = "-showGrid:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -192,6 +176,86 @@
             startingLineNumber = "1416"
             endingLineNumber = "1416"
             landmarkName = "-hideGrid"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "DevelopmentPods/NBUImagePicker/Assets/NBUAssetsGroup.m"
+            timestampString = "529123809.077763"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "219"
+            endingLineNumber = "219"
+            landmarkName = "-setPHAssetCollection:"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[NBUPHAssetsGroup setPHAssetCollection:]"
+                  moduleName = "PickerDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/apple/WorkSpace/XCode/NBUImagePicker/NBUImagePicker/DevelopmentPods/NBUImagePicker/Assets/NBUAssetsGroup.m"
+                  timestampString = "529123809.212417"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "220"
+                  endingLineNumber = "220"
+                  offsetFromSymbolStart = "437">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__41-[NBUPHAssetsGroup setPHAssetCollection:]_block_invoke"
+                  moduleName = "PickerDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/apple/WorkSpace/XCode/NBUImagePicker/NBUImagePicker/DevelopmentPods/NBUImagePicker/Assets/NBUAssetsGroup.m"
+                  timestampString = "529123809.216568"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "220"
+                  endingLineNumber = "220"
+                  offsetFromSymbolStart = "16">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "DevelopmentPods/NBUImagePicker/Assets/NBUAssetsGroup.m"
+            timestampString = "529123809.078306"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "217"
+            endingLineNumber = "217"
+            landmarkName = "-setPHAssetCollection:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "DevelopmentPods/NBUImagePicker/Assets/NBUAssetsGroup.m"
+            timestampString = "529123809.078682"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "432"
+            endingLineNumber = "432"
+            landmarkName = "-initWithDirectoryURL:name:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

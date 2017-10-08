@@ -17,7 +17,7 @@
         NSArray *array = [NBUAssetUtils getAllAlbums];
         for (NSString *album in array) {
             NSURL *url = [NSURL URLWithString:[docDir stringByAppendingPathComponent:album]];
-            [[NBUAssetsLibrary sharedLibrary] registerDirectoryGroupforURL:url name:album];
+            [[NBUAssetsLibrary sharedLibrary] registerDirectoryGroupForURL:url name:album];
         }
     }
 }
