@@ -26,21 +26,16 @@
 @import Photos;
 
 // Private classes
-/// 8.x以下使用的系统文件访问类接口
-@interface NBUALAsset : NBUAsset
-
-- (instancetype)initWithALAsset:(ALAsset *)ALAsset;
-
-@end
-
-/// 8.x以上使用的系统文件访问类接口
+/**
+ * 8.x以上使用的系统文件访问类接口
+ */
 @interface NBUPHAsset : NBUAsset <PHPhotoLibraryChangeObserver>
 
 - (instancetype)initWithPHAsset:(PHAsset *)PHAsset;
 
 @end
 
- /// 沙箱文件使用的,已经被提取出来放到 NBUAsset.h 文件中作为公共类来使用
+/// 沙箱文件使用的,已经被提取出来放到 NBUAsset.h 文件中作为公共类来使用
 /*@interface NBUFileAsset : NBUAsset
  
  - (instancetype)initWithFileURL:(NSURL *)fileURL;
@@ -58,368 +53,110 @@
 static CGFloat _scale;
 static CGSize _thumbnailSize;
 static CGSize _fullScreenSize;
+
 @implementation NBUAsset
-/// 初始化基本数据
-+ (void)initialize{
+/**
+ * 初始化基本数据
+ */
++ (void)initialize {
     _scale = [UIScreen mainScreen].scale;
-    _fullScreenSize = [[UIScreen mainScreen]bounds].size;
+    _fullScreenSize = [[UIScreen mainScreen] bounds].size;
     _fullScreenSize = CGSizeMake(_fullScreenSize.width * _scale, _fullScreenSize.height * _scale);
     _thumbnailSize = CGSizeMake(_fullScreenSize.width / 3, _fullScreenSize.width / 3);
 
 }
 
-+(CGFloat) scale{
++ (CGFloat)scale {
     return _scale;
 }
-+(CGSize) thumbnailSize{
+
++ (CGSize)thumbnailSize {
     return _thumbnailSize;
 }
-+(CGSize) fullScreenSize{
+
++ (CGSize)fullScreenSize {
     return _fullScreenSize;
 }
 
-/// 8.x以下系统使用
-+ (NBUAsset *)assetForALAsset:(ALAsset *)ALAsset
-{
-    return [[NBUALAsset alloc] initWithALAsset:ALAsset];
-}
-
-/// 8.x以上系统使用
-+ (NBUAsset *)assetForPHAsset:(PHAsset *)PHAsset
-{
++ (NBUAsset *)assetForPHAsset:(PHAsset *)PHAsset {
     return [[NBUPHAsset alloc] initWithPHAsset:PHAsset];
 }
 
-/// 沙箱文件系统使用
-+ (NBUAsset *)assetForFileURL:(NSURL *)fileURL
-{
++ (NBUAsset *)assetForFileURL:(NSURL *)fileURL {
     return [[NBUFileAsset alloc] initWithFileURL:fileURL];
 }
 
 // *** Implement in subclasses if needed ***
 
-- (NSURL *)URL { return nil; }
+- (NSURL *)URL {return nil;}
 
-- (NBUAssetOrientation)orientation { return NBUAssetOrientationUnknown; }
+- (NBUAssetOrientation)orientation {return NBUAssetOrientationUnknown;}
 
-- (BOOL)isEditable { return NO; }
+- (BOOL)isEditable {return NO;}
 
-- (CLLocation *)location { return nil; }
+- (CLLocation *)location {return nil;}
 
-- (NSDate *)date { return nil; }
+- (NSDate *)date {return nil;}
 
-- (NBUAssetType)type { return NBUAssetTypeUnknown; }
+- (NBUAssetType)type {return NBUAssetTypeUnknown;}
 
-- (ALAsset *)ALAsset { return nil; }
+- (PHAsset *)PHAsset {return nil;}
 
-- (PHAsset *)PHAsset { return nil; }
+- (UIImage *)thumbnailImage {return nil;}
 
-- (UIImage *)thumbnailImage { return nil; }
+- (UIImage *)fullScreenImage {return nil;}
 
-- (UIImage *)fullScreenImage { return nil; }
+- (UIImage *)fullResolutionImage {return nil;}
 
-- (UIImage *)fullResolutionImage { return nil; }
-
--(void) delete:(void (^)(NSError *, BOOL))reslutBlock{}
+- (void)delete:(void (^)(NSError *, BOOL))resultBlock {}
 
 @end
-
-
-
-#pragma mark - 8.x之前,文件访问系统文件的实现
-@implementation NBUALAsset
-{
-    ALAssetRepresentation * _defaultRepresentation;
-}
-
-@synthesize URL = _URL;
-@synthesize orientation = _orientation;
-@synthesize editable = _editable;
-@synthesize location = _location;
-@synthesize date = _date;
-@synthesize type = _type;
-@synthesize ALAsset = _ALAsset;
-
-- (instancetype)initWithALAsset:(ALAsset *)ALAsset
-{
-    self = [super init];
-    if (self)
-    {
-        if (ALAsset)
-        {
-            self.ALAsset = ALAsset;
-            
-            // 注释掉监听 Observe library changes
-            /*[[NSNotificationCenter defaultCenter] addObserver:self
-                                                     selector:@selector(libraryChanged:)
-                                                         name:ALAssetsLibraryChangedNotification
-                                                       object:nil];*/
-        }
-        else
-        {
-            self = nil; // Asset is required
-        }
-    }
-    return self;
-}
-
-- (void)dealloc
-{
-    // 注释掉监听,Stop observing
-    /*[[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:ALAssetsLibraryChangedNotification
-                                                  object:nil];*/
-}
-
-- (void)libraryChanged:(NSNotification *)notification
-{
-    //    NBULogVerbose(@"Asset thumbnail: %@", _ALAsset.thumbnail);
-    //    NBULogVerbose(@"Asset defaultRepresentation: %@", _ALAsset.defaultRepresentation);
-    //    NBULogVerbose(@"Asset ALAssetPropertyType: %@", [_ALAsset valueForProperty:ALAssetPropertyType]);
-    //    NBULogVerbose(@"Asset ALAssetPropertyOrientation: %@", [_ALAsset valueForProperty:ALAssetPropertyOrientation]);
-    //    NBULogVerbose(@"Asset ALAssetPropertyDate: %@", [_ALAsset valueForProperty:ALAssetPropertyDate]);
-    //    NBULogVerbose(@"Asset ALAssetPropertyRepresentations: %@", [_ALAsset valueForProperty:ALAssetPropertyRepresentations]);
-    
-    // Is ALAsset is still valid?
-    if (_ALAsset && _ALAsset.defaultRepresentation)
-        return;
-    
-    // Not valid -> Reload ALAsset
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-        
-        [[NBUAssetsLibrary sharedLibrary].ALAssetsLibrary assetForURL:_URL
-                                                          resultBlock:^(ALAsset * ALAsset)
-         {
-             if (ALAsset)
-             {
-                 NBULogVerbose(@"Asset %p had to be reloaded", self);
-                 self.ALAsset = ALAsset;
-                 // Send notification?
-             }
-             else
-             {
-                 NBULogWarn(@"Asset %p couldn't be reloaded. It may no longer exist", self);
-                 // Send notification?
-             }
-         }
-                                                         failureBlock:^(NSError * error)
-         {
-             NBULogError(@"Error while reloading asset %p: %@", self, error);
-             // Send notification?
-         }];
-    });
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"<%@: %p; %@>",
-            NSStringFromClass([self class]), self, _ALAsset];
-}
-
-#pragma mark - Properties
-- (void)setALAsset:(ALAsset *)ALAsset
-{
-    _ALAsset = ALAsset;
-    _defaultRepresentation = nil;
-    
-    // Get URL
-    NSArray * URLs = ((NSDictionary *)[_ALAsset valueForProperty:ALAssetPropertyURLs]).allValues;
-    if (URLs.count > 0)
-    {
-        _URL = URLs[0];
-        if (URLs.count != 1)
-        {
-            NBULogInfo(@"Asset %@ doesn't have a single URL, we chosed one: %@ -> %@",
-                       self, [_ALAsset valueForProperty:ALAssetPropertyURLs], _URL);
-        }
-    }
-    else
-    {
-        NBULogError(@"Can't find a URL for the asset %@", ALAsset);
-    }
-}
-
-- (NBUAssetOrientation)orientation
-{
-    if (_orientation == NBUAssetOrientationUnknown)
-    {
-        ALAssetOrientation orientation = self.defaultRepresentation.orientation;
-        
-        // Portrait: ALAssetOrientationLeft, Right, LeftMirrored, RightMirrored
-        if (orientation == ALAssetOrientationLeft ||
-            orientation == ALAssetOrientationRight ||
-            orientation == ALAssetOrientationLeftMirrored ||
-            orientation == ALAssetOrientationRightMirrored)
-        {
-            _orientation = NBUAssetOrientationPortrait;
-        }
-        // Landscape: ALAssetOrientationUp, Down, UpMirrored, DownMirrored
-        else
-        {
-            _orientation = NBUAssetOrientationLandscape;
-        }
-    }
-    return _orientation;
-}
-
-- (BOOL)isEditable
-{
-    if (!_editable)
-    {
-        _editable = _ALAsset.editable;
-    }
-    return _editable;
-}
-
-- (NBUAssetType)type
-{
-    if (!_type)
-    {
-        NSString * typeString = [_ALAsset valueForProperty:ALAssetPropertyType];
-        if ([typeString isEqualToString:ALAssetTypePhoto])
-        {
-            _type = NBUAssetTypeImage;
-        }
-        else if ([typeString isEqualToString:ALAssetTypeVideo])
-        {
-            _type = NBUAssetTypeVideo;
-        }
-    }
-    return _type;
-}
-
-- (NSDate *)date
-{
-    if (!_date)
-    {
-        _date = [_ALAsset valueForProperty:ALAssetPropertyDate];
-    }
-    return _date;
-}
-
-- (CLLocation *)location
-{
-    if (!_location)
-    {
-        _location = [_ALAsset valueForProperty:ALAssetPropertyLocation];
-    }
-    return _location;
-}
-
-#pragma mark - Images
-
-- (ALAssetRepresentation *)defaultRepresentation
-{
-    if (!_defaultRepresentation)
-    {
-        _defaultRepresentation = _ALAsset.defaultRepresentation;
-    }
-    return _defaultRepresentation;
-}
-
-- (UIImage *)thumbnailImage
-{
-    return [UIImage imageWithCGImage:_ALAsset.thumbnail];
-}
-
-- (UIImage *)fullScreenImage
-{
-    // "In iOS 5 and later, this method returns a fully cropped, rotated, and adjusted image—exactly as a user would see in Photos or in the image picker."
-    UIImage * image = [UIImage imageWithCGImage:self.defaultRepresentation.fullScreenImage
-                                          scale:self.defaultRepresentation.scale
-                                    orientation:UIImageOrientationUp];
-    NBULogVerbose(@"fullScreenImage with size: %@ orientation %@",
-                  NSStringFromCGSize(image.size), @(image.imageOrientation));
-    return image;
-}
-
-- (UIImage *)fullResolutionImage
-{
-    // "This method returns the biggest, best representation available, unadjusted in any way."
-    UIImage * image = [UIImage imageWithCGImage:self.defaultRepresentation.fullResolutionImage
-                                          scale:self.defaultRepresentation.scale
-                                    orientation:(UIImageOrientation)self.defaultRepresentation.orientation];
-    NBULogVerbose(@"fullResolutionImage with size: %@ orientation %@",
-                  NSStringFromCGSize(image.size), @(image.imageOrientation));
-    return image;
-}
-
--(void) delete:(void (^)(NSError *, BOOL))reslutBlock{
-    if (!_ALAsset.isEditable) {
-        return ;
-    }
-    //在这里imageData 和 metaData设为nil，就可以将相册中的照片删除
-    [_ALAsset setImageData:nil metadata:nil completionBlock:^(NSURL *assetURL, NSError *error) {
-        NBULogInfo(@"asset url(%@) should be delete . Error:%@ ", assetURL, error);
-        if (reslutBlock) {
-            if (error) {
-                reslutBlock(error, NO);
-            }else{
-                reslutBlock(error, YES);
-            }
-        }
-    }];
-}
-
-@end
-
-
 
 
 #pragma mark - 沙箱文件访问的实现
-static NSString * _thumbnailDir;
-static NSString * _fullScreenDir;
+static NSString *_thumbnailDir;
+static NSString *_fullScreenDir;
 
-@implementation NBUFileAsset
-{
+@implementation NBUFileAsset {
     // 相册所在路径
-    NSString *albumPath;
-    // 缩略图路径
-    //NSString *thumbnailImagePath;
-    // 全屏图片路径
-    //NSString * fullScreenImagePath;
+    NSString *_albumPath;
     // 文件名
-    NSString * fileName;
-    
+    NSString *_fileName;
+    NSURL *_fileURL;
+    // 图片类型
     NBUAssetType _type;
+    NSString *_thumbnailImagePath;
+    NSString *_fullScreenImagePath;
 }
 
-@synthesize URL = _URL;
-//@synthesize type = _type;
-//@synthesize thumbnailImage = _thumbnailImage;
-//@synthesize fullScreenImage = _fullScreenImage;
-@synthesize thumbnailImagePath = _thumbnailImagePath;
-@synthesize fullScreenImagePath = _fullScreenImagePath;
-
-+(void)initialize{
++ (void)initialize {
     _thumbnailDir = @"thumbnail";
     _fullScreenDir = @"fullscreen";
 }
 
 
-+(NSString *)thumbnailDir{
++ (NSString *)thumbnailDir {
     return _thumbnailDir;
 }
-+(NSString *)fullScreenDir{
+
++ (NSString *)fullScreenDir {
     return _fullScreenDir;
 }
 
-- (BOOL)isEditable { return YES; }
+- (BOOL)isEditable {return YES;}
 
-- (instancetype)initWithFileURL:(NSURL *)fileURL
-{
+- (instancetype)initWithFileURL:(NSURL *)fileURL {
     self = [super init];
-    if (self)
-    {
-        _URL = fileURL;
-        _type = NBUAssetTypeImage;
-        // 文件名
-        fileName = fileURL.path.lastPathComponent;
-        if ([fileName hasSuffix:@"mov"]) {
+    if (self) {
+        _fileURL = fileURL;
+        _fileName = fileURL.lastPathComponent;
+        if ([_fileName hasSuffix:@"mov"]) {
             _type = NBUAssetTypeVideo;
+        } else {
+            _type = NBUAssetTypeImage;
         }
         // 相册路径
-        albumPath = [fileURL.path stringByDeletingLastPathComponent];
+        _albumPath = [fileURL.path stringByDeletingLastPathComponent];
         // 缩略图路径
         //thumbnailImagePath = [[albumPath stringByAppendingPathComponent:_thumbnailDir] stringByAppendingPathComponent:fileName];
         // 全屏图片路径
@@ -428,169 +165,98 @@ static NSString * _fullScreenDir;
     return self;
 }
 
-- (NBUAssetType)type{
+- (NBUAssetType)type {
     return _type;
     //return NBUAssetTypeImage;
 }
 
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"<%@: %p; %@>",
-            NSStringFromClass([self class]), self, fileName];
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%@: %@; %@>",
+                                      NSStringFromClass([self class]), self, _fileName];
 }
 
-///// UIImage不能缓存起来,如果缓存起来会导致内存消耗过大,应该是使用完成之后即刻释放
--(UIImage *)thumbnailImage{
+// UIImage不能缓存起来,如果缓存起来会导致内存消耗过大,应该是使用完成之后即刻释放
+- (UIImage *)thumbnailImage {
     return [UIImage imageWithContentsOfFile:self.thumbnailImagePath];
-    /*UIImage *iamge;
-     // 如果缩略图不存在
-     if (![[NSFileManager defaultManager] fileExistsAtPath:self.thumbnailImagePath]) {
-     // 这里从原始尺寸图片切图
-     iamge = [self.fullResolutionImage thumbnailWithSize:_thumbnailSize];
-     [iamge writeToFile:self.thumbnailImagePath];
-     }else{
-     iamge = [UIImage imageWithContentsOfFile:self.thumbnailImagePath];
-     }
-     return iamge;*/
 }
 
-///// UIImage不能缓存起来,如果缓存起来会导致内存消耗过大,应该是使用完成之后即刻释放
-- (UIImage *)fullScreenImage
-{
+- (UIImage *)fullScreenImage {
     return [UIImage imageWithContentsOfFile:self.fullScreenImagePath];
-    /*UIImage *iamge;
-     // 如果全屏图不存在
-     if (![[NSFileManager defaultManager] fileExistsAtPath:self.fullScreenImagePath]) {
-     // 生成全屏图片
-     iamge = [self.fullResolutionImage imageDonwsizedToFill:_fullScreenSize];
-     [iamge writeToFile:self.fullScreenImagePath];
-     }else{
-     iamge = [UIImage imageWithContentsOfFile:self.fullScreenImagePath];
-     }
-     return iamge;*/
 }
 
 
-- (UIImage *)fullResolutionImage
-{
-    return [UIImage imageWithContentsOfFile:_URL.path];
+- (UIImage *)fullResolutionImage {
+    return [UIImage imageWithContentsOfFile:_fileURL.path];
 }
 
--(NSString *)thumbnailImagePath{
-    if(_thumbnailImagePath == nil){
+- (NSString *)thumbnailImagePath {
+    if (_thumbnailImagePath == nil) {
         // 缩略图路径
-        _thumbnailImagePath = [[albumPath stringByAppendingPathComponent:_thumbnailDir] stringByAppendingPathComponent:fileName];
+        _thumbnailImagePath = [[_albumPath stringByAppendingPathComponent:_thumbnailDir] stringByAppendingPathComponent:_fileName];
     }
     return _thumbnailImagePath;
 }
 
--(NSString *)fullScreenImagePath{
+- (NSString *)fullScreenImagePath {
     if (_fullScreenImagePath == nil) {
         // 全屏图片路径
-        _fullScreenImagePath =[[albumPath stringByAppendingPathComponent:_fullScreenDir] stringByAppendingPathComponent:fileName];
+        _fullScreenImagePath = [[_albumPath stringByAppendingPathComponent:_fullScreenDir] stringByAppendingPathComponent:_fileName];
     }
     return _fullScreenImagePath;
 }
 
--(NSString *)fullResolutionImagePath{
-    return _URL.path;
+- (NSString *)fullResolutionImagePath {
+    return _fileURL.path;
 }
 
-+(BOOL) deleteAll:(NSArray *)array{
-    BOOL exsist = NO;
-    BOOL result = YES;
-    NSError *error;
-    NSFileManager *manager = [NSFileManager defaultManager];
-
-    for (NBUFileAsset *file in array) {
-        if (file.URL ==nil || file.URL.path ==nil) {
-            return NO;
-        }
-        // 原图
-        exsist = [manager fileExistsAtPath:file.URL.path];
-        if (exsist) {
-            [manager removeItemAtPath:file.URL.path error:&error];
-            if (error != nil) {
-                result = NO;
-                break;
-            }
-        }
-        
-        // 缩略图
-        exsist = [manager fileExistsAtPath:file.thumbnailImagePath];
-        if (exsist) {
-            [manager removeItemAtPath:file.URL.path error:&error];
-            if (error != nil) {
-                result = NO;
-                break;
-            }
-        }
-
-        // 全屏图片
-        exsist = [manager fileExistsAtPath:file.fullScreenImagePath];
-        if (exsist) {
-            [manager removeItemAtPath:file.URL.path error:&error];
-            if (error != nil) {
-                result = NO;
-                break;
-            }
-        }
-
-    }
-    if (error!=nil) {
-        NBULogInfo(@"Error: %@", error);
-    }
-    return result;
-}
-
--(void) delete:(void (^)(NSError *, BOOL))reslutBlock{
-    if (_URL == nil || _URL.path == nil) {
-        if (reslutBlock) {
+- (void)delete:(void (^)(NSError *, BOOL))resultBlock {
+    if (_fileURL == nil || _fileURL.path == nil) {
+        if (resultBlock) {
             NSError *error = [[NSError alloc] initWithDomain:@"出错了URL不能为空" code:12 userInfo:nil];
-            reslutBlock(error, NO);
+            resultBlock(error, NO);
         }
-        return ;
+        return;
     }
-    BOOL exsist = NO;
+    BOOL exist;
     NSError *error;
     NSFileManager *manager = [NSFileManager defaultManager];
-    
+
     // 原图
-    exsist = [manager fileExistsAtPath:_URL.path];
-    if (exsist) {
-        [manager removeItemAtPath:_URL.path error:&error];
+    exist = [manager fileExistsAtPath:_fileURL.path];
+    if (exist) {
+        [manager removeItemAtPath:_fileURL.path error:&error];
         if (error) {
-            if (reslutBlock) {
-                reslutBlock(error, NO);
+            if (resultBlock) {
+                resultBlock(error, NO);
             }
-            return ;
+            return;
         }
     }
-    
+
     // 缩略图
-    exsist = [manager fileExistsAtPath:self.thumbnailImagePath];
-    if (exsist) {
+    exist = [manager fileExistsAtPath:self.thumbnailImagePath];
+    if (exist) {
         [manager removeItemAtPath:self.thumbnailImagePath error:&error];
         if (error) {
-            if (reslutBlock) {
-                reslutBlock(error, NO);
+            if (resultBlock) {
+                resultBlock(error, NO);
             }
-            return ;
+            return;
         }
     }
-    
+
     // 全屏图片
-    exsist = [manager fileExistsAtPath:self.fullScreenImagePath];
-    if (exsist) {
+    exist = [manager fileExistsAtPath:self.fullScreenImagePath];
+    if (exist) {
         [manager removeItemAtPath:self.fullScreenImagePath error:&error];
         if (error) {
-            if (reslutBlock) {
-                reslutBlock(error, NO);
+            if (resultBlock) {
+                resultBlock(error, NO);
             }
-            return ;
-        }else{
-            if (reslutBlock) {
-                reslutBlock(error, YES);
+            return;
+        } else {
+            if (resultBlock) {
+                resultBlock(error, YES);
             }
         }
     }
@@ -598,11 +264,9 @@ static NSString * _fullScreenDir;
 @end
 
 
-
-
 #pragma mark - 8.x以上系统文件访问系统文件的实现
-@implementation NBUPHAsset
-{
+
+@implementation NBUPHAsset {
     // ALAssetRepresentation * _defaultRepresentation;
     /*
      PHImageFileOrientationKey = 0;
@@ -626,35 +290,30 @@ static NSString * _fullScreenDir;
 @synthesize type = _type;
 @synthesize PHAsset = _PHAsset;
 
-- (instancetype)initWithPHAsset:(PHAsset *)PHAsset
-{
+- (instancetype)initWithPHAsset:(PHAsset *)PHAsset {
     self = [super init];
-    if (self)
-    {
-        if (PHAsset)
-        {
+    if (self) {
+        if (PHAsset) {
             self.PHAsset = PHAsset;
             // Observe library changes
             //[[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
-        }
-        else
-        {
+        } else {
             self = nil; // Asset is required
         }
     }
     return self;
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     // Stop observing
     [[PHPhotoLibrary sharedPhotoLibrary] unregisterChangeObserver:self];
 }
+
 /// 与8.x之前系统的AlAssets类的libraryChanged对应
 - (void)photoLibraryDidChange:(PHChange *)changeInstance {
     if (!_PHAsset)
         return;
-    
+
     // Not valid -> Reload ALAsset
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         // Check if there are changes to the assets we are showing.
@@ -667,54 +326,49 @@ static NSString * _fullScreenDir;
             _PHAsset = nil;
             return;
         }
-        if (objChangeDetails .objectAfterChanges) {
+        if (objChangeDetails.objectAfterChanges) {
             NBULogVerbose(@"Asset %p had to be reloaded", self);
-            _PHAsset = objChangeDetails.objectAfterChanges;
+            _PHAsset = (PHAsset *) objChangeDetails.objectAfterChanges;
         }
     });
 }
 
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"<%@: %p; %@>",
-            NSStringFromClass([self class]), self, _PHAsset];
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%@: %@; %@>",
+                                      NSStringFromClass([self class]), self, _PHAsset];
 }
 
 #pragma mark- Properties
-- (void)setPHAsset:(PHAsset *)PHAsset
-{
+
+- (void)setPHAsset:(PHAsset *)PHAsset {
     _PHAsset = PHAsset;
     if (!_phAssetInfo) {
         // PHAsset 的 UIImageOrientation 需要调用过 requestImageDataForAsset 才能获取
         [self requestPhAssetInfo];
     }
     // 从 PhAssetInfo 中获取 UIImageOrientation 对应的字段
-    _URL = (NSURL*)_phAssetInfo[@"PHImageFileURLKey"];
+    _URL = (NSURL *) _phAssetInfo[@"PHImageFileURLKey"];
 }
 
-- (NBUAssetOrientation)orientation
-{
-    if (_orientation == NBUAssetOrientationUnknown)
-    {
+- (NBUAssetOrientation)orientation {
+    if (_orientation == NBUAssetOrientationUnknown) {
         if (!_phAssetInfo) {
             // PHAsset 的 UIImageOrientation 需要调用过 requestImageDataForAsset 才能获取
             [self requestPhAssetInfo];
         }
         // 从 PhAssetInfo 中获取 UIImageOrientation 对应的字段
         //        UIImageOrientation orientation = (UIImageOrientation)[_phAssetInfo[@"orientation"] integerValue];
-        UIImageOrientation orientation = (UIImageOrientation)[_phAssetInfo[@"PHImageFileOrientationKey"] integerValue];
-        
+        UIImageOrientation orientation = (UIImageOrientation) [_phAssetInfo[@"PHImageFileOrientationKey"] integerValue];
+
         // Portrait: ALAssetOrientationLeft, Right, LeftMirrored, RightMirrored
         if (orientation == UIImageOrientationLeft ||
-            orientation == UIImageOrientationRight ||
-            orientation == UIImageOrientationLeftMirrored ||
-            orientation == UIImageOrientationRightMirrored)
-        {
+                orientation == UIImageOrientationRight ||
+                orientation == UIImageOrientationLeftMirrored ||
+                orientation == UIImageOrientationRightMirrored) {
             _orientation = NBUAssetOrientationPortrait;
         }
-        // Landscape: ALAssetOrientationUp, Down, UpMirrored, DownMirrored
-        else
-        {
+            // Landscape: ALAssetOrientationUp, Down, UpMirrored, DownMirrored
+        else {
             _orientation = NBUAssetOrientationLandscape;
         }
     }
@@ -722,19 +376,18 @@ static NSString * _fullScreenDir;
 }
 
 
--(void) requestPhAssetInfo{
+- (void)requestPhAssetInfo {
     PHImageRequestOptions *options = [[PHImageRequestOptions alloc] init];
     options.synchronous = YES;
     [[PHImageManager defaultManager] requestImageDataForAsset:_PHAsset
                                                       options:options
                                                 resultHandler:
-     ^(NSData *imageData, NSString *dataUTI, UIImageOrientation orientation, NSDictionary *info) {
-         _phAssetInfo = info;
-     }];
+                                                        ^(NSData *imageData, NSString *dataUTI, UIImageOrientation orientation, NSDictionary *info) {
+                                                            _phAssetInfo = info;
+                                                        }];
 }
 
-- (BOOL)isEditable
-{
+- (BOOL)isEditable {
     return YES;
     /*
      if (!_editable)
@@ -745,10 +398,8 @@ static NSString * _fullScreenDir;
      */
 }
 
-- (NBUAssetType)type
-{
-    if (!_type)
-    {
+- (NBUAssetType)type {
+    if (!_type) {
         PHAssetMediaType typeString = _PHAsset.mediaType;
         switch (typeString) {
             case PHAssetMediaTypeUnknown: {
@@ -772,27 +423,23 @@ static NSString * _fullScreenDir;
     return _type;
 }
 
-- (NSDate *)date
-{
-    if (!_date)
-    {
+- (NSDate *)date {
+    if (!_date) {
         _date = [_PHAsset creationDate];
     }
     return _date;
 }
 
-- (CLLocation *)location
-{
-    if (!_location)
-    {
+- (CLLocation *)location {
+    if (!_location) {
         _location = [_PHAsset location];
     }
     return _location;
 }
 
 #pragma mark - Images
-- (UIImage *)thumbnailImage
-{
+
+- (UIImage *)thumbnailImage {
     __block UIImage *resultImage;
     PHImageRequestOptions *phImageRequestOptions = [[PHImageRequestOptions alloc] init];
     phImageRequestOptions.synchronous = YES;
@@ -809,14 +456,13 @@ static NSString * _fullScreenDir;
     return resultImage;
 }
 
-- (UIImage *)fullScreenImage
-{
+- (UIImage *)fullScreenImage {
     __block UIImage *resultImage;
     PHImageRequestOptions *imageRequestOptions = [[PHImageRequestOptions alloc] init];
     imageRequestOptions.synchronous = YES;
     PHCachingImageManager *PHCachingImageManager = [NBUAssetsLibrary sharedLibrary].PHCachingImageManager;
     [PHCachingImageManager requestImageForAsset:_PHAsset
-                                     targetSize:CGSizeMake(_fullScreenSize.width*_scale, _fullScreenSize.height*_scale)
+                                     targetSize:CGSizeMake(_fullScreenSize.width * _scale, _fullScreenSize.height * _scale)
                                     contentMode:PHImageContentModeAspectFill
                                         options:imageRequestOptions
                                   resultHandler:^(UIImage *result, NSDictionary *info) {
@@ -825,8 +471,7 @@ static NSString * _fullScreenDir;
     return resultImage;
 }
 
-- (UIImage *)fullResolutionImage
-{
+- (UIImage *)fullResolutionImage {
     __block UIImage *resultImage;
     PHImageRequestOptions *phImageRequestOptions = [[PHImageRequestOptions alloc] init];
     phImageRequestOptions.synchronous = YES;
@@ -841,21 +486,20 @@ static NSString * _fullScreenDir;
     return resultImage;
 }
 
--(void)delete:(void (^)(NSError *, BOOL))reslutBlock{
+- (void)delete:(void (^)(NSError *, BOOL))resultBlock {
     [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
         [PHAssetChangeRequest deleteAssets:@[_PHAsset]];
-    } completionHandler:^(BOOL success, NSError *error) {
-        if (reslutBlock) {
+    }                                 completionHandler:^(BOOL success, NSError *error) {
+        if (resultBlock) {
             if (error) {
-                reslutBlock(error, NO);
+                resultBlock(error, NO);
                 NBULogInfo(@"Error: %@", error);
-            }else{
-                reslutBlock(error, YES);
+            } else {
+                resultBlock(error, YES);
             }
         }
     }];
 }
-
 
 
 @end // 8.x以上系统使用的

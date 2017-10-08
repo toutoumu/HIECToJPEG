@@ -15,28 +15,16 @@
 
 // Document目录路径
 static NSString *_documentsDirectory;
-static NSString *_password;//密码
 @implementation NBUAssetUtils
 
 + (void)initialize {
     // Document目录路径
     _documentsDirectory = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
-    _password = nil;
 }
 
 + (void)exitApplication {
     NSArray *arr = [[NSArray alloc] init];
-    [arr objectAtIndex:2];
-}
-
-+ (NSString *)getPassword {
-    //NBULogInfo(@"使用的密码是:%@",_password);
-    return _password;
-}
-
-+ (void)setPassword:(NSString *)password {
-    //NBULogInfo(@"设置的密码是:%@",password);
-    _password = password;
+    arr[2];
 }
 
 + (NSString *)documentsDirectory {
@@ -46,7 +34,7 @@ static NSString *_password;//密码
 #pragma mark 生成文件名
 
 + (NSString *)getFileName {
-    UInt64 recordTime = [[NSDate date] timeIntervalSince1970] * 1000;
+    UInt64 recordTime = (UInt64) ([[NSDate date] timeIntervalSince1970] * 1000);
     // NSString *name =  [NSString stringWithFormat:@"%llu", recordTime];
     // NSString *name = [dateFormatter stringFromDate:[NSDate date]];
     return [NSString stringWithFormat:@"%llu%@", recordTime, @".jpg"];
@@ -55,33 +43,32 @@ static NSString *_password;//密码
 #pragma mark 创建相册
 
 + (NSString *)createAlbum:(NSString *)albumName {
-    BOOL success = NO;
     BOOL isDir = NO;
-    BOOL existed = NO;
+    BOOL existed;
     NSError *error;
     NSFileManager *manager = [NSFileManager defaultManager];
 
     //创建相册路径
-    NSString *amblumPath = [_documentsDirectory stringByAppendingPathComponent:albumName];
-    existed = [manager fileExistsAtPath:amblumPath isDirectory:&isDir];
+    NSString *albumPath = [_documentsDirectory stringByAppendingPathComponent:albumName];
+    existed = [manager fileExistsAtPath:albumPath isDirectory:&isDir];
     if (!(isDir && existed)) {
-        success = [manager createDirectoryAtPath:amblumPath withIntermediateDirectories:YES attributes:nil error:&error];
+        [manager createDirectoryAtPath:albumPath withIntermediateDirectories:YES attributes:nil error:&error];
     }
 
     // 创建缩略图文件夹路径
-    NSString *thumbPath = [amblumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
+    NSString *thumbPath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
     existed = [manager fileExistsAtPath:thumbPath isDirectory:&isDir];
     if (!(isDir && existed)) {
-        success = [manager createDirectoryAtPath:thumbPath withIntermediateDirectories:YES attributes:nil error:&error];
+        [manager createDirectoryAtPath:thumbPath withIntermediateDirectories:YES attributes:nil error:&error];
     }
 
     // 创建全屏图片文件夹路径
-    NSString *fullScreen = [amblumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];
+    NSString *fullScreen = [albumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];
     existed = [manager fileExistsAtPath:fullScreen isDirectory:&isDir];
     if (!(isDir && existed)) {
-        success = [manager createDirectoryAtPath:fullScreen withIntermediateDirectories:YES attributes:nil error:nil];
+        [manager createDirectoryAtPath:fullScreen withIntermediateDirectories:YES attributes:nil error:nil];
     }
-    return amblumPath;
+    return albumPath;
 }
 
 #pragma mark 获取所有相册
@@ -116,21 +103,21 @@ static NSString *_password;//密码
     //原图
     fullName = [albumPath stringByAppendingPathComponent:fileName];// 相册名+文件名
     //[image writeToFile:fullName];
-    [self encryImage:image toPath:fullName withPwd:fileName];
+    [self encryptImage:image toPath:fullName withPwd:fileName];
 
     //预览图
     UIImage *fullScreenImage = [image imageDonwsizedToFill:[NBUFileAsset fullScreenSize]];//预览图图片对象
     NSString *fullScreenDir = [albumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];//预览图文件夹 相册名+预览图文件夹名称
     fullName = [fullScreenDir stringByAppendingPathComponent:fileName];//预览图全路径文件名
     //[fullScreenImage writeToFile:fullName];
-    [self encryImage:fullScreenImage toPath:fullName withPwd:fileName];
+    [self encryptImage:fullScreenImage toPath:fullName withPwd:fileName];
 
     //缩略图
     UIImage *thumbImage = [fullScreenImage thumbnailWithSize:[NBUFileAsset thumbnailSize]];
     NSString *thumbPath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
     fullName = [thumbPath stringByAppendingPathComponent:fileName];
     //[thumbImage writeToFile:fullName];
-    [self encryImage:thumbImage toPath:fullName withPwd:fileName];
+    [self encryptImage:thumbImage toPath:fullName withPwd:fileName];
 
     return YES;
 }
@@ -146,14 +133,14 @@ static NSString *_password;//密码
     NSString *fullScreenDir = [albumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];//预览图文件夹 相册名+预览图文件夹名称
     fullName = [fullScreenDir stringByAppendingPathComponent:fileName];//预览图全路径文件名
     //[fullScreenImage writeToFile:fullName];
-    [self encryImage:fullScreenImage toPath:fullName withPwd:fileName];
+    [self encryptImage:fullScreenImage toPath:fullName withPwd:fileName];
 
     //缩略图
     UIImage *thumbImage = [fullScreenImage thumbnailWithSize:[NBUFileAsset thumbnailSize]];
-    NSString *thumbpath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
-    fullName = [thumbpath stringByAppendingPathComponent:fileName];
+    NSString *thumbPath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
+    fullName = [thumbPath stringByAppendingPathComponent:fileName];
     //[thumbImage writeToFile:fullName];
-    [self encryImage:thumbImage toPath:fullName withPwd:fileName];
+    [self encryptImage:thumbImage toPath:fullName withPwd:fileName];
 
     return YES;
 }
@@ -197,7 +184,7 @@ static NSString *_password;//密码
 
 #pragma mark 解密数据到指定相册
 
-+ (BOOL)dencryImage:(NBUFileAsset *)image toAlubm:(NSString *)albumName withPwd:(NSString *)pwd {
++ (BOOL)decryImage:(NBUFileAsset *)image toAlubm:(NSString *)albumName withPwd:(NSString *)pwd {
     NSString *fileName = [image.fullResolutionImagePath lastPathComponent];//文件名
     NSString *albumPath = [_documentsDirectory stringByAppendingPathComponent:albumName];//保存到的相册路径
     NSString *fullName; //临时存储保存的文件全路径名称
@@ -205,7 +192,7 @@ static NSString *_password;//密码
     NSFileManager *manager = [NSFileManager defaultManager];
 
     BOOL isDir = NO;
-    BOOL existed = NO;
+    BOOL existed;
 
     //原图
     fullName = [albumPath stringByAppendingPathComponent:fileName];// 相册名+文件名
@@ -224,18 +211,18 @@ static NSString *_password;//密码
             return NO;
         }
     } else {
-        [self dencryImage:image.fullResolutionImagePath toPath:fullName withPwd:pwd];
+        [self decryImage:image.fullResolutionImagePath toPath:fullName withPwd:pwd];
     }
 
     //预览图
     NSString *fullScreenDir = [albumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];//预览图文件夹 相册名+预览图文件夹名称
     fullName = [fullScreenDir stringByAppendingPathComponent:fileName];//预览图全路径文件名
-    [self dencryImage:image.fullScreenImagePath toPath:fullName withPwd:pwd];
+    [self decryImage:image.fullScreenImagePath toPath:fullName withPwd:pwd];
 
     //缩略图
     NSString *thumbPath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
     fullName = [thumbPath stringByAppendingPathComponent:fileName];
-    [self dencryImage:image.thumbnailImagePath toPath:fullName withPwd:pwd];
+    [self decryImage:image.thumbnailImagePath toPath:fullName withPwd:pwd];
 
     return YES;
 }
@@ -251,7 +238,7 @@ static NSString *_password;//密码
  *
  *  @return 是否成功
  */
-+ (BOOL)dencryImage:(NSString *)filePath toPath:(NSString *)path withPwd:(NSString *)pwd {
++ (BOOL)decryImage:(NSString *)filePath toPath:(NSString *)path withPwd:(NSString *)pwd {
     NSError *error;
     NSData *inData = [NSData dataWithContentsOfFile:filePath];
     NSData *outData = [RNDecryptor decryptData:inData withSettings:kRNCryptorAES256Settings password:pwd error:&error];
@@ -276,7 +263,7 @@ static NSString *_password;//密码
  *
  *  @return 是否成功
  */
-+ (BOOL)encryImage:(UIImage *)image toPath:(NSString *)path withPwd:(NSString *)pwd {
++ (BOOL)encryptImage:(UIImage *)image toPath:(NSString *)path withPwd:(NSString *)pwd {
     //    NSDate* tmpStartData = [NSDate date];
     //    NBULogInfo(@"执行时间 = %f",  [[NSDate date] timeIntervalSinceDate:tmpStartData]);
     NSData *data = UIImageJPEGRepresentation(image, 0.8);

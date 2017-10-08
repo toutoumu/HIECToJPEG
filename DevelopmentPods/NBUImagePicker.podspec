@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
                         "http://cyberagent.github.io/iOS-NBUImagePicker/images/screenshot6.png",
                         "http://cyberagent.github.io/iOS-NBUImagePicker/images/screenshot1.png"]
     
-    s.platform      = :ios, '7.0'
+    s.platform      = :ios, '8.0'
     s.requires_arc  = true
     s.preserve_paths = "README.md", "NOTICE"
     
