@@ -28,7 +28,9 @@
 
 @end
 
-// 点击区域指示器 Private class
+/**
+ * 点击区域指示器 Private class
+ */
 @interface PointOfInterestView : UIView
 
 @end
@@ -110,12 +112,19 @@
 }
 
 - (void)dealloc {
+
 }
 
 
-// 对焦监听事件
 #if !TARGET_IPHONE_SIMULATOR
 
+/**
+ * 对焦监听回调方法
+ * @param keyPath
+ * @param object
+ * @param change
+ * @param context
+ */
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *, id> *)change context:(void *)context {
     if ([keyPath isEqualToString:@"adjustingFocus"]) {
         BOOL adjustingFocus = [change[NSKeyValueChangeNewKey] isEqualToNumber:@1];
@@ -209,7 +218,7 @@
 
     // 图片输出,由于进入相机第一次使用的是捕获图片因此... Configure output if needed
     if (!_captureImageOutput) {
-        if (![self updateOutput:NBUCameraOutPutModeTypeImage targetResolution:_targetResolution]) {
+        if (![self updateOutput:NBUCameraOutPutModeTypeImage targetResolution:self.targetResolution]) {
             return;
         }
     }
@@ -219,8 +228,7 @@
 #if !TARGET_IPHONE_SIMULATOR // 真机的输入设备 Real devices
         self.currentAVCaptureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
 #else
-        // 模拟器输入设备 Simulator
-        self.currentAVCaptureDevice = nil;
+        self.currentAVCaptureDevice = nil; // 模拟器输入设备 Simulator
 #endif
     }
 
@@ -262,6 +270,13 @@
 
 #pragma mark 设备方向改变监听
 
+/**
+ * 设备方向改变调用此方法
+ * @discussion 这里得到的是设备的旋转方向(UIDeviceOrientation),
+ *             但是对于摄像头来说有几个值是不需要的(UIDeviceOrientationFaceUp,UIDeviceOrientationFaceDown)
+ *
+ * @param notification
+ */
 - (void)deviceOrientationChanged:(NSNotification *)notification {
     [self setDeviceOrientation:[MotionOrientation sharedInstance].deviceOrientation];
 }
@@ -325,17 +340,11 @@
 #pragma mark - Access permissions
 
 - (BOOL)userDeniedAccess {
-    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
-        return [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] == AVAuthorizationStatusDenied;
-    }
-    return NO;
+    return [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] == AVAuthorizationStatusDenied;
 }
 
 - (BOOL)restrictedAccess {
-    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
-        return [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] == AVAuthorizationStatusRestricted;
-    }
-    return NO;
+    return [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] == AVAuthorizationStatusRestricted;
 }
 
 #pragma mark - Properties
@@ -514,7 +523,7 @@
         return AVCaptureSessionPresetPhoto;
     }
 
-    // 如果宽度大于高度,那么宽高对调 Make sure to have a portrait size
+    // 如果宽度小于高度,那么宽高对调 Make sure to have a portrait size
     CGSize target = targetResolution.width >= targetResolution.height ? targetResolution : CGSizeMake(targetResolution.height, targetResolution.width);
     // Try different resolutions
     NSString *preset;
@@ -580,40 +589,44 @@
 - (void)takePicture:(id)sender {
     NBULogTrace();
 
-    // 当拍照太快,在前端设置拍照间隔为n秒,等待数据处理完成之后再执行拍照 Skip capture?
-    if ([[NSDate date] timeIntervalSinceDate:_lastSequenceCaptureDate] < _sequenceCaptureInterval) {
-        return;
-    }
-    _sequenceCaptureInterval = 0.25;
-    _lastSequenceCaptureDate = [NSDate date];
-
-    if (_captureInProgress) {// 如果正在拍摄返回,Ignore?
-        NBULogWarn(@"%@ Ignored as a capture is already in progress.", THIS_METHOD);
-        return;
-    }
     // 如果不允许访问相机返回
     if (self.userDeniedAccess || self.restrictedAccess) {
         NBULogWarn(@"%@ Aborted, camera access denied.", THIS_METHOD);
         return;
     }
 
+    // 如果正在拍摄返回,Ignore?
+    if (_captureInProgress || _focusing) {
+        NBULogWarn(@"%@ Ignored as a capture is already in progress.", THIS_METHOD);
+        return;
+    }
+
+    // 当拍照太快,在前端设置拍照间隔为n秒,等待数据处理完成之后再执行拍照 Skip capture?
+    if ([[NSDate date] timeIntervalSinceDate:_lastSequenceCaptureDate] < _sequenceCaptureInterval) {
+        return;
+    }
+    _sequenceCaptureInterval = 0.25; //最小拍照间隔恢复为默认值
+    _lastSequenceCaptureDate = [NSDate date];//更新最后拍摄时间
+
     _captureInProgress = YES;// 设置为正在拍摄
     _shootButton.enabled = NO;// 禁用拍摄按钮 Update UI
     // [self flashHighlightMask];// 拍摄界面闪一下
 // 如果是手机(真机)
 #if !TARGET_IPHONE_SIMULATOR
-    static AVCaptureVideoOrientation preOrientation = AVCaptureVideoOrientationPortrait;//之前的方向
+    // 如果手机旋转方向有改变那么重新设置对焦信息
+    static AVCaptureVideoOrientation preOrientation = 0;//之前的旋转方向
+    AVCaptureVideoOrientation currentOrientation = _captureConnection.videoOrientation;//当前的旋转方向
     // 如果是固定对焦位置, 且不是对焦后拍摄(对焦后拍摄的对焦位置在点击的时候就已经设置了),且设置前后参数有变更
-    if (self.fixedFocusPoint && !self.shootAfterFocus && preOrientation != _captureConnection.videoOrientation) {
-        AVCaptureVideoOrientation currentOrientation = _captureConnection.videoOrientation;//当前的方向
-        if ((preOrientation == AVCaptureVideoOrientationLandscapeRight && currentOrientation == AVCaptureVideoOrientationLandscapeLeft)
-                || (preOrientation == AVCaptureVideoOrientationLandscapeLeft && currentOrientation == AVCaptureVideoOrientationLandscapeRight)) {
+    if (self.fixedFocusPoint && !self.shootAfterFocus && preOrientation != currentOrientation) {
+        if ((preOrientation == AVCaptureVideoOrientationLandscapeRight && currentOrientation == AVCaptureVideoOrientationLandscapeLeft) ||
+                (preOrientation == AVCaptureVideoOrientationLandscapeLeft && currentOrientation == AVCaptureVideoOrientationLandscapeRight)) {
+            preOrientation = currentOrientation;
             return;
         }
 
         preOrientation = currentOrientation;
         [self updateDeviceConfigurationWithBlock:^() {
-            // 这里我加的, 调整对焦位置, 横向为y 纵向为x 原点在右上角(注意是右上角,不是左上角)
+            // 调整对焦位置, 手机竖直放置 横向为y 纵向为x 原点在右上角(注意是右上角,不是左上角)
             CGPoint pointOfInterest = CGPointMake(0.725, 0.5);
             switch (currentOrientation) {
                 case AVCaptureVideoOrientationPortrait:
@@ -627,10 +640,11 @@
                     pointOfInterest = CGPointMake(0.275, 0.5);
                     break;
                 default:
+                    pointOfInterest = CGPointMake(0.725, 0.5);
                     break;
             }
 
-            // 对焦位置设置
+            // [对焦位置设置]
             if (_captureDevice.isFocusPointOfInterestSupported) {
                 _captureDevice.focusPointOfInterest = pointOfInterest;
             }
@@ -758,8 +772,10 @@
 }// End of takePicture
 
 - (IBAction)startStopPictureSequence:(id)sender {
-    if (_captureInProgress || [self isRecording] || _focusing) {
-        return;
+    //更改拍摄按钮的选择状态,更改图标
+    if (self.shootButton) {
+        UIButton *shootBtn = ((UIButton *) self.shootButton);
+        shootBtn.selected = !_capturingSequence;
     }
     if (!_capturingSequence) {
         [_captureSession removeOutput:_captureImageOutput];
@@ -860,7 +876,7 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 
 - (void)toggleCameraType:(NBUCameraOutPutType)targetOutputType targetResolution:(CGSize)targetResolution targetFrame:(CGRect)targetFrame resultBlock:(void (^)(NBUCameraOutPutType, BOOL))callback {
     // 是否正在 拍照,拍摄,对焦
-    if (_captureInProgress || [self isRecording] || _focusing) {
+    if (_captureInProgress || _focusing || [self isRecording] || _capturingSequence) {
         if (callback) {
             callback(_outputType, NO);
         }
@@ -877,8 +893,6 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     [queue cancelAllOperations];// 取消未执行的操作
 
     __block UIView *maskView = nil;//遮罩层
-    // 保存将要设置的输出类型, 由于有可能在使用 _outputType 时, _outputType 被其他线程修改了
-    NBUCameraOutPutType targetOutPutType = _outputType == NBUCameraOutPutModeTypeVideo ? NBUCameraOutPutModeTypeImage : NBUCameraOutPutModeTypeVideo;
 
     dispatch_async(dispatch_get_main_queue(), ^{
         if (self.maskViewContainer) {//如果设置了切换遮罩
@@ -909,21 +923,21 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
         if (_toggleCameraButton) _toggleCameraButton.enabled = NO;
         self.frame = targetFrame;//更新相机布局
         self.targetResolution = targetResolution;//更新分辨率期望值
-        _outputType = targetOutPutType;// 由于有可能这段代码执行的线程和调用方法的线程不一致,因此需要临时保存这个值
+        _outputType = targetOutputType;// 由于有可能这段代码执行的线程和调用方法的线程不一致,因此需要临时保存这个值
 
         if (callback) {// 回调
-            callback(targetOutPutType, YES);
+            callback(targetOutputType, YES);
         }
         // 更新界面UI
         switch (_outputType) {
             case NBUCameraOutPutModeTypeVideo: {//切换到视频
-                // 更新UI
                 if (self.shootButton) {
                     UIButton *shootBtn = ((UIButton *) self.shootButton);
                     shootBtn.selected = NO;
                     [shootBtn setImage:[UIImage imageNamed:@"videoStart"] forState:UIControlStateNormal];
                     [shootBtn setImage:[UIImage imageNamed:@"videoStop"] forState:UIControlStateSelected];
                     [shootBtn removeTarget:self action:@selector(takePicture:) forControlEvents:UIControlEventTouchUpInside];
+                    [shootBtn removeTarget:self action:@selector(startStopPictureSequence:) forControlEvents:UIControlEventTouchUpInside];
                     [shootBtn addTarget:self action:@selector(startStopRecording:) forControlEvents:UIControlEventTouchUpInside];
                 }
                 break;
@@ -935,11 +949,21 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
                     [shootBtn setImage:[UIImage imageNamed:@"cameraButton"] forState:UIControlStateNormal];
                     [shootBtn setImage:[UIImage imageNamed:@"cameraButton"] forState:UIControlStateSelected];
                     [shootBtn removeTarget:self action:@selector(startStopRecording:) forControlEvents:UIControlEventTouchUpInside];
+                    [shootBtn removeTarget:self action:@selector(startStopPictureSequence:) forControlEvents:UIControlEventTouchUpInside];
                     [shootBtn addTarget:self action:@selector(takePicture:) forControlEvents:UIControlEventTouchUpInside];
                 }
                 break;
             }
             case NBUCameraOutPutModeTypeVideoData: {
+                if (self.shootButton) {
+                    UIButton *shootBtn = ((UIButton *) self.shootButton);
+                    shootBtn.selected = NO;
+                    [shootBtn setImage:[UIImage imageNamed:@"videoStart"] forState:UIControlStateNormal];
+                    [shootBtn setImage:[UIImage imageNamed:@"videoStop"] forState:UIControlStateSelected];
+                    [shootBtn removeTarget:self action:@selector(takePicture:) forControlEvents:UIControlEventTouchUpInside];
+                    [shootBtn removeTarget:self action:@selector(startStopRecording:) forControlEvents:UIControlEventTouchUpInside];
+                    [shootBtn addTarget:self action:@selector(startStopPictureSequence:) forControlEvents:UIControlEventTouchUpInside];
+                }
                 break;
             }
         }
@@ -948,9 +972,9 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
         [_captureSession beginConfiguration];
         // 更新输出
-        [self updateOutput:targetOutPutType targetResolution:targetResolution];
+        [self updateOutput:targetOutputType targetResolution:targetResolution];
         // 更新输入输出连接
-        [self updateConnection:targetOutPutType];
+        [self updateConnection:targetOutputType];
         [_captureSession commitConfiguration];
         // 更新相机参数
 
@@ -961,6 +985,7 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
                                     options:UIViewAnimationOptionTransitionNone | UIViewAnimationOptionAllowUserInteraction
                                  animations:^() {
                                      maskView.frame = targetFrame;
+                                     maskView.alpha = 0.5;
                                  } completion:^(BOOL finish) {
                             if (finish) {
                                 if (_shootButton) _shootButton.enabled = YES;
@@ -1047,18 +1072,15 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     // 修改为根据当前的输出模式来获取
     NSArray *connections;
     switch (outPutType) {
-        case NBUCameraOutPutModeTypeImage: {
+        case NBUCameraOutPutModeTypeImage:
             connections = _captureImageOutput.connections;
             break;
-        }
-        case NBUCameraOutPutModeTypeVideo: {
+        case NBUCameraOutPutModeTypeVideo:
             connections = _captureMovieOutput.connections;
             break;
-        }
-        case NBUCameraOutPutModeTypeVideoData: {
+        case NBUCameraOutPutModeTypeVideoData:
             connections = _captureVideoDataOutput.connections;
             break;
-        }
     }
     for (AVCaptureConnection *connection in connections) {
         for (AVCaptureInputPort *port in connection.inputPorts) {
@@ -1085,9 +1107,12 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 - (void)toggleCamera:(id)sender {
     NBULogTrace();
     // 正在拍摄直接返回
-    if (_transitionAnimating || _captureInProgress || [self isRecording]) {
+    if (_captureInProgress || _focusing || [self isRecording] || _transitionAnimating) {
         return;
     }
+
+    _canTake = NO;
+    _focusing = NO;
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(void) {
         self.currentCaptureDevice = [_availableCaptureDevices objectAfter:_captureDevice.uniqueID wrap:YES];
@@ -1239,10 +1264,12 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 #pragma mark - 手势 Gestures
 
 - (void)tapped:(UITapGestureRecognizer *)sender {
-    if (!_captureDevice || ![sender isKindOfClass:[UITapGestureRecognizer class]])
+    if (!_captureDevice || ![sender isKindOfClass:[UITapGestureRecognizer class]]) {
         return;
-    if (_shootAfterFocus && _outputType == NBUCameraOutPutModeTypeImage) {// 对焦后拍摄才做这个处理
-        if (_focusing || _captureInProgress) {// 如果正在对焦,或正在拍摄
+    }
+    // 图片的对焦后拍摄才做这个处理
+    if (_shootAfterFocus && _outputType == NBUCameraOutPutModeTypeImage) {
+        if (_captureInProgress || _focusing) {// 如果正在对焦,或正在拍摄
             return;
         }
         _focusing = YES;
@@ -1324,7 +1351,7 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
                 _captureDevice.whiteBalanceMode = AVCaptureWhiteBalanceModeAutoWhiteBalance;
                 adjustingConfiguration = YES;
             }
-        } else if (!self.shootAfterFocus) {// [如果不是对焦后拍摄,设置循环对焦]
+        } else {// [如果不是对焦后拍摄,设置循环对焦]
             // [对焦模式设置--循环对焦]
             if ([_captureDevice isFocusModeSupported:AVCaptureFocusModeContinuousAutoFocus]) {
                 NBULogVerbose(@"Continuous Focusing...");

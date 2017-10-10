@@ -15,7 +15,6 @@
     NSMutableDictionary *_vibeDictionary;//震动相关
     int _inputCount;// 密码输入次数
     int _clickCount;// 点击打开相册的次数
-    BOOL _parameterSet;//参数是否已经设置完成
     BOOL _prefersStatusBarHidden;//是否隐藏状态栏
     UITapGestureRecognizer *_tapGesture;// 触摸手势
 }
@@ -28,7 +27,6 @@
         _inputCount = 0; //重置密码输入次数
         _clickCount = 0; //重置点击次数
         _tapGesture = nil;// 触摸手势
-        _parameterSet = NO;// 没有设置参数
         _prefersStatusBarHidden = NO;//进入页面时不隐藏状态栏
 
         // 初始化震动配置
@@ -56,7 +54,7 @@
 
     self.cameraView.fixedFocusPoint = YES;// 是否固定对焦位置
     self.cameraView.shootAfterFocus = NO;// 是否对焦后拍摄
-    self.cameraView.showPreviewLayer = NO;// 不显示预览图层
+    self.cameraView.showPreviewLayer = NO;// 是否显示预览图层
     self.cameraView.animateLastPictureImageView = NO;//最后一张图片不需要动画
     // 拍摄完成后的回调,注意这里是非ui线程
     self.cameraView.captureResultBlock = ^(UIImage *image, NSError *error) {
@@ -141,13 +139,8 @@
     if (self.cameraView.shootAfterFocus) {// 如果是触摸后拍摄直接调用tapped方法
         [self.cameraView tapped:gesture];
     } else {
-        if (_parameterSet) {// 如果拍摄参数已经设置好
-            [self.cameraView takePicture:_shootButton];
-        } else {// 触摸操作对焦,设置好相机参数
-            [self.cameraView tapped:gesture];
-            _parameterSet = YES;
-        }
-    }
+        [self.cameraView takePicture:_shootButton];
+     }
 }
 
 #pragma mark 双击打开相册, 打开相册之前需要输入密码

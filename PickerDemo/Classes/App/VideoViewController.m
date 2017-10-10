@@ -10,8 +10,17 @@
 
 @implementation VideoViewController {
     CGRect _cameraFrame;
+    NSArray *_outTypes;
     UISwipeGestureRecognizer *_leftGestureRecognizer;
     UISwipeGestureRecognizer *_rightGestureRecognizer;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        _outTypes = [NSArray arrayWithArray:@[@(NBUCameraOutPutModeTypeVideoData), @(NBUCameraOutPutModeTypeVideo), @( NBUCameraOutPutModeTypeImage)]];
+    }
+    return self;
 }
 
 - (void)viewDidLoad {
@@ -44,6 +53,12 @@
     // 拍摄按钮事件
     self.cameraView.shootButton = _shootButton;
     [_shootButton addTarget:self.cameraView action:@selector(takePicture:) forControlEvents:UIControlEventTouchUpInside];
+    // 拍照(只处理了序列)后的回调
+    self.cameraView.captureResultBlock = ^(UIImage *image, NSError *error) {
+        if (!error && self.cameraView.currentOutPutType == NBUCameraOutPutModeTypeVideoData) {
+            self.cameraView.lastPictureImageView.image = image;
+        }
+    };
 
     // 切换手势
     _rightGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeFrom:)];
@@ -61,7 +76,7 @@
     // 第一次进入计算尺寸
     if (CGRectEqualToRect(_cameraFrame, CGRectZero)) {
         _cameraFrame = [self calculateCameraFrame:CGSizeZero];
-        float x = (self.bottomContainer.size.width - self.views.size.width - self.video.size.width) / 2;
+        float x = (self.bottomContainer.size.width - self.views.size.width - self.video.size.width * 2) / 2;
         self.views.frame = CGRectMake(x, 0, self.views.size.width, self.views.size.height);
         self.picture.textColor = [UIColor orangeColor];
 
@@ -118,28 +133,26 @@
 }
 
 - (void)toggle:(NSInteger)type {
-    if (type == UISwipeGestureRecognizerDirectionRight && self.cameraView.currentOutPutType == NBUCameraOutPutModeTypeVideo) {
-        return;
-    } else if (type == UISwipeGestureRecognizerDirectionLeft && self.cameraView.currentOutPutType == NBUCameraOutPutModeTypeImage) {
-        return;
-    }
-
-    CGSize targetResolution = CGSizeMake(40000, 30000);
     NBUCameraOutPutType targetOutputType = NBUCameraOutPutModeTypeImage;
-    switch (self.cameraView.currentOutPutType) {
-        case NBUCameraOutPutModeTypeImage: {//切换到视频
+    if (type == UISwipeGestureRecognizerDirectionRight) {//向右滑动
+        targetOutputType = (NBUCameraOutPutType) [[_outTypes objectBefore:@(self.cameraView.currentOutPutType)
+                                                                     wrap:YES] integerValue];
+    } else if (type == UISwipeGestureRecognizerDirectionLeft) {//向左滑动
+        targetOutputType = (NBUCameraOutPutType) [[_outTypes objectAfter:@(self.cameraView.currentOutPutType)
+                                                                    wrap:YES] integerValue];
+    }
+    CGSize targetResolution = CGSizeMake(40000, 30000);
+    switch (targetOutputType) {
+        case NBUCameraOutPutModeTypeImage: {//切换到图片
+            targetResolution = CGSizeMake(40000, 30000);
+            break;
+        }
+        case NBUCameraOutPutModeTypeVideo: {//切换到视频
             targetResolution = CGSizeMake(1280, 720);
-            targetOutputType = NBUCameraOutPutModeTypeVideo;
             break;
         }
-        case NBUCameraOutPutModeTypeVideo: {//切换到图片
-            targetResolution = CGSizeMake(40000, 30000);
-            targetOutputType = NBUCameraOutPutModeTypeImage;
-            break;
-        }
-        case NBUCameraOutPutModeTypeVideoData: {//切换到图片
-            targetResolution = CGSizeMake(40000, 30000);
-            targetOutputType = NBUCameraOutPutModeTypeImage;
+        case NBUCameraOutPutModeTypeVideoData: {//切换到序列
+            targetResolution = CGSizeMake(1280, 720);
             break;
         }
     }
@@ -150,11 +163,11 @@
         if (!success)return;
         [self.views.layer removeAllAnimations];
         switch (outPutType) {
-            case NBUCameraOutPutModeTypeImage:
-            case NBUCameraOutPutModeTypeVideoData: {//切换到图片
+            case NBUCameraOutPutModeTypeImage: {//切换到图片
+                self.videoData.textColor = [UIColor whiteColor];
                 self.video.textColor = [UIColor whiteColor];
                 self.picture.textColor = [UIColor orangeColor];
-                float x = (self.bottomContainer.size.width - self.views.size.width - self.video.size.width) / 2;
+                float x = (self.bottomContainer.size.width - self.views.size.width - self.video.size.width * 2) / 2;
                 [UIView transitionWithView:self.views
                                   duration:0.3
                                    options:UIViewAnimationOptionTransitionNone
@@ -167,9 +180,26 @@
                 break;
             }
             case NBUCameraOutPutModeTypeVideo: {//切换到视频
+                self.videoData.textColor = [UIColor whiteColor];
                 self.video.textColor = [UIColor orangeColor];
                 self.picture.textColor = [UIColor whiteColor];
-                float x = (self.bottomContainer.size.width - self.views.size.width + self.video.size.width) / 2;
+                float x = (self.bottomContainer.size.width - self.views.size.width) / 2;
+                [UIView transitionWithView:self.views
+                                  duration:0.3
+                                   options:UIViewAnimationOptionTransitionNone
+                                animations:^() {
+                                    self.views.frame = CGRectMake(x, 0, self.views.size.width, self.views.size.height);
+                                }
+                                completion:^(BOOL finished) {
+                                    self.views.frame = CGRectMake(x, 0, self.views.size.width, self.views.size.height);
+                                }];
+                break;
+            }
+            case NBUCameraOutPutModeTypeVideoData: {//切换到序列
+                self.videoData.textColor = [UIColor orangeColor];
+                self.video.textColor = [UIColor whiteColor];
+                self.picture.textColor = [UIColor whiteColor];
+                float x = (self.bottomContainer.size.width - self.views.size.width + self.video.size.width * 2) / 2;
                 [UIView transitionWithView:self.views
                                   duration:0.3
                                    options:UIViewAnimationOptionTransitionNone

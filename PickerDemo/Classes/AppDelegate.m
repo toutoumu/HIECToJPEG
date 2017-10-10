@@ -41,7 +41,7 @@ static CGFloat _preBrightness;//保存之前的屏幕亮度
     // Add dashboard logger
     //[NBULog addDashboardLogger];
 #endif
-    // pods 项目 >> build settings >>apple llvm 设置 debug 中 debug1 = 1 改为 debug = 1 这样就有日志了
+    // pods 项目 >> build settings >> 搜索PreprocessorMacros 设置 debug 中 debug1 = 1 改为 debug = 1 这样就有日志了
     NBULogTrace();
 
     UIColor *tintColor = [UIColor colorWithRed:(CGFloat) (0 / 255.0) green:(CGFloat) (0 / 255.0) blue:(CGFloat) (0 / 255.0) alpha:1.0];
@@ -80,7 +80,9 @@ static CGFloat _preBrightness;//保存之前的屏幕亮度
     // 应用程序退到后台, 如果当前还是启动应用程序时候的密码输入界面,或者是已经输入密码进入了相机页面,那么堆栈不需要清空.
     UIViewController *controller = self.navController.viewControllers[self.navController.viewControllers.count - 1];
     if (controller != nil) {
-        if ([controller isKindOfClass:[CameraViewController class]] || [controller isKindOfClass:[PPViewController class]] || [controller isKindOfClass:[VideoViewController class]]) {
+        if ([controller isKindOfClass:[CameraViewController class]] ||
+                [controller isKindOfClass:[PPViewController class]] ||
+                [controller isKindOfClass:[VideoViewController class]]) {
             return;
         }
         // 如果不是密码页面,或者是拍摄页面,清空堆栈

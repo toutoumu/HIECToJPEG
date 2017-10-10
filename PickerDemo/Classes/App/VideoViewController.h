@@ -21,6 +21,8 @@
 
 @property(assign, nonatomic) IBOutlet UIView *views;
 
+@property(assign, nonatomic) IBOutlet UILabel *videoData;
+
 @property(assign, nonatomic) IBOutlet UILabel *video;
 
 @property(assign, nonatomic) IBOutlet UILabel *picture;
