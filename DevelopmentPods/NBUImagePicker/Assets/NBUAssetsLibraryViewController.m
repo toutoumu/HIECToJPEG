@@ -54,29 +54,31 @@
             self.loading = YES;
         });
 
-        [[NBUAssetsLibrary sharedLibrary] directoryGroupsWithResultBlock:^(NSArray *groups,
-                NSError *error) {
+        [[NBUAssetsLibrary sharedLibrary] directoryGroupsWithResultBlock:^(NSArray *groups, NSError *error) {
             if (!error) {
                 _assetsGroups = [NSMutableArray arrayWithArray:groups];
 
                 // 删除excludeAlbumNames包含的相册
                 NSMutableArray *remove = [[NSMutableArray alloc] init];
                 NSEnumerator *enumerator = [self.excludeAlbumNames objectEnumerator];//数组对象创建一个枚举器
-                NSString *albumName;
-                while (albumName = [enumerator nextObject]) {
+                NSString *albumName = [enumerator nextObject];
+                while (albumName) {
                     NSEnumerator *en = [_assetsGroups objectEnumerator];//数组对象创建一个枚举器
-                    NBUAssetsGroup *group;
-                    while (group = [en nextObject]) {
+                    NBUAssetsGroup *group = [en nextObject];
+                    while (group) {
                         if ([group.name isEqualToString:albumName]) {
                             [remove insertObject:group atIndex:0];
                             break;
                         }
+                        group = [en nextObject];
                     }
+                    albumName = [enumerator nextObject];
                 }
                 enumerator = [remove objectEnumerator];
-                NBUAssetsGroup *item;
-                while (item = [enumerator nextObject]) {
+                NBUAssetsGroup *item = [enumerator nextObject];
+                while (item) {
                     [_assetsGroups removeObject:item];
+                    item = [enumerator nextObject];
                 }
 
                 NBULogInfo(@"%@ available asset groups", @(_assetsGroups.count));

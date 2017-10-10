@@ -18,7 +18,7 @@
     [super viewDidLoad];
 
     self.cameraView.fixedFocusPoint = NO;// 是否固定对焦位置
-    self.cameraView.shootAfterFocus = NO;// 是否对焦后拍摄
+    self.cameraView.shootAfterFocus = YES;// 是否对焦后拍摄
     self.cameraView.targetResolution = CGSizeMake(40000, 30000);// 图像尺寸
     self.cameraView.savePicturesToLibrary = YES;// 保存到系统相册
     self.cameraView.targetLibraryAlbumName = @"test";// 系统相册名称
@@ -123,18 +123,35 @@
     } else if (type == UISwipeGestureRecognizerDirectionLeft && self.cameraView.currentOutPutType == NBUCameraOutPutModeTypeImage) {
         return;
     }
+
     CGSize targetResolution = CGSizeMake(40000, 30000);
-    if (self.cameraView.currentOutPutType == NBUCameraOutPutModeTypeImage) {//当前为图片,要切换到视频
-        targetResolution = CGSizeMake(1280, 720);
+    NBUCameraOutPutType targetOutputType = NBUCameraOutPutModeTypeImage;
+    switch (self.cameraView.currentOutPutType) {
+        case NBUCameraOutPutModeTypeImage: {//切换到视频
+            targetResolution = CGSizeMake(1280, 720);
+            targetOutputType = NBUCameraOutPutModeTypeVideo;
+            break;
+        }
+        case NBUCameraOutPutModeTypeVideo: {//切换到图片
+            targetResolution = CGSizeMake(40000, 30000);
+            targetOutputType = NBUCameraOutPutModeTypeImage;
+            break;
+        }
+        case NBUCameraOutPutModeTypeVideoData: {//切换到图片
+            targetResolution = CGSizeMake(40000, 30000);
+            targetOutputType = NBUCameraOutPutModeTypeImage;
+            break;
+        }
     }
 
     _cameraFrame = [self calculateCameraFrame:targetResolution];
 
-    [self.cameraView toggleCameraType:targetResolution targetFrame:_cameraFrame resultBlock:^(NBUCameraOutPutType outPutType, BOOL success) {
+    [self.cameraView toggleCameraType:targetOutputType targetResolution:targetResolution targetFrame:_cameraFrame resultBlock:^(NBUCameraOutPutType outPutType, BOOL success) {
         if (!success)return;
         [self.views.layer removeAllAnimations];
         switch (outPutType) {
-            case NBUCameraOutPutModeTypeImage: {//切换到图片
+            case NBUCameraOutPutModeTypeImage:
+            case NBUCameraOutPutModeTypeVideoData: {//切换到图片
                 self.video.textColor = [UIColor whiteColor];
                 self.picture.textColor = [UIColor orangeColor];
                 float x = (self.bottomContainer.size.width - self.views.size.width - self.video.size.width) / 2;

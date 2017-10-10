@@ -153,7 +153,7 @@
     // Configure access denied view if needed
     if (_accessDeniedView) {
         _accessDeniedView.hidden = (!_cameraView.userDeniedAccess && !_cameraView.restrictedAccess);
-        if (_accessDeniedView.hidden == NO) {
+        if (!_accessDeniedView.hidden) {
             _tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handTap:)];
             [_accessDeniedView addGestureRecognizer:_tapGesture];
         } else {
@@ -181,14 +181,9 @@
         if (!_buttonStealer) {
             __weak NBUCameraViewController *weakSelf = self;
             ButtonBlock block = ^{
-                // 音量按钮点击时候不显示音量调节界面
+                // 设置音量按钮点击时候不显示音量调节界面
                 AVAudioSession *audioSession = [AVAudioSession sharedInstance];
-                NSError *error = nil;
-                if (audioSession.otherAudioPlaying) {
-                    [audioSession setActive:NO error:&error];
-                } else {
-                    [audioSession setActive:YES error:&error];
-                }
+                [audioSession setActive:!audioSession.otherAudioPlaying error:nil];
                 [weakSelf.cameraView takePicture:weakSelf];
             };
             _buttonStealer = [RBVolumeButtons new];
@@ -201,28 +196,8 @@
 
         [_buttonStealer startStealingVolumeButtonEvents];
     }
-#if !TARGET_IPHONE_SIMULATOR
-    if (self.cameraView.shootAfterFocus) {// 如果是对焦后拍摄,添加对焦后的监听
-        NSKeyValueObservingOptions flags = NSKeyValueObservingOptionNew;
-        AVCaptureDevice *camDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-        [camDevice addObserver:self forKeyPath:@"adjustingFocus" options:flags context:nil];
-    }
-#endif
 }
 
-// 对焦监听事件
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *, id> *)change context:(void *)context {
-    if ([keyPath isEqualToString:@"adjustingFocus"]) {
-        BOOL adjustingFocus = [[change objectForKey:NSKeyValueChangeNewKey] isEqualToNumber:[NSNumber numberWithInt:1]];
-        NBULogInfo(@"Is adjusting focus? %@", adjustingFocus ? @"YES" : @"NO");
-        if (!adjustingFocus) {// 对焦完成
-            _cameraView.focusing = NO;
-            if (_cameraView.shootAfterFocus) {// 如果是对焦后拍摄
-                [_cameraView takePicture:self];
-            }
-        }
-    }
-}
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
@@ -231,12 +206,6 @@
     if (_takesPicturesWithVolumeButtons) {
         [_buttonStealer stopStealingVolumeButtonEvents];
     }
-#if !TARGET_IPHONE_SIMULATOR
-    if (self.cameraView.shootAfterFocus) {// 移除对焦监听
-        AVCaptureDevice *camDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-        [camDevice removeObserver:self forKeyPath:@"adjustingFocus"];
-    }
-#endif
 }
 
 #pragma mark - set方法重写

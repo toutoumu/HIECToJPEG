@@ -801,6 +801,11 @@
 
 #pragma mark 点击返回按钮是否退出图片浏览器
 
+/**
+ * 点击返回按钮是否退出图片浏览器
+ * @param photoBrowser
+ * @return false 不允许退出, true 允许退出
+ */
 - (BOOL)isReturn:(MWPhotoBrowser *)photoBrowser {
     // 有选择的图片是不允许直接退出
     return ![self hasSelectedItem];
@@ -825,13 +830,12 @@
     }
 
     SelectAlbumViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"SelectAlbumViewController"];
-    controller.action = action;// 1:导出选中项 2: 导出指定索引
+    controller.action = action;// 1:移动选中项 2: 移动指定索引
     controller.photoBrowser = photoBrowser;
 
     controller.onlyLoadDocument = YES;// 只加载沙盒
     // 排除当前相册和Deleted相册
     controller.excludeAlbumNames = [[NSMutableArray alloc] init];
-    [controller.excludeAlbumNames insertObject:photoBrowser.currentAlbumName atIndex:0];
     [controller.excludeAlbumNames addObject:photoBrowser.currentAlbumName];
     [controller.excludeAlbumNames addObject:@"Deleted"];
     [controller.excludeAlbumNames addObject:@"Decrypted"];
@@ -859,7 +863,7 @@
         [photoBrowser.delegate photoBrowser:photoBrowser exportAtIndex:index];
     };
 
-    void (^moveBlock)() = ^() {// 移动指定索引 1:导出选中项 2: 导出指定索引
+    void (^moveBlock)() = ^() {// 移动指定索引 1:移动选中项 2: 移动指定索引
         [photoBrowser.delegate showMove:photoBrowser action:2];
     };
 
@@ -1043,7 +1047,7 @@ void (^optionButtonClickBlock)(MWPhotoBrowser *) = ^(MWPhotoBrowser *photoBrowse
                 if ([photoBrowser.currentAlbumName isEqualToString:@"Decrypted"]) {//解密(Decrypted)文件夹文件不许移动
                     [photoBrowser showProgressHUDWithMessage:@""];
                     [photoBrowser showProgressHUDCompleteMessage:@"该相册文件不能移动"];
-                } else {//1:导出选中项 2: 导出指定索引
+                } else {// 1:移动选中项 2: 移动指定索引
                     [photoBrowser.delegate showMove:photoBrowser action:1];
                 }
             }], nil];

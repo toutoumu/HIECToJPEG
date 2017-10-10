@@ -14,7 +14,7 @@
 
 @interface SelectAlbumViewController : NBUAssetsLibraryViewController
 
-/// 1:导出选中项 2: 导出指定索引
+/// 1:移动选中项 2: 移动指定索引
 @property(nonatomic) int action;
 @property(nonatomic) MWPhotoBrowser *photoBrowser;
 

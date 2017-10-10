@@ -209,6 +209,8 @@ static NSString *_fullScreenDir;
     return _fileURL.path;
 }
 
+- (NSURL *)URL {return _fileURL;}
+
 - (void)delete:(void (^)(NSError *, BOOL))resultBlock {
     if (_fileURL == nil || _fileURL.path == nil) {
         if (resultBlock) {

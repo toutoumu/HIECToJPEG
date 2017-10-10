@@ -40,7 +40,7 @@ typedef NS_ENUM(NSInteger, NBUCameraOutPutType)
 {
     NBUCameraOutPutModeTypeImage       = 0,
     NBUCameraOutPutModeTypeVideo       = 1 << 0,
-    //NBUCameraOutPutModeTypeVideoDat    = 1 << 1,
+    NBUCameraOutPutModeTypeVideoData    = 1 << 1,
 };
 
 /**
@@ -61,13 +61,18 @@ typedef NS_ENUM(NSInteger, NBUCameraOutPutType)
 @property (nonatomic)                   BOOL fixedFocusPoint;
 #pragma mark 是否先对焦后拍摄,默认为NO,如果为NO会设置 [循环自动对焦],如果为YES 不会设置为循环自动对焦
 @property (nonatomic)                   BOOL shootAfterFocus;
-#pragma mark 是否正在对焦
-@property (nonatomic)                   BOOL focusing;
 #pragma mark 当前相机是拍照,还是视频
 @property (nonatomic, readonly)         NBUCameraOutPutType currentOutPutType;
 
 #pragma mark 视频,图片拍摄切换
--(void)toggleCameraType:(CGSize) targetResolution targetFrame:(CGRect) targetFrame resultBlock:(void(^)(NBUCameraOutPutType ,BOOL))callback;
+/**
+ * 视频,图片拍摄切换
+ * @param targetOutputType 图片,视频,序列 NBUCameraOutPutType
+ * @param targetResolution 目标分辨率 eg:视频分辨率 CGSizeMake(1280, 720)
+ * @param targetFrame 根据 [目标分辨率] 计算对应的视图尺寸, 相机View和遮罩层都将设置成这个frame
+ * @param callback 回调第一个参数是切换后的输出格式,第二个参数是否切换成功
+ */
+-(void)toggleCameraType:(NBUCameraOutPutType) targetOutputType targetResolution:(CGSize) targetResolution targetFrame:(CGRect) targetFrame resultBlock:(void(^)(NBUCameraOutPutType ,BOOL))callback;
 
 /// @name Configurable Properties
 

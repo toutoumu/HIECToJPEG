@@ -28,13 +28,16 @@
 
 @end
 
-// Private class
+// 点击区域指示器 Private class
 @interface PointOfInterestView : UIView
 
 @end
 
 
 @implementation NBUCameraView {
+    BOOL _canTake;//是否可以拍摄
+    BOOL _focusing;//是否正在对焦
+    BOOL _captureInProgress;//是否正在拍照
     BOOL _transitionAnimating;//是否正在执行动画
     NBUCameraOutPutType _outputType;//当前相机是拍照还是视频
 
@@ -50,24 +53,26 @@
     AVCaptureStillImageOutput *_captureImageOutput;//图片输出
     AVCaptureVideoPreviewLayer *_previewLayer;//预览
 
-    BOOL _captureInProgress;//是否正在拍照
     NSDate *_lastSequenceCaptureDate;//最后采集图像的时间
     UIImageOrientation _sequenceCaptureOrientation;//最后采集的图像的旋转方向
 
 #if TARGET_IPHONE_SIMULATOR
-    UIImage * _mockImage;// 为模拟器使用一张图片作为相机 Mock image for simulator
+    UIImage * _mockImage; // 为模拟器使用一张图片作为相机 Mock image for simulator
 #endif
 }
 
 - (void)commonInit {
     [super commonInit];
 
-    self.focusing = NO;//是否正在对焦
+    _canTake = NO;//是否可以拍摄
+    _focusing = NO;//是否正在对焦
+    _captureInProgress = NO;//是否正在拍照
+    _transitionAnimating = NO;//是否正在执行动画
+    _outputType = NBUCameraOutPutModeTypeImage;// 相机拍摄默认为图片
+
     self.fixedFocusPoint = NO;//是否固定对焦区域
     self.shootAfterFocus = NO;//是否触摸后拍摄
     self.showPreviewLayer = YES;//显示预览图层
-    _transitionAnimating = NO;//是否正在执行动画
-    _outputType = NBUCameraOutPutModeTypeImage;// 相机拍摄默认为图片
 
     // Configure the view
     self.recognizeSwipe = NO;//是否启用滑动手势
@@ -79,6 +84,10 @@
 
     _poiView = [PointOfInterestView new];// 点击位置(对焦区域)指示器 PoI view
     [self addSubview:_poiView];
+
+    // First orientation update
+    //[MotionOrientation initialize];
+    [self setDeviceOrientation:[MotionOrientation sharedInstance].deviceOrientation];
 
 #if TARGET_IPHONE_SIMULATOR
     {
@@ -98,20 +107,56 @@
         [self insertSubview:mockView atIndex:0];
     }
 #endif
+}
 
-    // First orientation update
-    //[MotionOrientation initialize];
-    [self setDeviceOrientation:[MotionOrientation sharedInstance].deviceOrientation];
+- (void)dealloc {
+}
+
+
+// 对焦监听事件
+#if !TARGET_IPHONE_SIMULATOR
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *, id> *)change context:(void *)context {
+    if ([keyPath isEqualToString:@"adjustingFocus"]) {
+        BOOL adjustingFocus = [change[NSKeyValueChangeNewKey] isEqualToNumber:@1];
+        if (!adjustingFocus && _shootAfterFocus && _canTake) {// 对焦完成,如果是对焦后拍摄,且可以拍摄
+            _canTake = NO;
+            _focusing = NO;
+            [self takePicture:self];
+        }
+    }
+}
+
+#endif
+
+/**
+ * 添加监听
+ */
+- (void)addObserver {
     // 手机方向改变监听 Observe orientation changes
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(deviceOrientationChanged:)
                                                  name:MotionOrientationChangedNotification
                                                object:nil];
+
+#if !TARGET_IPHONE_SIMULATOR
+    if (_shootAfterFocus) {// 如果是对焦后拍摄,添加对焦后的监听
+        [_captureDevice addObserver:self forKeyPath:@"adjustingFocus" options:NSKeyValueObservingOptionNew context:nil];
+    }
+#endif
 }
 
-- (void)dealloc {
-    // 停止监听 Stop observing
+/**
+ * 移除监听
+ */
+- (void)removeObserver {
+    // 停止手机方向改变监听 Stop observing
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+#if !TARGET_IPHONE_SIMULATOR
+    if (_shootAfterFocus) {// 移除对焦监听
+        [_captureDevice removeObserver:self forKeyPath:@"adjustingFocus"];
+    }
+#endif
 }
 
 - (void)layoutSubviews {
@@ -149,7 +194,7 @@
         return;
     }
 
-    // Create a capture session if needed
+    // 创建session Create a capture session if needed
     if (!_captureSession) {
         _captureSession = [AVCaptureSession new];
     }
@@ -164,14 +209,9 @@
 
     // 图片输出,由于进入相机第一次使用的是捕获图片因此... Configure output if needed
     if (!_captureImageOutput) {
-        _captureImageOutput = [AVCaptureStillImageOutput new];
-        if ([_captureSession canAddOutput:_captureImageOutput])
-            [_captureSession addOutput:_captureImageOutput];
-        else {
-            NBULogError(@"Can't add output: %@ to session: %@", _captureImageOutput, _captureSession);
+        if (![self updateOutput:NBUCameraOutPutModeTypeImage targetResolution:_targetResolution]) {
             return;
         }
-        NBULogVerbose(@"Output: %@ settings: %@", _captureImageOutput, _captureImageOutput.outputSettings);
     }
 
     // 图像输入设备 Get a capture device if needed
@@ -179,14 +219,14 @@
 #if !TARGET_IPHONE_SIMULATOR // 真机的输入设备 Real devices
         self.currentAVCaptureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
 #else
-        {
-            // 模拟器输入设备 Simulator (iOS5 simulator reports an input device while iOS6 simulator doesn't)
-            self.currentAVCaptureDevice = nil;
-        }
+        // 模拟器输入设备 Simulator
+        self.currentAVCaptureDevice = nil;
 #endif
     }
 
+    [self addObserver];
     _shootButton.enabled = YES;
+
     // 开始运行 Start session if needed
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
         if (!_captureSession.running) {
@@ -199,7 +239,9 @@
 - (void)viewWillDisappear {
     [super viewWillDisappear];
 
+    [self removeObserver];
     _shootButton.enabled = NO;
+
     // 停止运行 Stop session if possible
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
         if (_captureSession.running && !_captureInProgress) {
@@ -452,32 +494,9 @@
         NBULogError(@"Can't add input: %@ to session: %@", _captureDeviceInput, _captureSession);
     }
 
-    // Refresh the video connection
-    _captureConnection = nil;
-    // 修改为根据当前的输出模式来获取
-    NSArray *connections = self.currentOutPutType == NBUCameraOutPutModeTypeImage ? _captureImageOutput.connections : _captureMovieOutput.connections;
-    for (AVCaptureConnection *connection in connections)//修改了 _captureImageOutput.connections)
-    {
-        for (AVCaptureInputPort *port in connection.inputPorts) {
-            if ([port.mediaType isEqualToString:AVMediaTypeVideo]) {
-                _captureConnection = connection;
-                break;
-            }
-        }
-        if (_captureConnection) {
-            NBULogVerbose(@"Video connection: %@", _captureConnection);
+    // 更新输入输出连接 Refresh the video connection
+    [self updateConnection:_outputType];
 
-            // Handle fron camera video mirroring
-            if (_captureDevice.position == AVCaptureDevicePositionFront && _captureConnection.supportsVideoMirroring) {
-                _captureConnection.videoMirrored = _keepFrontCameraPicturesMirrored;
-            }
-
-            break;
-        }
-    }
-    if (!_captureConnection) {
-        NBULogError(@"Couldn't create video connection for output: %@", _captureImageOutput);
-    }
     [_captureSession commitConfiguration];
 }
 
@@ -635,114 +654,116 @@
     }
 
     // 异步捕获图片 Get the image
-    [_captureImageOutput captureStillImageAsynchronouslyFromConnection:_captureConnection
-                                                     completionHandler:^(CMSampleBufferRef imageDataSampleBuffer, NSError *error) {
-                                                         _captureInProgress = NO;// 设置为拍摄完成
+    [_captureImageOutput captureStillImageAsynchronouslyFromConnection:_captureConnection completionHandler:^(CMSampleBufferRef imageDataSampleBuffer, NSError *error) {
+        _captureInProgress = NO;// 设置为拍摄完成
 
-                                                         // 如果窗口不存在停止 Stop session if needed
-                                                         if (!self.window && _captureSession.running) {
-                                                             [_captureSession stopRunning];
-                                                             NBULogVerbose(@"Capture session: {\n%@} stopped running", _captureSession);
-                                                         }
+        // 如果窗口不存在停止 Stop session if needed
+        if (!self.window && _captureSession.running) {
+            [_captureSession stopRunning];
+            NBULogVerbose(@"Capture session: {\n%@} stopped running", _captureSession);
+        }
 
-                                                         if (error) {// 拍摄出错了
-                                                             NBULogError(@"Error: %@", error);
-                                                             _shootButton.enabled = YES;
+        if (error) {// 拍摄出错了
+            NBULogError(@"Error: %@", error);
+            _shootButton.enabled = YES;
 
-                                                             // 回调 Execute result blocks
-                                                             if (_captureResultBlock) _captureResultBlock(nil, error);
-                                                             if (_savePicturesToLibrary && _saveResultBlock) _saveResultBlock(nil, nil, nil, error);
+            // 回调 Execute result blocks
+            if (_captureResultBlock) _captureResultBlock(nil, error);
+            if (_savePicturesToLibrary && _saveResultBlock) _saveResultBlock(nil, nil, nil, error);
 
-                                                             return;
-                                                         } else {// 处理图片数据
-                                                             UIImage *image = [UIImage imageWithData:[AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer]];
-                                                             NBULogInfo(@"Captured jpeg image: %@ of size: %@ orientation: %@", image, NSStringFromCGSize(image.size), @(image.imageOrientation));
+            return;
+        } else {// 处理图片数据
+            UIImage *image = [UIImage imageWithData:[AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer]];
+            NBULogInfo(@"Captured jpeg image: %@ of size: %@ orientation: %@", image, NSStringFromCGSize(image.size), @(image.imageOrientation));
 #else
-                                                             // Mock simulator
-                                                             _captureInProgress = NO;
-                                                             UIImage * image = _mockImage;
-                                                             NBULogInfo(@"Captured mock image: %@ of size: %@", image, NSStringFromCGSize(_mockImage.size));
+            // Mock simulator
+            _captureInProgress = NO;
+            UIImage * image = _mockImage;
+            NBULogInfo(@"Captured mock image: %@ of size: %@", image, NSStringFromCGSize(_mockImage.size));
 #endif
-                                                             // 更新最后拍摄的哪一张照片显示 Update last picture view
-                                                             if (_lastPictureImageView) {
-                                                                 //image = [image imageWithOrientationUp];//旋转到正确的方向
-                                                                 if (_animateLastPictureImageView) {
-                                                                     static UIImageView *preview;// 定义在方法体里面的static变量只能在对应的访问里面访问，变量是类变量
-                                                                     static dispatch_once_t onceToken;
-                                                                     dispatch_once(&onceToken, ^{
-                                                                         preview = [[NBURotatingImageView alloc] initWithImage:image];
-                                                                         preview.contentMode = UIViewContentModeScaleAspectFill;
-                                                                         preview.clipsToBounds = YES;
-                                                                         [self.viewController.view addSubview:preview];
-                                                                     });
-                                                                     preview.image = image;
-                                                                     preview.hidden = NO;
-                                                                     preview.frame = [self.viewController.view convertRect:self.bounds fromView:self];
+            // 更新最后拍摄的哪一张照片显示 Update last picture view
+            if (_lastPictureImageView) {
+                //image = [image imageWithOrientationUp];//旋转到正确的方向
+                if (_animateLastPictureImageView) {
+                    static UIImageView *preview;// 定义在方法体里面的static变量只能在对应的访问里面访问，变量是类变量
+                    static dispatch_once_t onceToken;
+                    dispatch_once(&onceToken, ^{
+                        preview = [[NBURotatingImageView alloc] initWithImage:image];
+                        preview.contentMode = UIViewContentModeScaleAspectFill;
+                        preview.clipsToBounds = YES;
+                        [self.viewController.view addSubview:preview];
+                    });
+                    preview.image = image;
+                    preview.hidden = NO;
+                    preview.frame = [self.viewController.view convertRect:self.bounds fromView:self];
 
-                                                                     // Update UI
-                                                                     [UIView animateWithDuration:0.2
-                                                                                           delay:0.0
-                                                                                         options:UIViewAnimationOptionCurveEaseIn
-                                                                                      animations:^{
-                                                                                          preview.frame = [self.viewController.view convertRect:_lastPictureImageView.bounds fromView:_lastPictureImageView];
-                                                                                      }
-                                                                                      completion:^(BOOL finished) {
-                                                                                          //_lastPictureImageView.image = image;
-                                                                                          _lastPictureImageView.image = [image thumbnailWithSize:_lastPictureImageView.size];
-                                                                                          preview.hidden = YES;
-                                                                                          _shootButton.enabled = YES;
+                    // Update UI
+                    [UIView animateWithDuration:0.2
+                                          delay:0.0
+                                        options:UIViewAnimationOptionCurveEaseIn
+                                     animations:^{
+                                         preview.frame = [self.viewController.view convertRect:_lastPictureImageView.bounds fromView:_lastPictureImageView];
+                                     }
+                                     completion:^(BOOL finished) {
+                                         //_lastPictureImageView.image = image;
+                                         _lastPictureImageView.image = [image thumbnailWithSize:_lastPictureImageView.size];
+                                         preview.hidden = YES;
+                                         _shootButton.enabled = YES;
 
-                                                                                      }];
-                                                                 }// End of if (_animateLastPictureImageView)
-                                                                 else {
-                                                                     //_lastPictureImageView.image = image;
-                                                                     _lastPictureImageView.image = [image thumbnailWithSize:_lastPictureImageView.size];
-                                                                     _shootButton.enabled = YES;
-                                                                 }
-                                                             }// End of if (_lastPictureImageView)
-                                                             else {
-                                                                 _shootButton.enabled = YES;
-                                                             }
+                                     }];
+                }// End of if (_animateLastPictureImageView)
+                else {
+                    //_lastPictureImageView.image = image;
+                    _lastPictureImageView.image = [image thumbnailWithSize:_lastPictureImageView.size];
+                    _shootButton.enabled = YES;
+                }
+            }// End of if (_lastPictureImageView)
+            else {
+                _shootButton.enabled = YES;
+            }
 
-                                                             // 拍照完成之后的回调方法 Execute capture block
-                                                             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-                                                                 if (_captureResultBlock) _captureResultBlock(image, nil);
-                                                             });
+            // 拍照完成之后的回调方法 Execute capture block
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+                if (_captureResultBlock) _captureResultBlock(image, nil);
+            });
 
-                                                             // 如果不保存到相册 返回 No need to save image?
-                                                             if (!_savePicturesToLibrary)
-                                                                 return;
+            // 如果不保存到相册 返回 No need to save image?
+            if (!_savePicturesToLibrary)
+                return;
 
-                                                             // Retrieve the metadata
-                                                             NSDictionary *metadata;
+            // Retrieve the metadata
+            NSDictionary *metadata;
 #if !TARGET_IPHONE_SIMULATOR
-                                                             metadata = (__bridge_transfer NSDictionary *) CMCopyDictionaryOfAttachments(kCFAllocatorDefault,
-                                                                     imageDataSampleBuffer,
-                                                                     kCMAttachmentMode_ShouldPropagate);
-                                                             NBULogVerbose(@"Image metadata: %@", metadata);
+            metadata = (__bridge_transfer NSDictionary *) CMCopyDictionaryOfAttachments(kCFAllocatorDefault, imageDataSampleBuffer, kCMAttachmentMode_ShouldPropagate);
+            NBULogVerbose(@"Image metadata: %@", metadata);
 #endif
-                                                             // 保存图片到相册
-                                                             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-                                                                 // Read metadata
-                                                                 // 保存到系统相册 Save to the Camera Roll
-                                                                 [[NBUAssetsLibrary sharedLibrary] saveImageToCameraRoll:image
-                                                                                                                metadata:metadata
-                                                                                                addToAssetsGroupWithName:_targetLibraryAlbumName
-                                                                                                             resultBlock:^(NSURL *assetURL, NSError *saveError) {
-                                                                                                                 // 保存之后的回调 Execute result block
-                                                                                                                 dispatch_async(dispatch_get_main_queue(), ^{
-                                                                                                                     if (_saveResultBlock) _saveResultBlock(image, metadata, assetURL, saveError);
-                                                                                                                 });
-                                                                                                             }];
-                                                             });
+            // 保存图片到相册
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+                // Read metadata
+                // 保存到系统相册 Save to the Camera Roll
+                [[NBUAssetsLibrary sharedLibrary] saveImageToCameraRoll:image
+                                                               metadata:metadata
+                                               addToAssetsGroupWithName:_targetLibraryAlbumName
+                                                            resultBlock:^(NSURL *assetURL, NSError *saveError) {
+                                                                // 保存之后的回调 Execute result block
+                                                                dispatch_async(dispatch_get_main_queue(), ^{
+                                                                    if (_saveResultBlock) _saveResultBlock(image, metadata, assetURL, saveError);
+                                                                });
+                                                            }];
+            });
 #if !TARGET_IPHONE_SIMULATOR
-                                                         }
-                                                     }];
+        }
+    }];
 #endif
 }// End of takePicture
 
 - (IBAction)startStopPictureSequence:(id)sender {
+    if (_captureInProgress || [self isRecording] || _focusing) {
+        return;
+    }
     if (!_capturingSequence) {
+        [_captureSession removeOutput:_captureImageOutput];
+        [_captureSession removeOutput:_captureMovieOutput];
         if (!_captureVideoDataOutput) {
             _captureVideoDataOutput = [AVCaptureVideoDataOutput new];
             _captureVideoDataOutput.videoSettings = @{(NSString *) kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA)};
@@ -802,22 +823,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 
     if (!self.recording) {
 #if !TARGET_IPHONE_SIMULATOR
-        // 拍摄视频需要进行切换之后才能进入都视频拍摄,因此这段代码移动到了切换动作中
-        /*if (!_captureMovieOutput)
-         {
-         _captureMovieOutput = [AVCaptureMovieFileOutput new];
-         }
-         
-         if ([_captureSession canAddOutput:_captureMovieOutput])
-         {
-         [_captureSession addOutput:_captureMovieOutput];
-         }
-         else
-         {
-         NBULogError(@"Can't record movies here!");
-         return;
-         }*/
-
+        // 设置输出文件名称
         if (!_targetMovieFolder) {
             _targetMovieFolder = [UIApplication sharedApplication].documentsDirectory;
         }
@@ -852,10 +858,9 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 
 #pragma mark targetResolution 目标分辨率 targetFrame CameraView的Frame属性
 
-- (void)toggleCameraType:(CGSize)targetResolution targetFrame:(CGRect)targetFrame resultBlock:(void (^)(NBUCameraOutPutType, BOOL))callback {
-    // 是否正在 拍照,拍摄
-    //self.maskViewContiner = nil;
-    if (_captureInProgress || [self isRecording]) {
+- (void)toggleCameraType:(NBUCameraOutPutType)targetOutputType targetResolution:(CGSize)targetResolution targetFrame:(CGRect)targetFrame resultBlock:(void (^)(NBUCameraOutPutType, BOOL))callback {
+    // 是否正在 拍照,拍摄,对焦
+    if (_captureInProgress || [self isRecording] || _focusing) {
         if (callback) {
             callback(_outputType, NO);
         }
@@ -872,7 +877,8 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     [queue cancelAllOperations];// 取消未执行的操作
 
     __block UIView *maskView = nil;//遮罩层
-    NBUCameraOutPutType currentOutPutType = _outputType;//保存方法调用时候的输出模式
+    // 保存将要设置的输出类型, 由于有可能在使用 _outputType 时, _outputType 被其他线程修改了
+    NBUCameraOutPutType targetOutPutType = _outputType == NBUCameraOutPutModeTypeVideo ? NBUCameraOutPutModeTypeImage : NBUCameraOutPutModeTypeVideo;
 
     dispatch_async(dispatch_get_main_queue(), ^{
         if (self.maskViewContainer) {//如果设置了切换遮罩
@@ -898,19 +904,20 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 
             _previewLayer.opacity = 0.0;//隐藏预览层
         }
+
         if (_shootButton) _shootButton.enabled = NO;
         if (_toggleCameraButton) _toggleCameraButton.enabled = NO;
         self.frame = targetFrame;//更新相机布局
         self.targetResolution = targetResolution;//更新分辨率期望值
+        _outputType = targetOutPutType;// 由于有可能这段代码执行的线程和调用方法的线程不一致,因此需要临时保存这个值
 
+        if (callback) {// 回调
+            callback(targetOutPutType, YES);
+        }
         // 更新界面UI
-        switch (currentOutPutType) {
-            case NBUCameraOutPutModeTypeImage: {//切换到视频
-                _outputType = NBUCameraOutPutModeTypeVideo;
-                // 更新UI及回调
-                if (callback) {
-                    callback(NBUCameraOutPutModeTypeVideo, YES);
-                }
+        switch (_outputType) {
+            case NBUCameraOutPutModeTypeVideo: {//切换到视频
+                // 更新UI
                 if (self.shootButton) {
                     UIButton *shootBtn = ((UIButton *) self.shootButton);
                     shootBtn.selected = NO;
@@ -921,12 +928,7 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
                 }
                 break;
             }
-            case NBUCameraOutPutModeTypeVideo: {//切换到照片
-                _outputType = NBUCameraOutPutModeTypeImage;
-                // 更新UI及回调
-                if (callback) {
-                    callback(NBUCameraOutPutModeTypeImage, YES);
-                }
+            case NBUCameraOutPutModeTypeImage: {//切换到照片
                 if (self.shootButton) {
                     UIButton *shootBtn = ((UIButton *) self.shootButton);
                     shootBtn.selected = NO;
@@ -937,77 +939,41 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
                 }
                 break;
             }
+            case NBUCameraOutPutModeTypeVideoData: {
+                break;
+            }
         }
-
     });
 
-    {
-        NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
-            // 更新相机参数
-            switch (currentOutPutType) {
-                case NBUCameraOutPutModeTypeImage: {//切换到视频
-                    // 移除图片输出
-                    [_captureSession removeOutput:_captureImageOutput];
+    NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
+        [_captureSession beginConfiguration];
+        // 更新输出
+        [self updateOutput:targetOutPutType targetResolution:targetResolution];
+        // 更新输入输出连接
+        [self updateConnection:targetOutPutType];
+        [_captureSession commitConfiguration];
+        // 更新相机参数
 
-                    // 设置新的输出
-                    if (!_captureMovieOutput) {
-                        _captureMovieOutput = [AVCaptureMovieFileOutput new];
-                        _captureMovieOutput.movieFragmentInterval = kCMTimeInvalid;
-                    }
-                    if ([_captureSession canAddOutput:_captureMovieOutput]) {
-                        [_captureSession beginConfiguration];
-                        [_captureSession setSessionPreset:[self bestSuitedSessionPresetForResolution:targetResolution]];
-                        [_captureSession addOutput:_captureMovieOutput];
-                        [_captureSession commitConfiguration];
-                    }
-
-                    // 更新连接
-                    [self updateConnection:NBUCameraOutPutModeTypeVideo];
-                    break;
-                }
-                case NBUCameraOutPutModeTypeVideo: {//切换到拍照
-                    // 移除视频输出
-                    [_captureSession removeOutput:_captureMovieOutput];
-
-                    // 设置新的输出
-                    if (!_captureImageOutput) {
-                        _captureImageOutput = [AVCaptureStillImageOutput new];
-                    }
-                    if ([_captureSession canAddOutput:_captureImageOutput]) {
-                        [_captureSession beginConfiguration];
-                        [_captureSession setSessionPreset:[self bestSuitedSessionPresetForResolution:targetResolution]];
-                        [_captureSession addOutput:_captureImageOutput];
-                        [_captureSession commitConfiguration];
-                    }
-
-                    // 更新连接
-                    [self updateConnection:NBUCameraOutPutModeTypeImage];
-                    break;
-                }
-            }// end of switch (_outputType)
-
-            // 执行完成动画
-            if (self.maskViewContainer) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [UIView animateWithDuration:0.2
-                                          delay:0
-                                        options:UIViewAnimationOptionTransitionNone | UIViewAnimationOptionAllowUserInteraction
-                                     animations:^() {
-                                         maskView.frame = targetFrame;
-                                     } completion:^(BOOL finish) {
-                                if (finish) {
-                                    if (_shootButton) _shootButton.enabled = YES;
-                                    if (_toggleCameraButton)_toggleCameraButton.enabled = YES;
-                                    _previewLayer.opacity = 1.0;
-                                    [maskView removeFromSuperview];
-                                }
+        if (self.maskViewContainer) {// 执行完成动画
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [UIView animateWithDuration:0.2
+                                      delay:0
+                                    options:UIViewAnimationOptionTransitionNone | UIViewAnimationOptionAllowUserInteraction
+                                 animations:^() {
+                                     maskView.frame = targetFrame;
+                                 } completion:^(BOOL finish) {
+                            if (finish) {
+                                if (_shootButton) _shootButton.enabled = YES;
+                                if (_toggleCameraButton)_toggleCameraButton.enabled = YES;
+                                _previewLayer.opacity = 1.0;
+                                [maskView removeFromSuperview];
                             }
-                    ];
-                });
-            }
-        }];
-        [queue addOperation:operation];
-    }
+                        }
+                ];
+            });
+        }
+    }];
+    [queue addOperation:operation];
 }
 
 - (void)animationDidStart:(CAAnimation *)anim {
@@ -1018,15 +984,82 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     _previewLayer.opacity = 1.0;
 }
 
+#pragma mark 更新输出
 
-#pragma mark 更新连接
+- (BOOL)updateOutput:(NBUCameraOutPutType)outPutType targetResolution:(CGSize)resolution {
+    switch (outPutType) {
+        case NBUCameraOutPutModeTypeImage : {//切换到拍照
+            // 移除视频输出
+            [_captureSession removeOutput:_captureMovieOutput];
+            [_captureSession removeOutput:_captureVideoDataOutput];
+
+            // 设置新的输出
+            if (!_captureImageOutput) {
+                _captureImageOutput = [AVCaptureStillImageOutput new];
+            }
+            if ([_captureSession canAddOutput:_captureImageOutput]) {
+                if (_captureSession.isRunning) {
+                    [_captureSession setSessionPreset:[self bestSuitedSessionPresetForResolution:resolution]];
+                }
+                [_captureSession addOutput:_captureImageOutput];
+            } else {
+                NBULogError(@"Can't add output: %@ to session: %@", _captureImageOutput, _captureSession);
+                return NO;
+            }
+            NBULogVerbose(@"Output: %@ settings: %@", _captureImageOutput, _captureImageOutput.outputSettings);
+            break;
+        }
+        case NBUCameraOutPutModeTypeVideo : {//切换到视频
+            // 移除图片输出
+            [_captureSession removeOutput:_captureImageOutput];
+            [_captureSession removeOutput:_captureVideoDataOutput];
+
+            // 设置新的输出
+            if (!_captureMovieOutput) {
+                _captureMovieOutput = [AVCaptureMovieFileOutput new];
+                _captureMovieOutput.movieFragmentInterval = kCMTimeInvalid;
+            }
+            if ([_captureSession canAddOutput:_captureMovieOutput]) {
+                if (_captureSession.isRunning) {
+                    [_captureSession setSessionPreset:[self bestSuitedSessionPresetForResolution:resolution]];
+                }
+                [_captureSession addOutput:_captureMovieOutput];
+            } else {
+                NBULogError(@"Can't add output: %@ to session: %@", _captureMovieOutput, _captureSession);
+                return NO;
+            }
+            NBULogVerbose(@"Output: %@ settings: %@", _captureMovieOutput, @"empty");
+            break;
+        }
+        case NBUCameraOutPutModeTypeVideoData: {
+            return NO;
+            break;
+        }
+    }
+    return YES;
+}
+
+#pragma mark 更新输入输出连接
 
 - (void)updateConnection:(NBUCameraOutPutType)outPutType {
     // 更新_captureConnection
-    // NSDate *tmpStartData = [NSDate date];
-
     _captureConnection = nil;
-    NSArray *connections = outPutType == NBUCameraOutPutModeTypeImage ? _captureImageOutput.connections : _captureMovieOutput.connections;
+    // 修改为根据当前的输出模式来获取
+    NSArray *connections;
+    switch (outPutType) {
+        case NBUCameraOutPutModeTypeImage: {
+            connections = _captureImageOutput.connections;
+            break;
+        }
+        case NBUCameraOutPutModeTypeVideo: {
+            connections = _captureMovieOutput.connections;
+            break;
+        }
+        case NBUCameraOutPutModeTypeVideoData: {
+            connections = _captureVideoDataOutput.connections;
+            break;
+        }
+    }
     for (AVCaptureConnection *connection in connections) {
         for (AVCaptureInputPort *port in connection.inputPorts) {
             if ([port.mediaType isEqualToString:AVMediaTypeVideo]) {
@@ -1043,8 +1076,9 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
             break;
         }
     }
-
-    // NBULogInfo(@"更新连接执行时间 = %f", [[NSDate date] timeIntervalSinceDate:tmpStartData]);
+    if (!_captureConnection) {
+        NBULogError(@"Couldn't create video connection for output: %@", _captureImageOutput);
+    }
 }
 
 
@@ -1140,8 +1174,8 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 }
 
 - (void)toggleFlashMode:(id)sender {
-    self.currentFlashMode = [[_availableFlashModes objectAfter:@(self.currentFlashMode)
-                                                          wrap:YES] integerValue];
+    self.currentFlashMode = (AVCaptureFlashMode) [[_availableFlashModes objectAfter:@(self.currentFlashMode)
+                                                                               wrap:YES] integerValue];
 }
 
 #pragma mark - 对焦模式
@@ -1159,8 +1193,8 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 }
 
 - (void)toggleFocusMode:(id)sender {
-    self.currentFocusMode = [[_availableFocusModes objectAfter:@(self.currentFocusMode)
-                                                          wrap:YES] integerValue];
+    self.currentFocusMode = (AVCaptureFocusMode) [[_availableFocusModes objectAfter:@(self.currentFocusMode)
+                                                                               wrap:YES] integerValue];
 }
 
 #pragma mark - 曝光模式
@@ -1178,8 +1212,8 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 }
 
 - (void)toggleExposureMode:(id)sender {
-    self.currentExposureMode = [[_availableExposureModes objectAfter:@(self.currentExposureMode)
-                                                                wrap:YES] integerValue];
+    self.currentExposureMode = (AVCaptureExposureMode) [[_availableExposureModes objectAfter:@(self.currentExposureMode)
+                                                                                        wrap:YES] integerValue];
 }
 
 
@@ -1198,8 +1232,8 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 }
 
 - (void)toggleWhiteBalanceMode:(id)sender {
-    self.currentWhiteBalanceMode = [[_availableWhiteBalanceModes objectAfter:@(self.currentWhiteBalanceMode)
-                                                                        wrap:YES] integerValue];
+    self.currentWhiteBalanceMode = (AVCaptureWhiteBalanceMode) [[_availableWhiteBalanceModes objectAfter:@(self.currentWhiteBalanceMode)
+                                                                                                    wrap:YES] integerValue];
 }
 
 #pragma mark - 手势 Gestures
@@ -1207,11 +1241,12 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 - (void)tapped:(UITapGestureRecognizer *)sender {
     if (!_captureDevice || ![sender isKindOfClass:[UITapGestureRecognizer class]])
         return;
-    if (_shootAfterFocus) {// 对焦后拍摄才做这个处理
+    if (_shootAfterFocus && _outputType == NBUCameraOutPutModeTypeImage) {// 对焦后拍摄才做这个处理
         if (_focusing || _captureInProgress) {// 如果正在对焦,或正在拍摄
             return;
         }
         _focusing = YES;
+        _canTake = YES;
     }
 
     [super tapped:sender];

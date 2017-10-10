@@ -50,7 +50,7 @@
                            cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{
                            }]
                            otherButtonItems:[RIButtonItem itemWithLabel:@"确定" action:^{
-                               if (_action == 1) {//1:导出选中项 2: 导出指定索引
+                               if (_action == 1) {// 1:移动选中项 2: 移动指定索引
                                    [weakPhotoBrowser.delegate photoBrowser:weakPhotoBrowser moveSelectedToAlbum:group.name];
                                } else if (_action == 2) {
                                    [weakPhotoBrowser.delegate photoBrowser:weakPhotoBrowser moveAtIndex:weakPhotoBrowser.currentIndex toAlbum:group.name];
