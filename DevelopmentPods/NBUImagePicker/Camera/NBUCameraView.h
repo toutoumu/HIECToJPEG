@@ -151,6 +151,11 @@ typedef NS_ENUM(NSInteger, NBUCameraOutPutType)
 /// 可用的相机(前置,后置) @see [AVCaptureDevice uniqueID].
 @property (strong, nonatomic, readonly) NSArray * availableCaptureDevices;
 
+/**
+ * 可用的相机采集类型,图片,视频,序列
+ */
+@property (strong, nonatomic, readonly) NSArray * availableCameraOutTypes;
+
 /// The current capture device's uniqueID.
 /// @discussion Changing the current device refreshes the availableFlashModes, availableFocusModes,
 /// 当前使用的相机(前置|后置) availableExposureModes and availableWhiteBalanceModes.

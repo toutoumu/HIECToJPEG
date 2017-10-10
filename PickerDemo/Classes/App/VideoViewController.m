@@ -10,17 +10,8 @@
 
 @implementation VideoViewController {
     CGRect _cameraFrame;
-    NSArray *_outTypes;
     UISwipeGestureRecognizer *_leftGestureRecognizer;
     UISwipeGestureRecognizer *_rightGestureRecognizer;
-}
-
-- (instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-        _outTypes = [NSArray arrayWithArray:@[@(NBUCameraOutPutModeTypeVideoData), @(NBUCameraOutPutModeTypeVideo), @( NBUCameraOutPutModeTypeImage)]];
-    }
-    return self;
 }
 
 - (void)viewDidLoad {
@@ -134,6 +125,7 @@
 
 - (void)toggle:(NSInteger)type {
     NBUCameraOutPutType targetOutputType = NBUCameraOutPutModeTypeImage;
+    NSArray *_outTypes = self.cameraView.availableCameraOutTypes;
     if (type == UISwipeGestureRecognizerDirectionRight) {//向右滑动
         targetOutputType = (NBUCameraOutPutType) [[_outTypes objectBefore:@(self.cameraView.currentOutPutType)
                                                                      wrap:YES] integerValue];
