@@ -311,8 +311,8 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 }
 
 // Release any retained subviews of the main view.
-// 这个方法过时了怎么处理
-- (void)viewDidUnload1 {
+// 这个方法过时了怎么处理,据说这些都不需要进行处理了
+- (void)viewDidUnload {
     _currentPageIndex = 0;
     _pagingScrollView = nil;
     _visiblePages = nil;
@@ -321,7 +321,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _previousButton = nil;
     _nextButton = nil;
     _progressHUD = nil;
-    //[super viewDidUnload];
+    [super viewDidUnload];
 }
 
 - (BOOL)presentingViewControllerPrefersStatusBarHidden {
@@ -416,7 +416,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
-    // 开启滑动返回
+    // 启用 iOS7 返回手势
     if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
         //self.navigationController.interactivePopGestureRecognizer.enabled = YES;
     }
@@ -1769,6 +1769,11 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 #pragma mark 返回按钮事件监听
 
 - (BOOL)navigationShouldPopOnBackButton {//在这个方法里写返回按钮的事件处理
+    // 如果当前是单张图片浏览,回到Grid模式
+    if (_enableGrid && _gridController == nil){
+        [self showGridAnimated];
+        return NO;
+    }
     if ([_delegate isReturn:self]) {
         return YES;
     }

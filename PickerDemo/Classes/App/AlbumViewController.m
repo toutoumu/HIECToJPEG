@@ -65,7 +65,7 @@
             browser.displayNavArrows = YES;//翻页箭头
             browser.displaySelectionButtons = NO;//是否显示选择按钮
             browser.alwaysShowControls = NO;//是否总是显示底部工具条
-            browser.zoomPhotosToFill = YES;
+            browser.zoomPhotosToFill = NO;
             browser.enableGrid = YES;//启用网格列表
             browser.startOnGrid = YES;//从网格列表显示
             browser.enableSwipeToDismiss = YES;
