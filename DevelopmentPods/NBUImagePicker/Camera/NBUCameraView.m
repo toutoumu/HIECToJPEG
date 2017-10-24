@@ -909,7 +909,7 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 
             // 生成遮罩层 --- 这里需要判断设备是否支持模糊效果 http://stackoverflow.com/a/29997626/2269387
             CGRect maskFrame = self.frame;
-            UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular];
+            UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
             UIView *tempView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
             tempView.frame = CGRectMake(0, 0, maskFrame.size.width, maskFrame.size.height);// 遮罩层必须填充满整个CameraView
             [self insertSubview:tempView atIndex:(NSInteger) ([_previewLayer zPosition] + 1)];

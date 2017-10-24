@@ -12,10 +12,10 @@
 #import "MWCommon.h"
 
 @interface MWGridViewController () {
-    
+
     // Store margins for current setup
     CGFloat _margin, _gutter, _marginL, _gutterL, _columns, _columnsL;
-    
+
 }
 
 @end
@@ -24,12 +24,12 @@
 
 - (id)init {
     if ((self = [super initWithCollectionViewLayout:[UICollectionViewFlowLayout new]])) {
-        
+
         // Defaults
         _columns = 3, _columnsL = 4;
         _margin = 0, _gutter = 1;
         _marginL = 0, _gutterL = 1;
-        
+
         // For pixel perfection...
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
             // iPad
@@ -49,7 +49,7 @@
         }
 
         _initialContentOffset = CGPointMake(0, CGFLOAT_MAX);
- 
+
     }
     return self;
 }
@@ -84,13 +84,13 @@
 }
 
 - (void)adjustOffsetsAsRequired {
-    
+
     // Move to previous content offset
     if (_initialContentOffset.y != CGFLOAT_MAX) {
         self.collectionView.contentOffset = _initialContentOffset;
         [self.collectionView layoutIfNeeded]; // Layout after content offset change
     }
-    
+
     // Check if current item is visible and if not, make it so!
     if (_browser.numberOfPhotos > 0) {
         NSIndexPath *currentPhotoIndexPath = [NSIndexPath indexPathForItem:_browser.currentIndex inSection:0];
@@ -106,12 +106,18 @@
             [self.collectionView scrollToItemAtIndexPath:currentPhotoIndexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
         }
     }
-    
+
 }
 
 - (void)performLayout {
     UINavigationBar *navBar = self.navigationController.navigationBar;
     self.collectionView.contentInset = UIEdgeInsetsMake(navBar.frame.origin.y + navBar.frame.size.height + [self getGutter], 0, 0, 0);
+    // 兼容IOS11
+    if (@available(iOS 11.0, *)) {
+        self.collectionView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+        self.collectionView.contentInset = UIEdgeInsetsMake(navBar.frame.origin.y + navBar.frame.size.height + [self getGutter], 0, 0, 0);
+        self.collectionView.scrollIndicatorInsets = self.collectionView.contentInset;
+    }
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
