@@ -1769,6 +1769,11 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 #pragma mark 返回按钮事件监听
 
 - (BOOL)navigationShouldPopOnBackButton {//在这个方法里写返回按钮的事件处理
+    // 如果没有数据直接允许返回
+    if ([_delegate numberOfPhotosInPhotoBrowser:self] == 0){
+        return YES;
+    }
+
     // 如果当前是单张图片浏览,回到Grid模式
     if (_enableGrid && _gridController == nil){
         [self showGridAnimated];

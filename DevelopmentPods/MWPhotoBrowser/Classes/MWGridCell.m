@@ -62,7 +62,7 @@
          UIControlEventTouchDown];
         _selectedButton.frame = CGRectMake(0, 0, 44, 44);*/
 
-        //S替换点击事件,并添加双击事件
+        //S************替换点击事件,并添加双击事件************
         _tapButton = [UIButton buttonWithType:UIButtonTypeCustom];
         UIColor * tintColor = [UIColor colorWithRed:76.0/255.0 green:19.0/255.0 blue:136.0/255.0 alpha:0.0];
         _tapButton.backgroundColor = tintColor;
@@ -77,18 +77,18 @@
         [_tapButton addGestureRecognizer:singleRecognizer];
         
         // 双击的 Recognizer
-        UITapGestureRecognizer* doubleRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DoubleTap:)];
+        /*UITapGestureRecognizer* doubleRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DoubleTap:)];
         doubleRecognizer.numberOfTapsRequired = 2; // 双击
         //关键语句，给self.view添加一个手势监测；
         [_tapButton addGestureRecognizer:doubleRecognizer];
         // 关键在这一行，双击手势确定监测失败才会触发单击手势的相应操作
-        [singleRecognizer requireGestureRecognizerToFail:doubleRecognizer];
+        [singleRecognizer requireGestureRecognizerToFail:doubleRecognizer];*/
         ////E单击双击事件
         
         // 调整了图片大小
         _selectedButton.frame = self.bounds;//CGRectMake(0, 0, 84, 84);
         _tapButton.hidden = YES;
-        //E替换点击事件,并添加双击事件
+        //************E替换点击事件,并添加双击事件************
         
         _selectedButton.hidden = YES;
         [self addSubview:_selectedButton];

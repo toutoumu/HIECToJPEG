@@ -418,7 +418,7 @@
         [self refreshDirectoryContents];
         if (_directoryContents.count > 0) {
 
-            NSURL *posterFileURL = _directoryContents[_directoryContents.count - 1];
+            NSURL *posterFileURL = _directoryContents[0];
             //if ([posterFileURL.path hasSuffix:@"mov"]) {
             // 修改为全部取缩略图
             posterFileURL = [[NSURL alloc] initFileURLWithPath:[[directoryURL.path stringByAppendingPathComponent:NBUFileAsset.thumbnailDir] stringByAppendingPathComponent:posterFileURL.path.lastPathComponent]];
@@ -440,9 +440,23 @@
     return self;
 }
 
+/**
+ * 刷新数据 是否反序(新数据在第一位)
+ */
 - (void)refreshDirectoryContents {
-    _directoryContents = [[NSFileManager defaultManager] URLsForFilesWithExtensions:kNBUImageFileExtensions
-                                                              searchInDirectoryURLs:@[_URL]];
+    if (_directoryContents != nil && _directoryContents.count > 0){
+        return;
+    }
+    NSArray *dirs = [[NSFileManager defaultManager] URLsForFilesWithExtensions:kNBUImageFileExtensions
+                                                         searchInDirectoryURLs:@[_URL]];
+    // ios 11版本返回的数据是无序的,所以需要排序
+    if (@available(iOS 11.0, *)) {
+        _directoryContents = [dirs sortedArrayUsingComparator:^(NSURL *obj1, NSURL *obj2) {
+            return [obj2.lastPathComponent compare:obj1.lastPathComponent];
+        }];
+    } else {
+        _directoryContents = dirs.reverseObjectEnumerator.allObjects;
+    }
 }
 
 - (NSUInteger)assetsCount {
@@ -469,7 +483,7 @@
     [self refreshDirectoryContents];
 
     // Adjust order and indexes (if any)
-    NSArray *contents = reverseOrder ? _directoryContents.reverseObjectEnumerator.allObjects : _directoryContents;
+    NSArray *contents = !reverseOrder ? _directoryContents.reverseObjectEnumerator.allObjects : _directoryContents;
     if (indexSet) {
         contents = [contents objectsAtIndexes:indexSet];
     }

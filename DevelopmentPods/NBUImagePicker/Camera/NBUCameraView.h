@@ -24,6 +24,7 @@
 @protocol UIButton;
 
 /// block宏定义 NBUCameraView blocks.
+typedef void (^NBUCaptureSuccess)();
 typedef void (^NBUCapturePictureResultBlock)(UIImage * image,
                                              NSError * error);
 typedef void (^NBUSavePictureResultBlock)(UIImage * image,
@@ -87,6 +88,7 @@ typedef NS_ENUM(NSInteger, NBUCameraOutPutType)
 - (void)setInterfaceOrientation:(UIInterfaceOrientation)orientation;
 #pragma mark - Picture Properties
 /// 图片拍摄相关的属性 @name Picture Properties
+@property (nonatomic, copy)             NBUCaptureSuccess captureSuccess;
 
 /// 拍摄完成之后(未保存)的回调,非UI线程 和 Sequence 共用一个回调 block The block to be called immediately after capturing the picture.
 @property (nonatomic, copy)             NBUCapturePictureResultBlock captureResultBlock;

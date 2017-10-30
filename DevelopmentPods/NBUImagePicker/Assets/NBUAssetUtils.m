@@ -106,14 +106,14 @@ static NSString *_documentsDirectory;
     [self encryptImage:image toPath:fullName withPwd:fileName];
 
     //预览图
-    UIImage *fullScreenImage = [image imageDonwsizedToFill:[NBUFileAsset fullScreenSize]];//预览图图片对象
+    UIImage *fullScreenImage = [image imageDonwsizedToFit:[NBUFileAsset fullScreenSize]];//预览图图片对象
     NSString *fullScreenDir = [albumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];//预览图文件夹 相册名+预览图文件夹名称
     fullName = [fullScreenDir stringByAppendingPathComponent:fileName];//预览图全路径文件名
     //[fullScreenImage writeToFile:fullName];
     [self encryptImage:fullScreenImage toPath:fullName withPwd:fileName];
 
-    //缩略图
-    UIImage *thumbImage = [fullScreenImage thumbnailWithSize:[NBUFileAsset thumbnailSize]];
+    //缩略图,由于thumbnailWithSize需要的尺寸是point值所以传thumbnailSizeNoScale
+    UIImage *thumbImage = [fullScreenImage thumbnailWithSize:[NBUFileAsset thumbnailSizeNoScale]];
     NSString *thumbPath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
     fullName = [thumbPath stringByAppendingPathComponent:fileName];
     //[thumbImage writeToFile:fullName];
@@ -129,14 +129,14 @@ static NSString *_documentsDirectory;
     NSString *fullName; //临时存储保存的文件全路径名称
 
     //预览图
-    UIImage *fullScreenImage = [image imageDonwsizedToFill:[NBUFileAsset fullScreenSize]];//预览图图片对象
+    UIImage *fullScreenImage = [image imageDonwsizedToFit:[NBUFileAsset fullScreenSize]];//预览图图片对象
     NSString *fullScreenDir = [albumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];//预览图文件夹 相册名+预览图文件夹名称
     fullName = [fullScreenDir stringByAppendingPathComponent:fileName];//预览图全路径文件名
     //[fullScreenImage writeToFile:fullName];
     [self encryptImage:fullScreenImage toPath:fullName withPwd:fileName];
 
-    //缩略图
-    UIImage *thumbImage = [fullScreenImage thumbnailWithSize:[NBUFileAsset thumbnailSize]];
+    //缩略图,由于thumbnailWithSize需要的尺寸是point值所以传thumbnailSizeNoScale
+    UIImage *thumbImage = [fullScreenImage thumbnailWithSize:[NBUFileAsset thumbnailSizeNoScale]];
     NSString *thumbPath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
     fullName = [thumbPath stringByAppendingPathComponent:fileName];
     //[thumbImage writeToFile:fullName];

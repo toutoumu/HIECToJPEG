@@ -52,6 +52,7 @@
 #pragma mark - 文件访问基类的实现
 static CGFloat _scale;
 static CGSize _thumbnailSize;
+static CGSize _thumbnailSizeNoScale;
 static CGSize _fullScreenSize;
 
 @implementation NBUAsset
@@ -60,10 +61,10 @@ static CGSize _fullScreenSize;
  */
 + (void)initialize {
     _scale = [UIScreen mainScreen].scale;
-    _fullScreenSize = [[UIScreen mainScreen] bounds].size;
-    _fullScreenSize = CGSizeMake(_fullScreenSize.width * _scale, _fullScreenSize.height * _scale);
-    _thumbnailSize = CGSizeMake(_fullScreenSize.width / 3, _fullScreenSize.width / 3);
-
+    CGSize screenSize = [[UIScreen mainScreen] bounds].size;
+    _thumbnailSizeNoScale = CGSizeMake(screenSize.width / 3, screenSize.width / 3);
+    _thumbnailSize = CGSizeMake(screenSize.width * _scale / 3, screenSize.width * _scale / 3);
+    _fullScreenSize = CGSizeMake(screenSize.width * _scale, screenSize.height * _scale);
 }
 
 + (CGFloat)scale {
@@ -72,6 +73,10 @@ static CGSize _fullScreenSize;
 
 + (CGSize)thumbnailSize {
     return _thumbnailSize;
+}
+
++ (CGSize)thumbnailSizeNoScale {
+    return _thumbnailSizeNoScale;
 }
 
 + (CGSize)fullScreenSize {

@@ -36,7 +36,7 @@
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index selectedChanged:(BOOL)selected;
 - (void)photoBrowserDidFinishModalPresentation:(MWPhotoBrowser *)photoBrowser;
 
-#pragma mark 是否退出图片浏览器
+#pragma mark 是否可以退出图片浏览器,如果有选择项,(NO)不可以
 - (BOOL)isReturn:(MWPhotoBrowser *)photoBrowser;
 
 /**

@@ -48,13 +48,19 @@ typedef NS_ENUM(NSUInteger, NBUAssetOrientation) {
 + (CGFloat)scale;
 
 /**
- * 缩略图尺寸
+ * 缩略图尺寸(像素值)
  * @return
  */
 + (CGSize)thumbnailSize;
 
 /**
- * 全屏图片尺寸
+ * 缩略图尺寸(Point值没有*scale)
+ * @return
+ */
++ (CGSize)thumbnailSizeNoScale;
+
+/**
+ * 全屏图片尺寸(像素值)
  * @return
  */
 + (CGSize)fullScreenSize;

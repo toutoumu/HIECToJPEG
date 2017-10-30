@@ -234,38 +234,6 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
-            timestampString = "529318663.963148"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "617"
-            endingLineNumber = "617"
-            landmarkName = "-takePicture:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
-            timestampString = "529318663.963486"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "627"
-            endingLineNumber = "627"
-            landmarkName = "-takePicture:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
             timestampString = "529318663.963779"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
@@ -288,54 +256,6 @@
             startingLineNumber = "989"
             endingLineNumber = "989"
             landmarkName = "-toggleCameraType:targetResolution:targetFrame:resultBlock:"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__75-[NBUCameraView toggleCameraType:targetResolution:targetFrame:resultBlock:]_block_invoke_2"
-                  moduleName = "PickerDemo"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/apple/WorkSpace/XCode/NBUImagePicker/NBUImagePicker/DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
-                  timestampString = "530525015.859702"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "989"
-                  endingLineNumber = "989"
-                  offsetFromSymbolStart = "80">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__75-[NBUCameraView toggleCameraType:targetResolution:targetFrame:resultBlock:]_block_invoke_3"
-                  moduleName = "PickerDemo"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/apple/WorkSpace/XCode/NBUImagePicker/NBUImagePicker/DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
-                  timestampString = "530525015.861771"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "989"
-                  endingLineNumber = "989"
-                  offsetFromSymbolStart = "19">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "DevelopmentPods/MWPhotoBrowser/Classes/MWZoomingScrollView.m"
-            timestampString = "530525823.398586"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "314"
-            endingLineNumber = "314"
-            landmarkName = "-layoutSubviews"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

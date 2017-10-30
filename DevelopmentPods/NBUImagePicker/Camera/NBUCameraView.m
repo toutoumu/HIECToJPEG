@@ -84,7 +84,7 @@
     self.highlightColor = [UIColor colorWithWhite:1.0 alpha:0.7];//高亮颜色
     self.animateLastPictureImageView = YES;//拍照时最后一张相片是否显示动画效果
 
-    _availableCameraOutTypes =[NSArray arrayWithArray:@[@(NBUCameraOutPutModeTypeVideoData), @(NBUCameraOutPutModeTypeVideo), @( NBUCameraOutPutModeTypeImage)]];
+    _availableCameraOutTypes = [NSArray arrayWithArray:@[@(NBUCameraOutPutModeTypeVideoData), @(NBUCameraOutPutModeTypeVideo), @( NBUCameraOutPutModeTypeImage)]];
 
 
     _poiView = [PointOfInterestView new];// 点击位置(对焦区域)指示器 PoI view
@@ -591,7 +591,7 @@
 
 - (void)takePicture:(id)sender {
     NBULogTrace();
-
+    NSDate *tmpStartData = [NSDate date];
     // 如果不允许访问相机返回
     if (self.userDeniedAccess || self.restrictedAccess) {
         NBULogWarn(@"%@ Aborted, camera access denied.", THIS_METHOD);
@@ -606,6 +606,7 @@
 
     // 当拍照太快,在前端设置拍照间隔为n秒,等待数据处理完成之后再执行拍照 Skip capture?
     if ([[NSDate date] timeIntervalSinceDate:_lastSequenceCaptureDate] < _sequenceCaptureInterval) {
+        NBULogWarn(@"%@ %@ Ignored as a capture is already in progress.", THIS_METHOD, @"按得太快");
         return;
     }
     _sequenceCaptureInterval = 0.25; //最小拍照间隔恢复为默认值
@@ -743,6 +744,11 @@
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
                 if (_captureResultBlock) _captureResultBlock(image, nil);
             });
+
+            if (_captureSuccess) {//震动
+                _captureSuccess();
+            }
+            NBULogInfo(@"执行时间 = %f",  [[NSDate date] timeIntervalSinceDate:tmpStartData]);
 
             // 如果不保存到相册 返回 No need to save image?
             if (!_savePicturesToLibrary)

@@ -32,10 +32,17 @@
         // 初始化震动配置
         _vibeDictionary = [NSMutableDictionary dictionary];
         NSMutableArray *array = [NSMutableArray array];
-        [array addObject:@YES];
-        [array addObject:@30];//震动时长
-        _vibeDictionary[@"VibePattern"] = array;
-        _vibeDictionary[@"Intensity"] = @1.0F;// 震动强度
+        if (@available(iOS 11.0, *)) {
+            [array addObject:@YES];
+            [array addObject:@10];//震动时长
+            _vibeDictionary[@"VibePattern"] = array;
+            _vibeDictionary[@"Intensity"] = @0.5F;// 震动强度
+        } else {
+            [array addObject:@YES];
+            [array addObject:@30];//震动时长
+            _vibeDictionary[@"VibePattern"] = array;
+            _vibeDictionary[@"Intensity"] = @1.0F;// 震动强度
+        }
     }
     return self;
 }
@@ -56,11 +63,13 @@
     self.cameraView.shootAfterFocus = NO;// 是否对焦后拍摄
     self.cameraView.showPreviewLayer = NO;// 是否显示预览图层
     self.cameraView.animateLastPictureImageView = NO;//最后一张图片不需要动画
+    self.cameraView.captureSuccess = ^{// 震动
+        AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, _vibeDictionary);
+    };
     // 拍摄完成后的回调,注意这里是非ui线程
     self.cameraView.captureResultBlock = ^(UIImage *image, NSError *error) {
         if (!error) {
             _clickCount = 0;
-            AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, _vibeDictionary);// 震动
             [NBUAssetUtils saveImage:image toAlubm:_albumName];
         }
     };
