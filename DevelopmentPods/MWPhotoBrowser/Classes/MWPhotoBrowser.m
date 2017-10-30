@@ -388,6 +388,9 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
 
     // Layout
+    if (@available(iOS 11.0, *)) {
+        [self layoutVisiblePages];
+    }
     [self.view setNeedsLayout];
 
 }
@@ -511,7 +514,12 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
-    [self layoutVisiblePages];
+    // https://github.com/mwaterfall/MWPhotoBrowser/issues/620
+    if (@available(iOS 11.0, *)) {
+        // do nothing
+    }else{
+        [self layoutVisiblePages];
+    }
 }
 
 - (void)layoutVisiblePages {
@@ -1461,8 +1469,8 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [self cancelControlHiding];
 
     // Animations & positions
-    CGFloat animatonOffset = 20;
-    CGFloat animationDuration = (animated ? 0.35 : 0);
+    CGFloat animationOffset = 20;
+    CGFloat animationDuration = (animated ? 0.35f : 0);
 
     // Status bar
     if (!_leaveStatusBarAlone) {
@@ -1491,7 +1499,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     if ([self areControlsHidden] && !hidden && animated) {
 
         // Toolbar
-        _toolbar.frame = CGRectOffset([self frameForToolbarAtOrientation:self.interfaceOrientation], 0, animatonOffset);
+        _toolbar.frame = CGRectOffset([self frameForToolbarAtOrientation:self.interfaceOrientation], 0, animationOffset);
 
         // Captions
         for (MWZoomingScrollView *page in _visiblePages) {
@@ -1500,7 +1508,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
                 // Pass any index, all we're interested in is the Y
                 CGRect captionFrame = [self frameForCaptionView:v atIndex:0];
                 captionFrame.origin.x = v.frame.origin.x; // Reset X
-                v.frame = CGRectOffset(captionFrame, 0, animatonOffset);
+                v.frame = CGRectOffset(captionFrame, 0, animationOffset);
             }
         }
 
@@ -1519,7 +1527,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
             _toolbar.alpha = 0;
         } else {
             _toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
-            if (hidden) _toolbar.frame = CGRectOffset(_toolbar.frame, 0, animatonOffset);
+            if (hidden) _toolbar.frame = CGRectOffset(_toolbar.frame, 0, animationOffset);
             _toolbar.alpha = alpha;
         }
 
@@ -1530,7 +1538,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
                 // Pass any index, all we're interested in is the Y
                 CGRect captionFrame = [self frameForCaptionView:v atIndex:0];
                 captionFrame.origin.x = v.frame.origin.x; // Reset X
-                if (hidden) captionFrame = CGRectOffset(captionFrame, 0, animatonOffset);
+                if (hidden) captionFrame = CGRectOffset(captionFrame, 0, animationOffset);
                 v.frame = captionFrame;
                 v.alpha = alpha;
             }

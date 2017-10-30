@@ -31,7 +31,9 @@
 
 - (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser {
     if ((self = [super init])) {
-        
+        if (@available(iOS 11.0, *)) {//解决ios11,图片放大后点击图片会造成图片偏移
+            self.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+        }
         // Setup
         _index = NSUIntegerMax;
         _photoBrowser = browser;
