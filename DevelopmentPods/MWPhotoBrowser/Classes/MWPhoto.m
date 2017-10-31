@@ -200,7 +200,7 @@
         // Check what type of url it is
         if ([[[_photoURL scheme] lowercaseString] isEqualToString:@"assets-library"]) {
             
-            // Load from assets library
+            // Load from ALAssetsLibrary
             [self _performLoadUnderlyingImageAndNotifyWithAssetsLibraryURL: _photoURL];
             
         }
@@ -218,12 +218,12 @@
         }
         
     } else if(_alAsset){
-        // Load from photos asset
+        // Load from ALAsset
         [self _performLoadUnderlyingImageAndNotifyWithAssetsLibraryAlAsset: _alAsset];
         
     }else if (_asset) {
         
-        // Load from photos asset
+        // Load from PHAsset
         [self _performLoadUnderlyingImageAndNotifyWithAsset: _asset targetSize:_assetTargetSize];
         
     } else {
@@ -278,7 +278,6 @@
                     if (inData != nil){
                         NSString *pwd = url.lastPathComponent;
                         NSData *outData = [RNDecryptor decryptData:inData withSettings:kRNCryptorAES256Settings password:pwd error:&error];
-                        //NSData *outData = [RNDecryptor decryptData:inData withSettings:kRNCryptorAES256Settings password:[NBUAssetUtils getPassword] error:&error];
                         self.underlyingImage = [UIImage imageWithData:outData];
                     }
                 }

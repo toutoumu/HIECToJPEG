@@ -1730,27 +1730,27 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 }
 
 - (void)showProgressHUDWithMessage:(NSString *)message {
-    self.progressHUD.labelText = message;
+    self.progressHUD.label.text = message;
     self.progressHUD.mode = MBProgressHUDModeIndeterminate;
-    [self.progressHUD show:YES];
+    [self.progressHUD showAnimated:YES];
     self.fd_interactivePopDisabled = YES;
     self.navigationController.navigationBar.userInteractionEnabled = NO;
 }
 
 - (void)hideProgressHUD:(BOOL)animated {
-    [self.progressHUD hide:animated];
+    [self.progressHUD hideAnimated:animated];
     self.fd_interactivePopDisabled = NO;
     self.navigationController.navigationBar.userInteractionEnabled = YES;
 }
 
 - (void)showProgressHUDCompleteMessage:(NSString *)message {
     if (message) {
-        if (self.progressHUD.isHidden) [self.progressHUD show:YES];
-        self.progressHUD.labelText = message;
+        if (self.progressHUD.isHidden) [self.progressHUD showAnimated:YES];
+        self.progressHUD.label.text  = message;
         self.progressHUD.mode = MBProgressHUDModeCustomView;
-        [self.progressHUD hide:YES afterDelay:0.6];
+        [self.progressHUD hideAnimated:YES afterDelay:0.6];
     } else {
-        [self.progressHUD hide:YES];
+        [self.progressHUD hideAnimated:YES];
     }
     //这里修改了,为了解决删除文件时候,右滑返回,会在弹窗时候可用
     //self.fd_interactivePopDisabled = NO;
@@ -1769,7 +1769,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 - (void)setProgressMessage:(NSString *)message {
     if (message) {
         if (_progressHUD != nil && !_progressHUD.isHidden) {
-            self.progressHUD.labelText = message;
+            self.progressHUD.label.text = message;
         }
     }
 }

@@ -15,6 +15,7 @@
 
 // Document目录路径
 static NSString *_documentsDirectory;
+
 @implementation NBUAssetUtils
 
 + (void)initialize {
@@ -103,21 +104,21 @@ static NSString *_documentsDirectory;
     //原图
     fullName = [albumPath stringByAppendingPathComponent:fileName];// 相册名+文件名
     //[image writeToFile:fullName];
-    [self encryptImage:image toPath:fullName withPwd:fileName];
+    [self encryptImage:image imageType:0 toPath:fullName withPwd:fileName];
 
     //预览图
     UIImage *fullScreenImage = [image imageDonwsizedToFit:[NBUFileAsset fullScreenSize]];//预览图图片对象
     NSString *fullScreenDir = [albumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];//预览图文件夹 相册名+预览图文件夹名称
     fullName = [fullScreenDir stringByAppendingPathComponent:fileName];//预览图全路径文件名
     //[fullScreenImage writeToFile:fullName];
-    [self encryptImage:fullScreenImage toPath:fullName withPwd:fileName];
+    [self encryptImage:fullScreenImage imageType:1 toPath:fullName withPwd:fileName];
 
     //缩略图,由于thumbnailWithSize需要的尺寸是point值所以传thumbnailSizeNoScale
     UIImage *thumbImage = [fullScreenImage thumbnailWithSize:[NBUFileAsset thumbnailSizeNoScale]];
     NSString *thumbPath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
     fullName = [thumbPath stringByAppendingPathComponent:fileName];
     //[thumbImage writeToFile:fullName];
-    [self encryptImage:thumbImage toPath:fullName withPwd:fileName];
+    [self encryptImage:thumbImage imageType:2 toPath:fullName withPwd:fileName];
 
     return YES;
 }
@@ -133,14 +134,14 @@ static NSString *_documentsDirectory;
     NSString *fullScreenDir = [albumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];//预览图文件夹 相册名+预览图文件夹名称
     fullName = [fullScreenDir stringByAppendingPathComponent:fileName];//预览图全路径文件名
     //[fullScreenImage writeToFile:fullName];
-    [self encryptImage:fullScreenImage toPath:fullName withPwd:fileName];
+    [self encryptImage:fullScreenImage imageType:1 toPath:fullName withPwd:fileName];
 
     //缩略图,由于thumbnailWithSize需要的尺寸是point值所以传thumbnailSizeNoScale
     UIImage *thumbImage = [fullScreenImage thumbnailWithSize:[NBUFileAsset thumbnailSizeNoScale]];
     NSString *thumbPath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
     fullName = [thumbPath stringByAppendingPathComponent:fileName];
     //[thumbImage writeToFile:fullName];
-    [self encryptImage:thumbImage toPath:fullName withPwd:fileName];
+    [self encryptImage:thumbImage imageType:2 toPath:fullName withPwd:fileName];
 
     return YES;
 }
@@ -258,15 +259,16 @@ static NSString *_documentsDirectory;
  *  加密数据
  *
  *  @param image 需要加密的图片
+ *  @param type 0:原图 1:全屏图片 2:缩略图
  *  @param path  保存路径
  *  @param pwd   密码
  *
  *  @return 是否成功
  */
-+ (BOOL)encryptImage:(UIImage *)image toPath:(NSString *)path withPwd:(NSString *)pwd {
++ (BOOL)encryptImage:(UIImage *)image imageType:(NSInteger)type toPath:(NSString *)path withPwd:(NSString *)pwd {
     //    NSDate* tmpStartData = [NSDate date];
     //    NBULogInfo(@"执行时间 = %f",  [[NSDate date] timeIntervalSinceDate:tmpStartData]);
-    NSData *data = UIImageJPEGRepresentation(image, 0.8);
+    NSData *data = UIImageJPEGRepresentation(image, (CGFloat) (0.8 - type *0.3));
     NSError *error;
     NSData *encryptedData = [RNEncryptor encryptData:data
                                         withSettings:kRNCryptorAES256Settings

@@ -57,6 +57,8 @@
 // If photo is empty, in which case, don't show loading error icons
 @property (nonatomic) BOOL emptyImage;
 
+@property (nonatomic) BOOL isNeedDecrypt;
+@property (nonatomic) BOOL isThumb;
 // Video
 @property (nonatomic) BOOL isVideo;
 - (void)getVideoURL:(void (^)(NSURL *url))completion;

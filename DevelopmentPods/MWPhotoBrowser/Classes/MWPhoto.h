@@ -23,7 +23,7 @@
 @property (nonatomic, strong) NSURL *videoURL;
 @property (nonatomic) BOOL emptyImage;
 @property (nonatomic) BOOL isVideo;
-@property (nonatomic) BOOL isThumb;
+@property (nonatomic) BOOL isThumb;//是否为缩略图
 @property (nonatomic) BOOL isNeedDecrypt;//是否需要解密
 
 

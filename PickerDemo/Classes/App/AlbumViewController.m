@@ -219,6 +219,7 @@
         if (temp.type == NBUAssetTypeVideo) {//如果是视频那么设置视频URL
             photo.videoURL = temp.URL;
         }
+        photo.isThumb = YES;
         return photo;
     }
     return nil;
@@ -438,7 +439,9 @@
                         return;
                     }
                 }
-                [photoBrowser showProgressHUDCompleteMessage:[NSString stringWithFormat:@"%@成功", message]];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [photoBrowser showProgressHUDCompleteMessage:[NSString stringWithFormat:@"%@成功", message]];
+                });
             }//end of 解密文件
         });
     };
@@ -968,9 +971,9 @@
 #pragma mark 显示进度条
 
 - (void)showProgressHUDWithMessage:(NSString *)message {
-    self.progressHUD.labelText = message;
+    self.progressHUD.label.text = message;
     self.progressHUD.mode = MBProgressHUDModeIndeterminate;
-    [self.progressHUD show:YES];
+    [self.progressHUD showAnimated:YES];
     self.fd_interactivePopDisabled = YES;
     self.navigationController.navigationBar.userInteractionEnabled = NO;
 }
@@ -978,21 +981,21 @@
 #pragma mark 隐藏进度条
 
 - (void)hideProgressHUD:(BOOL)animated {
-    [self.progressHUD hide:animated];
+    [self.progressHUD hideAnimated:animated];
     self.fd_interactivePopDisabled = NO;
     self.navigationController.navigationBar.userInteractionEnabled = YES;
 }
 
-#pragma mark 显示0.6秒信息提示
+#pragma mark 显示1.6秒信息提示
 
 - (void)showProgressHUDCompleteMessage:(NSString *)message {
     if (message) {
-        if (self.progressHUD.isHidden) [self.progressHUD show:YES];
-        self.progressHUD.labelText = message;
+        if (self.progressHUD.isHidden) [self.progressHUD showAnimated:YES];
+        self.progressHUD.label.text = message;
         self.progressHUD.mode = MBProgressHUDModeCustomView;
-        [self.progressHUD hide:YES afterDelay:0.6];
+        [self.progressHUD hideAnimated:YES afterDelay:0.6];
     } else {
-        [self.progressHUD hide:YES];
+        [self.progressHUD hideAnimated:YES];
     }
     //这里修改了,为了解决删除文件时候,右滑返回,会在弹窗时候可用
     //self.fd_interactivePopDisabled = NO;
@@ -1013,7 +1016,7 @@
 - (void)setProgressMessage:(NSString *)message {
     if (message) {
         if (_progressHUD != nil && !_progressHUD.isHidden) {
-            self.progressHUD.labelText = message;
+            self.progressHUD.label.text = message;
         }
     }
 }

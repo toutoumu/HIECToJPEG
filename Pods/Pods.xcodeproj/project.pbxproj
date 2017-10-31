@@ -97,6 +97,7 @@
 		1BA5073AEF8313AE3E81FD7786576B7A /* GPUImagePerlinNoiseFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 552CE1452B55CC5210D2F99D3E5C55B9 /* GPUImagePerlinNoiseFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1C1DA1AB0112CA78D216AE320D918BEE /* PlayButtonOverlayLargeTap@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 74065F5EFE990FB73A10D21288E5D843 /* PlayButtonOverlayLargeTap@3x.png */; };
 		1C20719672D3D31408BDE8B9EC3DC186 /* DACircularProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D048131F8AB6FACCD4B8CF31C07F657 /* DACircularProgressView.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		1C76817FA5353D989D7BC33E8C5997B5 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47554E74F8144D823F665D19C0705E10 /* CoreGraphics.framework */; };
 		1CE11CE8D20FA4F0C7CCD0AE37E911E1 /* UIApplication+NBUAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = D8942C0164F15EAE520651FDFCD94750 /* UIApplication+NBUAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1D639EA5A46C2FAE479D88516C9E69DC /* GPUImageTransformFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E983572D0B0D8CB823B1C0EFF859B48 /* GPUImageTransformFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		1D647AD1C944C4E7EA01EA21AA2609FF /* GPUImageTransformFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A2EC84D5EBFAAA1E033C60DE4B232839 /* GPUImageTransformFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -105,7 +106,6 @@
 		1E1516A9EA172674F71146610BBDDE8D /* ImageSelectedOff@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF1B847FE54471F4F4C531DB05A6C4F8 /* ImageSelectedOff@2x.png */; };
 		1E2E2D5F4027075383C5300A9D3F3876 /* GPUImageGrayscaleFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1986C28CFABDC52B03778194601A2EE5 /* GPUImageGrayscaleFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		1E494F63CB71E4333B06E7C5BC2E04AE /* GPUImageHighPassFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = D2954DB23FD611A203A858BE62A4B9D7 /* GPUImageHighPassFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1E528D890E3B32D53D963CE1417BA4D8 /* MBProgressHUD-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = DBF5E480895500FB385BE0E05C78C57A /* MBProgressHUD-dummy.m */; };
 		1E74C6078AE36FE7A64689ADDEB6DF10 /* GPUImageColorPackingFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = E3411193D8569D75361ECCE09534AB72 /* GPUImageColorPackingFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1EB9BD04E9F754A9E39687A688D79147 /* NBULogContextDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 482CDF909E744155CE31D5694324A65C /* NBULogContextDescription.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		1F6069CEDED8C7DE2A9D1EFAD3ED0756 /* GPUImageAddBlendFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DBC885E546A1C62B7BE7CEF64629CB2 /* GPUImageAddBlendFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
@@ -141,7 +141,6 @@
 		29AB5CAAD3DCD64FAFD62CD5774E6DA2 /* NBUAssetThumbnailView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 295035493A6050B4903A0B1A3535FA59 /* NBUAssetThumbnailView.xib */; };
 		2A24FF9C7ED27C28F3CC700571D5BA83 /* GPUImageClosingFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E68E1637530073B6E57DDFD7B9EE3E4 /* GPUImageClosingFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		2A5CB14D2D23DED7FD7D5026FBC3E69F /* GPUImage3x3TextureSamplingFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 95BE282EF999E07A0E1AA87898BC9F1E /* GPUImage3x3TextureSamplingFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
-		2A76DB3CD21C569626495DE7D69D7B0C /* MBProgressHUD.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BFDCBB4BA7B677CF7F496876B455149 /* MBProgressHUD.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2A9862D957EEA64CF6F4038880313F55 /* UIImage+MultiFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = E42F75A1FFB371D7D628D0B5E3989C79 /* UIImage+MultiFormat.m */; };
 		2B47D333AC1FF975C0D21F750719AB68 /* RKFixCategoryBug.h in Headers */ = {isa = PBXBuildFile; fileRef = 9365323F2E09F6D886251850FEE21147 /* RKFixCategoryBug.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2BCAB3CDB423903DE78A2AE90FD92F55 /* NBUObjectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 51F199618D700065F2C07209F7ECD93C /* NBUObjectViewController.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
@@ -235,7 +234,6 @@
 		4CD17645019E4C75141A1DC54A8D9611 /* NSBundle+NBUAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E48EBEB0E61120AC22E8E9138CABE03 /* NSBundle+NBUAdditions.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		4E7BBB31F7E5F0AC5ED3FFA10F968000 /* GPUImageHalftoneFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DA8DA90E4313F35D84C2C3A61C40C59 /* GPUImageHalftoneFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		4FD3C8D4DC8C35135463B4B74CA5A0C2 /* GPUImageLowPassFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 25723466CA3F4C2E82323E3320EF2DB3 /* GPUImageLowPassFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		509D8F10DC7BD0265790C450C94228E3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47554E74F8144D823F665D19C0705E10 /* CoreGraphics.framework */; };
 		50C36311C87819C9BBBB13244F7965E6 /* GPUImageLanczosResamplingFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 25D5FBBC3959F2F131BACE1BB978090C /* GPUImageLanczosResamplingFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		50C488E4B64EB439974B96BB6C17317D /* UIBarButtonItemArrowRight@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 500732FD6ABA696631D01D8CD746BA3F /* UIBarButtonItemArrowRight@3x.png */; };
 		50D89076F85A27C28E3D62E8153F4944 /* MotionOrientation@PTEz-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 543D945D31D6F504D375FCE5DEA0D38D /* MotionOrientation@PTEz-dummy.m */; };
@@ -249,8 +247,8 @@
 		53269790146DF4F6ADF31BB26BF3B2BF /* NBUCore.h in Headers */ = {isa = PBXBuildFile; fileRef = C7E86A4D92D2B1DA01306C3F41A4718A /* NBUCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5354170E7F764D1F32B9EC5B237FAF22 /* GPUImageUIElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEFA8F50E7FAE0A78334C3421DF6C68 /* GPUImageUIElement.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		5354D525F59FC87467C0E46A546549A6 /* GPUImageShiTomasiFeatureDetectionFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 11029554F5589CE5C7C441CFEAB095A1 /* GPUImageShiTomasiFeatureDetectionFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
-		535C3BD688BA2CDEC5DAE361DDF5D7B0 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B532DADEDEA642D26187AAAA65B52F6 /* MBProgressHUD.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		536D6AEC979EA00179050AE68AA1F0B1 /* NBUMediaInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 28BB1C5605B859884788155DC2FC082A /* NBUMediaInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		536F7D0550F5FD9F5869CEC995CFEE9B /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B532DADEDEA642D26187AAAA65B52F6 /* MBProgressHUD.m */; };
 		546420514444437898FA39F2733C271C /* GPUImageParallelCoordinateLineTransformFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E6CB98F7D7DAD24DFEF47A5545DCB24 /* GPUImageParallelCoordinateLineTransformFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54D85769918EC5B0569A61B1531360DA /* NBUCameraView.h in Headers */ = {isa = PBXBuildFile; fileRef = D15A8B80F9C4596425B2A2C599123226 /* NBUCameraView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5506C527414981D9E9DC7E2956D31A68 /* GPUImageThreeInputFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 78FC7DBB3CCFC53B8894C1C7AE170E72 /* GPUImageThreeInputFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
@@ -329,6 +327,7 @@
 		71AA8C78F711B3136F048201934E8D0F /* GPUImageThreeInputFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 273E0FA11768BFE7056ACCEC52D7B2F7 /* GPUImageThreeInputFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		72151B1DE88ADA3EECE3A58A33E3D459 /* GPUImageMedianFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = F744CD1F14CF3D296ADAB9A6D4D7978F /* GPUImageMedianFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		728A0966853DE33E139E7FDE3A116E88 /* GPUImageZoomBlurFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 06E7873E0E8299F01BFB7F309BA7FB44 /* GPUImageZoomBlurFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		7291E906AE8A3C1F92183154FE65DCDD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ABD084B2C093DC69D223E6B146EB637 /* QuartzCore.framework */; };
 		729F2670544B907502EE0328B6DBBE0C /* NSString+NBUAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 293D98F2DFAFED2DCF06929A6DB305C5 /* NSString+NBUAdditions.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		72AD382D9D141CFFB428FC6D7CA8CC62 /* NBUPresetFilterView.h in Headers */ = {isa = PBXBuildFile; fileRef = F9BFCE7430C9073482E77CDDF59A3724 /* NBUPresetFilterView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7341D8F95B24087CF86C1E328836C174 /* UINavigationController+NBUAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 513DCFF084024DAE4365CBD15CA4162D /* UINavigationController+NBUAdditions.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
@@ -420,12 +419,12 @@
 		90642EDC2352F3539EBBEEEE6D0FA3F9 /* ImageError@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = C78C9900AB865AB906C8AE45077D69B4 /* ImageError@3x.png */; };
 		90B65747298C3A59F08134DF20DB7947 /* GPUImageHistogramFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAF6EED12A62ADD0A96776FCD0403BC /* GPUImageHistogramFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		91D244FF93BC35A4FA448D3C8BC06016 /* NBUImagePicker-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7875D130C48DF75F5B43313F1DBF529A /* NBUImagePicker-dummy.m */; };
+		93F12B05D8333C37D9CBEA3D1782CC04 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F4EF0E0B996C3B82DF8CB308106A15 /* Foundation.framework */; };
 		9419A5AFAE07CCFC563CB903DC6AE255 /* GPUImageJFAVoronoiFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 39004E3F90EECF0C72D91ED5AC5A9F42 /* GPUImageJFAVoronoiFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		94815F4628C510076EDF59DC3FC62335 /* GPUImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EFEAB2E817D3CC593C4C7CA26214D70 /* GPUImageView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		94D880AC12F7FBAB7F27D2BBA9CBB53E /* DACircularProgressView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D179FF1852BF9D2E879334A874DAA2F /* DACircularProgressView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9505573B785699BF7175E70041928F60 /* DDLog.h in Headers */ = {isa = PBXBuildFile; fileRef = C75DDC010656B1C8FAAFF0E1C3A4560A /* DDLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9512C86AE43AE6248388F1A30ED41D20 /* GPUImageLevelsFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D6147EA414CBC7B1B7797756A2DB339 /* GPUImageLevelsFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
-		951E122F9EFF8F6DF2AAF2E80A10630A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F4EF0E0B996C3B82DF8CB308106A15 /* Foundation.framework */; };
 		95508E4A3FE640C6A167788B7E9050CF /* GPUImageOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 0925B468135BFBF3876804FCDC2DB186 /* GPUImageOutput.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		959063700BB67690A65F0C0BDAC43D8E /* GPUImageSubtractBlendFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50A080F2F9C0122768AA9C8041FBB899 /* GPUImageSubtractBlendFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		95BEA16681FA80C0CF56FCFB910A53E6 /* RNEncryptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 59354D0AE86B1E218A4D39D52EDC72D7 /* RNEncryptor.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -663,6 +662,7 @@
 		E4543DF742DE4F8C16EBB7FC9A11A209 /* GPUImageHSBFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = E04A272FE618D3B3D4773AE264B545CE /* GPUImageHSBFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		E496733D45FBC5AE66E10391EA4E4245 /* NSData+ImageContentType.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E883633C71B425FD846559BE165564 /* NSData+ImageContentType.m */; };
 		E49A525584718765001E7E619FB6F307 /* GPUImageTextureOutput.h in Headers */ = {isa = PBXBuildFile; fileRef = D9E05338A5AF6E79383A347BBAA4101F /* GPUImageTextureOutput.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E5229F5125ACD420659E7B2D19BB30A8 /* MBProgressHUD-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = DBF5E480895500FB385BE0E05C78C57A /* MBProgressHUD-dummy.m */; };
 		E5A51C75BE70CD40B9917C1D1983C2AE /* NBUTabBarController.h in Headers */ = {isa = PBXBuildFile; fileRef = C4CD88150DD95A3DDD6C677B0CD85C35 /* NBUTabBarController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E6162F5951EAD2844C35166B861C9B61 /* GPUImageSwirlFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 9817A6F6C1C66FE7617951314F801908 /* GPUImageSwirlFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E63B56931886BF3F548BA461D032A84F /* GPUImageSwirlFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D61F2072DA8F99B5DD9FEA2F8CE160C /* GPUImageSwirlFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
@@ -678,6 +678,7 @@
 		E8D868301A1255CB5444135FD1A90A6A /* DDASLLogCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = D4112DBC671DF9EF98B6A49C2DC292A4 /* DDASLLogCapture.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		E9D7DA9B7BB7E337846C59E93C056B4D /* RKDirectory.m in Sources */ = {isa = PBXBuildFile; fileRef = 900DC0BB486C29412E7B31FCF1EF7ACA /* RKDirectory.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		EA02B470DE1F7A0D03FCC55258299B9F /* GPUImageLuminanceThresholdFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 92E5A805FAF8647A6F9E8691C17AFAC3 /* GPUImageLuminanceThresholdFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		EA321C98029015AA4895C0B26891D8F8 /* MBProgressHUD.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BFDCBB4BA7B677CF7F496876B455149 /* MBProgressHUD.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EA4181572584A97E052DB6A3C5AB8486 /* GPUImageSourceOverBlendFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = BB3E747E8BB7E24E364F166886402640 /* GPUImageSourceOverBlendFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EB29205D7ABF2EE1208436427A3D4E88 /* GPUImageRGBClosingFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = FBAA2228A56AEB294C130F50D252A3CB /* GPUImageRGBClosingFilter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		EBDED40E23568274CEB482DA9B76C262 /* GPUImageKuwaharaRadius3Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5357169160480025749C2F9A173C8FC7 /* GPUImageKuwaharaRadius3Filter.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
@@ -802,7 +803,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 175B076ED45EB1A3E40F58BA14036467;
+			remoteGlobalIDString = 586F2DFA9BDCC6675C2546793A69E5CC;
 			remoteInfo = MBProgressHUD;
 		};
 		66694744A727C272030A3DAF52979C1C /* PBXContainerItemProxy */ = {
@@ -816,7 +817,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 175B076ED45EB1A3E40F58BA14036467;
+			remoteGlobalIDString = 586F2DFA9BDCC6675C2546793A69E5CC;
 			remoteInfo = MBProgressHUD;
 		};
 		7178730A74EC53EDE88D8101AFC21E51 /* PBXContainerItemProxy */ = {
@@ -1774,15 +1775,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		12070984FA8985EF77A932BEC1CF2A5D /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				509D8F10DC7BD0265790C450C94228E3 /* CoreGraphics.framework in Frameworks */,
-				951E122F9EFF8F6DF2AAF2E80A10630A /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		120B11B8425C0E92ED04893060877F02 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1943,6 +1935,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D48093ED7C4A2E7A02956F555B1A1C6 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F9AC974E3329F79899A7B3BE290FC894 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C76817FA5353D989D7BC33E8C5997B5 /* CoreGraphics.framework in Frameworks */,
+				93F12B05D8333C37D9CBEA3D1782CC04 /* Foundation.framework in Frameworks */,
+				7291E906AE8A3C1F92183154FE65DCDD /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3365,6 +3367,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1B1D84BCA4F7BDAE79C37DF88C9DCE23 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EA321C98029015AA4895C0B26891D8F8 /* MBProgressHUD.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D149A4FB98CC88DC61DFCDE20ED0D8A /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -3696,34 +3706,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EFC33D369E9A80BFCC07EAB513251186 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2A76DB3CD21C569626495DE7D69D7B0C /* MBProgressHUD.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		175B076ED45EB1A3E40F58BA14036467 /* MBProgressHUD */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 7C66CB3E04875BC1C255326C7ADB2D78 /* Build configuration list for PBXNativeTarget "MBProgressHUD" */;
-			buildPhases = (
-				FED59DE88F6C855E8E4E64782275A4C6 /* Sources */,
-				12070984FA8985EF77A932BEC1CF2A5D /* Frameworks */,
-				EFC33D369E9A80BFCC07EAB513251186 /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = MBProgressHUD;
-			productName = MBProgressHUD;
-			productReference = BCD1CD2514D502ADF1985258874AC065 /* libMBProgressHUD.a */;
-			productType = "com.apple.product-type.library.static";
-		};
 		31C3AEA08858221648A2183252709F01 /* NBUImagePicker-NBUImagePicker */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0049FFF6E468DA38C41581B0513D626A /* Build configuration list for PBXNativeTarget "NBUImagePicker-NBUImagePicker" */;
@@ -3851,6 +3836,23 @@
 			name = GPUImage;
 			productName = GPUImage;
 			productReference = F5FC950B28C51B96C97C85CBF233C66B /* libGPUImage.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		586F2DFA9BDCC6675C2546793A69E5CC /* MBProgressHUD */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6B44251FA50022CA55D4B2FBE1468C76 /* Build configuration list for PBXNativeTarget "MBProgressHUD" */;
+			buildPhases = (
+				7E4305B404C5BA5156646C69578ADD62 /* Sources */,
+				F9AC974E3329F79899A7B3BE290FC894 /* Frameworks */,
+				1B1D84BCA4F7BDAE79C37DF88C9DCE23 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MBProgressHUD;
+			productName = MBProgressHUD;
+			productReference = BCD1CD2514D502ADF1985258874AC065 /* libMBProgressHUD.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		6B729ECA370387DF0C6FF9AA26C21F15 /* NBUKit-NBUKit */ = {
@@ -4089,7 +4091,7 @@
 				4F69F82C1EEBC0A05686A3B0FECD2FDB /* GPUImage */,
 				449F075A8751455DAD46F2CEA3550A7A /* Lockbox */,
 				3EB2FAD81BDEB22BCF46F47CED290BAA /* LumberjackConsole */,
-				175B076ED45EB1A3E40F58BA14036467 /* MBProgressHUD */,
+				586F2DFA9BDCC6675C2546793A69E5CC /* MBProgressHUD */,
 				9F91DAC52B92E0A7E323DF852770A2F3 /* MotionOrientation@PTEz */,
 				862A7377C6D64BACCC2CB4EED58C71FC /* MWPhotoBrowser */,
 				D5B4FD992A5B3CE448CEE369D4715513 /* MWPhotoBrowser-MWPhotoBrowser */,
@@ -4319,6 +4321,15 @@
 				28D8437EFEF565235846AF8F2F41FBC6 /* MWTapDetectingView.m in Sources */,
 				10DACE4AC155ECD9EC7E91D9AE4435A7 /* MWZoomingScrollView.m in Sources */,
 				41308DF5ABC9548F720C1F5FD672E53E /* UIImage+MWPhotoBrowser.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7E4305B404C5BA5156646C69578ADD62 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E5229F5125ACD420659E7B2D19BB30A8 /* MBProgressHUD-dummy.m in Sources */,
+				536F7D0550F5FD9F5869CEC995CFEE9B /* MBProgressHUD.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4622,15 +4633,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FED59DE88F6C855E8E4E64782275A4C6 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1E528D890E3B32D53D963CE1417BA4D8 /* MBProgressHUD-dummy.m in Sources */,
-				535C3BD688BA2CDEC5DAE361DDF5D7B0 /* MBProgressHUD.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		FEE62B9FFE17617B864960E74DB3DA69 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4767,7 +4769,7 @@
 		AB8CC977A4B66DBAB51D4A29B88E275D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = MBProgressHUD;
-			target = 175B076ED45EB1A3E40F58BA14036467 /* MBProgressHUD */;
+			target = 586F2DFA9BDCC6675C2546793A69E5CC /* MBProgressHUD */;
 			targetProxy = 5D15F9E3C24BF13EB25ADFF2FEF4B77E /* PBXContainerItemProxy */;
 		};
 		ABC4A9851EFAF7081208695EA24C14E6 /* PBXTargetDependency */ = {
@@ -4791,7 +4793,7 @@
 		AEAD4C97FA9EADC442CB9149EF8CC654 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = MBProgressHUD;
-			target = 175B076ED45EB1A3E40F58BA14036467 /* MBProgressHUD */;
+			target = 586F2DFA9BDCC6675C2546793A69E5CC /* MBProgressHUD */;
 			targetProxy = 68556850DB8BD454C62869D06BE5B718 /* PBXContainerItemProxy */;
 		};
 		B024A56AB8433CAAA89688D6F926580B /* PBXTargetDependency */ = {
@@ -5009,28 +5011,6 @@
 			};
 			name = Release;
 		};
-		1F94CE7E65F6BDD0A280D8B698381DB3 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = C23B4935ADB55AA790F7E975F35712ED /* MBProgressHUD.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				GCC_PREFIX_HEADER = "Target Support Files/MBProgressHUD/MBProgressHUD-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 		2B909AB9B422601B4FB75168FC490868 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E62DB978246F5DD9E160D6AF6BAC5044 /* LumberjackConsole.xcconfig */;
@@ -5137,6 +5117,28 @@
 			};
 			name = Debug;
 		};
+		3DF956A357D278C29F53AD3094728975 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C23B4935ADB55AA790F7E975F35712ED /* MBProgressHUD.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/MBProgressHUD/MBProgressHUD-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		41256FB3EC132E737E68F52263B10199 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 735B9B1F9FEE364AFA89B434C95EA54F /* NBUCore.xcconfig */;
@@ -5232,6 +5234,27 @@
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				GCC_PREFIX_HEADER = "Target Support Files/CocoaLumberjack/CocoaLumberjack-prefix.pch";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		587AEEE2AC12944079DE6A6112E7E4C5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C23B4935ADB55AA790F7E975F35712ED /* MBProgressHUD.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/MBProgressHUD/MBProgressHUD-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PRIVATE_HEADERS_FOLDER_PATH = "";
@@ -5739,27 +5762,6 @@
 			};
 			name = Release;
 		};
-		FFCFD877A0D05122357C558B9F34B2B9 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = C23B4935ADB55AA790F7E975F35712ED /* MBProgressHUD.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				GCC_PREFIX_HEADER = "Target Support Files/MBProgressHUD/MBProgressHUD-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -5835,6 +5837,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		6B44251FA50022CA55D4B2FBE1468C76 /* Build configuration list for PBXNativeTarget "MBProgressHUD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				587AEEE2AC12944079DE6A6112E7E4C5 /* Debug */,
+				3DF956A357D278C29F53AD3094728975 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		77F70BC1CA09AD08D46BB7F8B61E9316 /* Build configuration list for PBXNativeTarget "Lockbox" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -5849,15 +5860,6 @@
 			buildConfigurations = (
 				DD6D5337DB7DEC772A0A3DD4A24BC75F /* Debug */,
 				92EB08919A3174AE30A1210A51FB063D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		7C66CB3E04875BC1C255326C7ADB2D78 /* Build configuration list for PBXNativeTarget "MBProgressHUD" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				FFCFD877A0D05122357C558B9F34B2B9 /* Debug */,
-				1F94CE7E65F6BDD0A280D8B698381DB3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
