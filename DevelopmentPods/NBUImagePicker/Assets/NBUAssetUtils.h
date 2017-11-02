@@ -33,6 +33,12 @@
 + (NSString *)createAlbum:(NSString *)albumName;
 
 /**
+ * 创建文件名称
+ * @return
+ */
++ (NSString *)createFileName;
+
+/**
  *  获取所有相册名称
  *  @return 相册名称列表
  */
@@ -42,9 +48,10 @@
  *  保存图片
  *  @param image     图片
  *  @param albumName 相册名称 eg:album
+ *  @param fileName  文件名称 eg:abc.jpg
  *  @return 保存是否成功
  */
-+ (BOOL)saveImage:(UIImage *)image toAlubm:(NSString *)albumName;
++ (BOOL)saveImage:(UIImage *)image toAlubm:(NSString *)albumName withFileName:(NSString *)fileName;
 
 /**
  * 保存视频
@@ -55,6 +62,13 @@
  */
 + (BOOL)saveVideo:(UIImage *)image toAlubm:(NSString *)albumName fileName:(NSString *)fileName;
 
+
+/**
+ * 解密成图片
+ * @param image NBUFileAsset
+ * @return UIImage
+ */
++ (UIImage *)decryImage:(NBUFileAsset *)image;
 
 /**
  *  解密数据

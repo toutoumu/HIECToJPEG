@@ -34,7 +34,7 @@ static NSString *_documentsDirectory;
 
 #pragma mark 生成文件名
 
-+ (NSString *)getFileName {
++ (NSString *)createFileName {
     UInt64 recordTime = (UInt64) ([[NSDate date] timeIntervalSince1970] * 1000);
     // NSString *name =  [NSString stringWithFormat:@"%llu", recordTime];
     // NSString *name = [dateFormatter stringFromDate:[NSDate date]];
@@ -96,8 +96,7 @@ static NSString *_documentsDirectory;
 
 #pragma mark 保存相片到指定相册
 
-+ (BOOL)saveImage:(UIImage *)image toAlubm:(NSString *)albumName {
-    NSString *fileName = [self getFileName];//文件名
++ (BOOL)saveImage:(UIImage *)image toAlubm:(NSString *)albumName withFileName:(NSString *)fileName{
     NSString *albumPath = [_documentsDirectory stringByAppendingPathComponent:albumName];//相册路径
     NSString *fullName; //临时存储保存的文件全路径名称
 
@@ -182,6 +181,34 @@ static NSString *_documentsDirectory;
     return YES;
 }
 
+
++ (UIImage *)decryImage:(NBUFileAsset *)image {
+    if (image == nil) {
+        return nil;
+    }
+    BOOL isDir = NO;
+    BOOL existed;
+
+    //检查文件是否已经存在
+    NSFileManager *manager = [NSFileManager defaultManager];
+    existed = [manager fileExistsAtPath:image.fullResolutionImagePath isDirectory:&isDir];
+    if (!existed || isDir) {//如果已经存在
+        NBULogError(@"Error: %@", @"文件不存在");
+        return nil;
+    }
+
+    NSError *error;
+    NSString *pwd = image.fullResolutionImagePath.lastPathComponent;
+    NSData *inData = [NSData dataWithContentsOfFile:image.fullResolutionImagePath];
+    NSData *outData = [RNDecryptor decryptData:inData withSettings:kRNCryptorAES256Settings password:pwd error:&error];
+
+    if (error != nil) {
+        NBULogInfo(@"Error: %@", error);
+        return nil;
+    }
+    UIImage *img = [UIImage imageWithData:outData];
+    return img;
+}
 
 #pragma mark 解密数据到指定相册
 
@@ -268,7 +295,7 @@ static NSString *_documentsDirectory;
 + (BOOL)encryptImage:(UIImage *)image imageType:(NSInteger)type toPath:(NSString *)path withPwd:(NSString *)pwd {
     //    NSDate* tmpStartData = [NSDate date];
     //    NBULogInfo(@"执行时间 = %f",  [[NSDate date] timeIntervalSinceDate:tmpStartData]);
-    NSData *data = UIImageJPEGRepresentation(image, (CGFloat) (0.8 - type *0.3));
+    NSData *data = UIImageJPEGRepresentation(image, (CGFloat) (0.8 - type * 0.3));
     NSError *error;
     NSData *encryptedData = [RNEncryptor encryptData:data
                                         withSettings:kRNCryptorAES256Settings

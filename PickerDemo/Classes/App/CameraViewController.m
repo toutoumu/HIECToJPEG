@@ -70,7 +70,7 @@
     self.cameraView.captureResultBlock = ^(UIImage *image, NSError *error) {
         if (!error) {
             _clickCount = 0;
-            [NBUAssetUtils saveImage:image toAlubm:_albumName];
+            [NBUAssetUtils saveImage:image toAlubm:_albumName withFileName:[NBUAssetUtils createFileName]];
         }
     };
     //为拍摄按钮添加触摸手势 , 第一次点击设置好相机参数,然后移除掉手势, 让其调用 takePicture

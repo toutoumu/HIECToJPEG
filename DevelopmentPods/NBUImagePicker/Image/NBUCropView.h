@@ -32,7 +32,7 @@
 
 /// @name Setting and Getting Images
 
-/// Set the source image, get the cropped image.
+/// set方法设置需要裁剪的图片, get方法获取裁剪好的图片 Set the source image, get the cropped image.
 @property (strong, nonatomic)           UIImage * image;
 
 /// The current crop rect in image coordinates.
@@ -45,7 +45,7 @@
 /// @note If not set the cropGuideView size will be used.
 @property (nonatomic)                   CGSize cropGuideSize;
 
-/// Maximum scale factor to be allowed to use. Default value `1.5`.
+/// 最大放大多少倍, 默认为1.5 Maximum scale factor to be allowed to use. Default value `1.5`.
 @property (nonatomic)                   CGFloat maximumScaleFactor;
 
 /// Whether to allow the viewToCrop to "aspectFit" inside the cropGuideView. Defaul `NO`.
@@ -63,7 +63,7 @@
 /// one will be created.
 @property (nonatomic, strong) IBOutlet  UIScrollView * scrollView;
 
-/// An optional image to be displayed as reference for cropping.
+/// 剪切时显示在图片上的剪切区域方框 An optional image to be displayed as reference for cropping.
 /// @discussion If you don't want to use the default cropGuideView just set it to `nil`
 /// after setting the cropGuideSize.
 @property (nonatomic, strong) IBOutlet  UIView * cropGuideView;

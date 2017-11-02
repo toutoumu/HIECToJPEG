@@ -22,8 +22,12 @@
 
 @class NBUMediaInfo, NBUPresetFilterView, NBUCropView;
 
-/// NBUCameraView blocks.
+/// 剪切结束回调 NBUCameraView blocks.
 typedef void (^NBUEditImageResultBlock)(UIImage * image);
+/// 剪切开始
+typedef void (^NBUEditImageStartBlock)();
+/// 剪切结束
+typedef void (^NBUEditImageFinishBlock)();
 
 /**
  A view controller to handle a NBUPresetFilterView and/or a NBUCropView.
@@ -32,16 +36,20 @@ typedef void (^NBUEditImageResultBlock)(UIImage * image);
 
 /// @name Hanlding Images
 
-/// The source image.
+/// 需要裁剪的图片 The source image.
 @property (strong, nonatomic, setter=setObject:,
                               getter=object)        UIImage * image;
 
-/// The edited image.
+/// 编辑后的图片 The edited image.
 /// @note Every time you call this method the image is processed again.
 - (UIImage *)editedImage;
 
 /// The optional block to be called when the apply: action is triggered.
 @property (nonatomic, copy)                         NBUEditImageResultBlock resultBlock;
+/// 剪切开始
+@property (nonatomic, copy)                         NBUEditImageStartBlock startBlock;
+/// 剪切结束
+@property (nonatomic, copy)                         NBUEditImageFinishBlock finishBlock;
 
 /// @name Handling Media Info Objects
 
@@ -61,7 +69,7 @@ typedef void (^NBUEditImageResultBlock)(UIImage * image);
 /// @see NBUCropView.
 @property (nonatomic)                               CGSize cropGuideSize;
 
-/// Maximum scale factor to be allowed to use.
+///最大缩放级别 Maximum scale factor to be allowed to use.
 /// @see NBUCropView.
 @property (nonatomic)                               CGFloat maximumScaleFactor;
 

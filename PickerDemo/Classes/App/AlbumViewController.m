@@ -2,6 +2,8 @@
 #import "AlbumViewController.h"
 #import "SelectAlbumViewController.h"
 #import "UINavigationController+FDFullscreenPopGesture.h"
+#import "CropViewController.h"
+#import "NBUAssetUtils.h"
 
 // 相册列表,图片列表,图片浏览
 @implementation AlbumViewController {
@@ -226,12 +228,12 @@
 }
 
 /*- (MWCaptionView *)photoBrowser:(MWPhotoBrowser *)photoBrowser captionViewForPhotoAtIndex:(NSUInteger)index {
-    
+ 
     NBUAsset * data = [_asses objectAtIndex:index];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     NSString *strDate = [dateFormatter stringFromDate:data.date];
-    
+ 
     MWPhoto *photo = [[MWPhoto alloc]init];
     photo.caption = strDate;
     MWCaptionView *captionView = [[MWCaptionView alloc] initWithPhoto:photo];
@@ -392,10 +394,6 @@
                 return;
             }
             if ([photoBrowser.currentAlbumName isEqualToString:@"Decrypted"]) {//导出到系统相册
-                //NSMutableArray * array = [[NSMutableArray alloc]init];
-                //for (NBUFileAsset *asset in selectedAssets) {
-                //    [array addObject:asset.fullResolutionImage];
-                //}
                 [NBUAssetsLibrary addAll:selectedAssets toAlbum:@"test" withBlock:^(NSError *error, BOOL fihisn, int index) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         if (index == selectedAssets.count) {
@@ -850,14 +848,15 @@
     [self.navigationController pushViewController:controller animated:YES];
 }
 
+
+#pragma mark 单张图片浏览右下角的按钮
+
 /**
  *  点击分享操作按钮后的回调,如果设置了这个那么默认的将不会显示 [单张图片右下角的按钮]
  *
  *  @param photoBrowser 图片浏览器引用
  *  @param index        图片索引
  */
-#pragma mark 单张图片右下角的按钮
-
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser actionButtonPressedForPhotoAtIndex:(NSUInteger)index {
     void (^deleteBlock)() = ^() {// 删除
         [photoBrowser.delegate photoBrowser:photoBrowser deleteAtIndex:index];
@@ -870,6 +869,39 @@
         [photoBrowser.delegate showMove:photoBrowser action:2];
     };
 
+    void (^editBlock)() = ^() {//剪切,编辑
+        // 如果当前不是沙盒相册,且数据不存在
+        if ([photoBrowser.currentAlbumName isEqualToString:@"Decrypted"] ||
+                _group == nil || ![_group isMemberOfClass:[NBUDirectoryAssetsGroup class]] ||
+                _asses == nil || _asses.count == 0 || _asses[index] == nil) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [photoBrowser showProgressHUDWithMessage:@""];
+                [photoBrowser showProgressHUDCompleteMessage:@"该相册文件不能编辑"];
+            });
+            return;
+        }
+
+        CropViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CropViewController"];
+        controller.image = [NBUAssetUtils decryImage:_asses[index]];//需要剪切的图片
+        controller.resultBlock = ^(UIImage *image) {// 剪切后的回调方法
+            [photoBrowser showProgressHUDWithMessage:@"保存中..."];
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                NSString *fileName = ((NBUFileAsset *) _asses[index]).fullResolutionImagePath.lastPathComponent;
+                [NBUAssetUtils saveImage:image toAlubm:_group.name withFileName:fileName];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [photoBrowser reloadData];// 刷新数据
+                    [photoBrowser hideProgressHUD:YES];
+                });
+            });
+        };
+
+        photoBrowser.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
+                                                                                         style:UIBarButtonItemStylePlain
+                                                                                        target:self
+                                                                                        action:nil];
+        [self.navigationController pushViewController:controller animated:YES];
+    };
+
     NSString *message = @"解密";
     if ([photoBrowser.currentAlbumName isEqualToString:@"Decrypted"]) {
         message = @"导出";
@@ -880,6 +912,7 @@
                                           destructiveButtonItem:[RIButtonItem itemWithLabel:@"删除" action:deleteBlock]
                                                otherButtonItems:
                                                        [RIButtonItem itemWithLabel:message action:exportBlock],
+                                                       [RIButtonItem itemWithLabel:@"编辑" action:editBlock],
                                                        [RIButtonItem itemWithLabel:@"移动" action:moveBlock], nil];
     [sheet showInView:photoBrowser.view];
 }
@@ -928,6 +961,10 @@
 
 #pragma mark 显示警告信息
 
+/**
+ * 显示警告信息
+ * @param message 警告信息
+ */
 - (void)showWarning:(NSString *)message {
     [[[UIAlertView alloc] initWithTitle:@"警告"
                                 message:message
@@ -938,6 +975,11 @@
 
 #pragma mark 显示警告信息
 
+/**
+ * 显示警告信息
+ * @param title 标题
+ * @param message 警告信息
+ */
 - (void)showAlertWithTitle:(NSString *)title message:(NSString *)message {
     [[[UIAlertView alloc] initWithTitle:title
                                 message:message
@@ -947,6 +989,13 @@
 
 #pragma mark 显示确认取消对话框
 
+/**
+ * 显示确认取消对话框
+ * @param title 标题
+ * @param message 信息
+ * @param okTitle 确定按钮文本
+ * @param action 确定按钮执行的操作
+ */
 - (void)showAlertWithTitle:(NSString *)title message:(NSString *)message okTitle:(NSString *)okTitle action:(void (^)(void))action {
     [[[UIAlertView alloc] initWithTitle:title
                                 message:message
@@ -958,6 +1007,10 @@
 #pragma mark - Action Progress
 #pragma mark 进度条
 
+/**
+ * _progressHUD get方法
+ * @return
+ */
 - (MBProgressHUD *)progressHUD {
     if (!_progressHUD) {
         _progressHUD = [[MBProgressHUD alloc] initWithView:self.view];
@@ -1030,9 +1083,8 @@ void (^optionButtonClickBlock)(MWPhotoBrowser *) = ^(MWPhotoBrowser *photoBrowse
     if ([photoBrowser.currentAlbumName isEqualToString:@"Decrypted"]) {
         exp = @"导出选中项";
     }
-    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"导出到相册"
-                                               cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{
-                                               }]
+    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"选择操作"
+                                               cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{}]
                                           destructiveButtonItem:[RIButtonItem itemWithLabel:@"删除选中项" action:^{
                                               [photoBrowser.delegate deleteSelected:photoBrowser];
                                           }]

@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		182364551FA87F0900A43FCA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 182364541FA87F0900A43FCA /* Main.storyboard */; };
 		188663631F3869EE002D38DC /* videoStart.png in Resources */ = {isa = PBXBuildFile; fileRef = 1886635D1F3869EE002D38DC /* videoStart.png */; };
 		188663641F3869EE002D38DC /* videoStart@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1886635E1F3869EE002D38DC /* videoStart@2x.png */; };
 		188663651F3869EE002D38DC /* videoStart@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1886635F1F3869EE002D38DC /* videoStart@3x.png */; };
 		188663661F3869EE002D38DC /* videoStop.png in Resources */ = {isa = PBXBuildFile; fileRef = 188663601F3869EE002D38DC /* videoStop.png */; };
 		188663671F3869EE002D38DC /* videoStop@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 188663611F3869EE002D38DC /* videoStop@2x.png */; };
 		188663681F3869EE002D38DC /* videoStop@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 188663621F3869EE002D38DC /* videoStop@3x.png */; };
+		18AFA71D1FA85ADF00519BBE /* CropViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18AFA71C1FA85ADF00519BBE /* CropViewController.m */; };
 		18EA43301F5CFE74005A0EDC /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18EA432F1F5CFE74005A0EDC /* AssetsLibrary.framework */; };
 		18FD37221F1E167E001FE220 /* image_notloaded.png in Resources */ = {isa = PBXBuildFile; fileRef = 18FD37201F1E167E001FE220 /* image_notloaded.png */; };
 		18FD37231F1E167E001FE220 /* image_notloaded@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18FD37211F1E167E001FE220 /* image_notloaded@2x.png */; };
@@ -38,6 +40,7 @@
 		58B835EB00FB57F1EC026043 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B83CE879D7DFD826A5DCDF /* AppDelegate.m */; };
 		58B83600EDA7C0571B04673D /* RIButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B83E14C8FA4BFC904CA5F5 /* RIButtonItem.m */; };
 		58B836F41C589C2BA41A1284 /* PPCircleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B8390FD367F808CCAA5D58 /* PPCircleButton.m */; };
+		58B837B0A6B0710F423DEC4D /* frame.png in Resources */ = {isa = PBXBuildFile; fileRef = 58B83762E1EF9A20FBC0EB0C /* frame.png */; };
 		58B83812A5FB0B16947D7283 /* UIActionSheet+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B8301EF3BD3EA3EA22F1BE /* UIActionSheet+Blocks.m */; };
 		58B83826135C99DD1FD6863D /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 58B8375E2BB56B251C41D208 /* Storyboard.storyboard */; };
 		58B8382E3A1CB1A5712FF6B8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 58B83618F22C64385173B9EA /* InfoPlist.strings */; };
@@ -60,12 +63,15 @@
 
 /* Begin PBXFileReference section */
 		033994116E7C15DDD5FE5DCD /* libPods-PickerDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PickerDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		182364541FA87F0900A43FCA /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = SOURCE_ROOT; };
 		1886635D1F3869EE002D38DC /* videoStart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = videoStart.png; sourceTree = "<group>"; };
 		1886635E1F3869EE002D38DC /* videoStart@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "videoStart@2x.png"; sourceTree = "<group>"; };
 		1886635F1F3869EE002D38DC /* videoStart@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "videoStart@3x.png"; sourceTree = "<group>"; };
 		188663601F3869EE002D38DC /* videoStop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = videoStop.png; sourceTree = "<group>"; };
 		188663611F3869EE002D38DC /* videoStop@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "videoStop@2x.png"; sourceTree = "<group>"; };
 		188663621F3869EE002D38DC /* videoStop@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "videoStop@3x.png"; sourceTree = "<group>"; };
+		18AFA71B1FA85ADF00519BBE /* CropViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CropViewController.h; path = Classes/App/CropViewController.h; sourceTree = "<group>"; };
+		18AFA71C1FA85ADF00519BBE /* CropViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CropViewController.m; path = Classes/App/CropViewController.m; sourceTree = "<group>"; };
 		18EA432F1F5CFE74005A0EDC /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		18FD37201F1E167E001FE220 /* image_notloaded.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image_notloaded.png; sourceTree = "<group>"; };
 		18FD37211F1E167E001FE220 /* image_notloaded@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "image_notloaded@2x.png"; sourceTree = "<group>"; };
@@ -97,6 +103,7 @@
 		58B836D8D0C9D4A3EF5AF4D3 /* UIViewController+BackButtonHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIViewController+BackButtonHandler.m"; path = "Classes/Extend/UIViewController+BackButtonHandler.m"; sourceTree = "<group>"; };
 		58B8375A816B67A304B1F28B /* AlbumViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AlbumViewController.h; path = Classes/App/AlbumViewController.h; sourceTree = "<group>"; };
 		58B8375E2BB56B251C41D208 /* Storyboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Storyboard.storyboard; path = Classes/App/Storyboard.storyboard; sourceTree = "<group>"; };
+		58B83762E1EF9A20FBC0EB0C /* frame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = frame.png; sourceTree = "<group>"; };
 		58B83771FC1EE8E40F76186F /* NavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NavigationController.h; path = Classes/App/NavigationController.h; sourceTree = "<group>"; };
 		58B837C348FDA69F1CC7DDA9 /* GalleryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GalleryViewController.h; path = Classes/App/GalleryViewController.h; sourceTree = "<group>"; };
 		58B837C60C75B33C820CECC0 /* UIAlertView+Blocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIAlertView+Blocks.m"; path = "Classes/Extend/UIAlertView+Blocks.m"; sourceTree = "<group>"; };
@@ -217,6 +224,9 @@
 		58B83E002344E23F2DBE9967 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				182364541FA87F0900A43FCA /* Main.storyboard */,
+				18AFA71B1FA85ADF00519BBE /* CropViewController.h */,
+				18AFA71C1FA85ADF00519BBE /* CropViewController.m */,
 				58B8375A816B67A304B1F28B /* AlbumViewController.h */,
 				58B838F5708D6280E9F9159D /* AlbumViewController.m */,
 				58B83C174E16414A7DC1C919 /* BaseViewController.h */,
@@ -270,6 +280,7 @@
 				4039F3041CE3386A0073F9E9 /* cameraButton@3x.png */,
 				403CDE5A1C48E04D00806269 /* nocontent.png */,
 				403CDE5B1C48E04D00806269 /* nocontent@2x.png */,
+				58B83762E1EF9A20FBC0EB0C /* frame.png */,
 				58B837B0CFC1004EEFBF81E7 /* en.lproj */,
 				58B83114E751250AE312AC40 /* zh.lproj */,
 			);
@@ -399,6 +410,7 @@
 				4039F31C1CE33FB90073F9E9 /* camera_switch.png in Resources */,
 				403CDE5C1C48E04D00806269 /* nocontent.png in Resources */,
 				188663661F3869EE002D38DC /* videoStop.png in Resources */,
+				182364551FA87F0900A43FCA /* Main.storyboard in Resources */,
 				403CDE5D1C48E04D00806269 /* nocontent@2x.png in Resources */,
 				4039F31D1CE33FB90073F9E9 /* camera_switch@2x.png in Resources */,
 				18FD37231F1E167E001FE220 /* image_notloaded@2x.png in Resources */,
@@ -416,6 +428,7 @@
 				58B83826135C99DD1FD6863D /* Storyboard.storyboard in Resources */,
 				58B838C3BDAA8E7AE47D602A /* InfoPlist.strings in Resources */,
 				58B8382E3A1CB1A5712FF6B8 /* InfoPlist.strings in Resources */,
+				58B837B0A6B0710F423DEC4D /* frame.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -521,6 +534,7 @@
 			files = (
 				E58DA591184339C100D60BBC /* main.m in Sources */,
 				58B835EB00FB57F1EC026043 /* AppDelegate.m in Sources */,
+				18AFA71D1FA85ADF00519BBE /* CropViewController.m in Sources */,
 				58B83600EDA7C0571B04673D /* RIButtonItem.m in Sources */,
 				58B83812A5FB0B16947D7283 /* UIActionSheet+Blocks.m in Sources */,
 				58B83BECC5DDA627909D0EA2 /* UIAlertView+Blocks.m in Sources */,

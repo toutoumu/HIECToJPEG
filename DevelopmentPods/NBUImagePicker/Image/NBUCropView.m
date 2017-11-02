@@ -33,78 +33,72 @@
 @end
 
 
-@implementation NBUCropView
-{
+@implementation NBUCropView {
     CGPoint _cropOrigin;
     CGFloat _aspectFillFactor;
     CGFloat _aspectFitFactor;
-    BOOL _ignoreLayout; // Needed for iOS4
 }
 
-- (void)commonInit
-{
+- (void)commonInit {
     [super commonInit];
-    
+
     _maximumScaleFactor = 1.5;
 }
 
 @synthesize image = _image;
 
-- (void)setImage:(UIImage *)image
-{
+/**
+ * 设置需要裁剪的图片
+ * @param image UIImage
+ */
+- (void)setImage:(UIImage *)image {
     _image = image;
-    
+
     // Update view to crop
     self.viewToCrop.image = image;
-    
+
     // Update layout
     [self setNeedsLayout];
-    _ignoreLayout = NO;
 }
 
-- (UIImage *)image
-{
+/**
+ * 获取裁剪好的图片
+ * @return UIImage
+ */
+- (UIImage *)image {
     if (!_image)
         return nil;
-    
+
     // Let viewToCrop process the image
-    UIImage * image = _viewToCrop.image;
-    
+    UIImage *image = _viewToCrop.image;
+
     // Calculate the crop rect
     CGRect cropRect = self.currentCropRect;
-    
+
     return [image imageCroppedToRect:cropRect];
 }
 
-- (CGRect)currentCropRect
-{
+- (CGRect)currentCropRect {
     // UI crop area
     CGRect cropRect = [_viewToCrop convertRect:CGRectMake(_cropOrigin.x + _scrollView.origin.x,
-                                                          _cropOrigin.y + _scrollView.origin.y,
-                                                          _cropGuideSize.width,
-                                                          _cropGuideSize.height)
+                    _cropOrigin.y + _scrollView.origin.y,
+                    _cropGuideSize.width,
+                    _cropGuideSize.height)
                                       fromView:self];
-    
+
     // The image crop area
     CGFloat factor = _image.size.width / _viewToCrop.bounds.size.width;
-    cropRect = CGRectMake(cropRect.origin.x * factor,
-                          cropRect.origin.y * factor,
-                          cropRect.size.width * factor,
-                          cropRect.size.height * factor);
-    
-    NBULogInfo(@"currentCropRect %@ from %@)",
-               NSStringFromCGRect(cropRect),
-               NSStringFromCGSize(_image.size));
-    
+    cropRect = CGRectMake(cropRect.origin.x * factor, cropRect.origin.y * factor, cropRect.size.width * factor, cropRect.size.height * factor);
+
+    NBULogInfo(@"currentCropRect %@ from %@)", NSStringFromCGRect(cropRect), NSStringFromCGSize(_image.size));
+
     return cropRect;
 }
 
 #pragma mark - Subviews
 
-- (UIView<UIImageView> *)viewToCrop
-{
-    if (!_viewToCrop)
-    {
+- (UIView <UIImageView> *)viewToCrop {
+    if (!_viewToCrop) {
         // Create a view if needed
         _viewToCrop = [UIImageView new];
         [self.scrollView addSubview:_viewToCrop];
@@ -112,141 +106,130 @@
     return _viewToCrop;
 }
 
-- (UIScrollView *)scrollView
-{
-    if (!_scrollView)
-    {
+- (UIScrollView *)scrollView {
+    if (!_scrollView) {
         // Create a view if needed
         _scrollView = [UIScrollView new];
-        _scrollView.autoresizingMask = (UIViewAutoresizingFlexibleHeight |
-                                        UIViewAutoresizingFlexibleWidth);
+        if (@available(iOS 11.0, *)) {
+            _scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+        }
+        _scrollView.autoresizingMask = (UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth);
         _scrollView.showsHorizontalScrollIndicator = NO;
         _scrollView.showsVerticalScrollIndicator = NO;
         _scrollView.clipsToBounds = NO;
         _scrollView.frame = self.bounds;
-        [self insertSubview:_scrollView
-                    atIndex:0];
+        [self insertSubview:_scrollView atIndex:0];
     }
     return _scrollView;
 }
 
-- (void)setCropGuideSize:(CGSize)cropGuideSize
-{
+- (void)setCropGuideSize:(CGSize)cropGuideSize {
     _cropGuideSize = cropGuideSize;
-    
+
     // Create a default crop guide view if nil and cropSize is set
     if (!_cropGuideView &&
-        !CGSizeEqualToSize(_cropGuideSize, CGSizeZero))
-    {
+            !CGSizeEqualToSize(_cropGuideSize, CGSizeZero)) {
         self.cropGuideView = [[CropGuideView alloc] initWithFrame:CGRectMake(0.0,
-                                                                             0.0,
-                                                                             _cropGuideSize.width,
-                                                                             _cropGuideSize.height)];
+                0.0,
+                _cropGuideSize.width,
+                _cropGuideSize.height)];
     }
 }
 
-- (void)setCropGuideView:(UIView *)cropGuideView
-{
+- (void)setCropGuideView:(UIView *)cropGuideView {
     // Remove previous
     [_cropGuideView removeFromSuperview];
-    
+
     _cropGuideView = cropGuideView;
-    
+
     if (!cropGuideView)
         return;
-    
+
     // Configure it
     cropGuideView.autoresizingMask = (UIViewAutoresizingFlexibleTopMargin |
-                                       UIViewAutoresizingFlexibleBottomMargin);
+            UIViewAutoresizingFlexibleBottomMargin);
     cropGuideView.userInteractionEnabled = NO;
     cropGuideView.opaque = NO;
     [self addSubview:cropGuideView];
-    
+
     // Set cropSize if not set
-    if (CGSizeEqualToSize(_cropGuideSize, CGSizeZero))
-    {
+    if (CGSizeEqualToSize(_cropGuideSize, CGSizeZero)) {
         _cropGuideSize = cropGuideView.size;
     }
 }
 
 #pragma mark - Layout
 
-- (void)layoutSubviews
-{
+- (void)layoutSubviews {
     [super layoutSubviews];
-    
+
     // Reset scrollView
     _scrollView.delegate = self;
     _scrollView.minimumZoomScale = 1.0;
     _scrollView.maximumZoomScale = 1.0;
     _scrollView.zoomScale = 1.0;
-    
+
     // Adjust the crop guide view
     _cropGuideView.center = _scrollView.center;
-    
+
     // Configure the viewToCrop
     _cropOrigin = CGPointMake((_scrollView.bounds.size.width - _cropGuideSize.width) / 2.0,
-                              (_scrollView.bounds.size.height - _cropGuideSize.height) / 2.0);
+            (_scrollView.bounds.size.height - _cropGuideSize.height) / 2.0);
     CGSize size = [_viewToCrop sizeThatFits:CGSizeMake(CGFLOAT_MAX,
-                                                       CGFLOAT_MAX)];
+            CGFLOAT_MAX)];
     if (CGSizeEqualToSize(size, CGSizeZero))
         return;
     _viewToCrop.frame = CGRectMake(_cropOrigin.x,
-                                   _cropOrigin.y,
-                                   size.width,
-                                   size.height);
-    
+            _cropOrigin.y,
+            size.width,
+            size.height);
+
     // Configure the scrollView
     _aspectFillFactor = MAX(_cropGuideSize.width / size.width,
-                            _cropGuideSize.height / size.height);
+            _cropGuideSize.height / size.height);
     _aspectFitFactor = MIN(_cropGuideSize.width / size.width,
-                           _cropGuideSize.height / size.height);
+            _cropGuideSize.height / size.height);
     _scrollView.minimumZoomScale = _allowAspectFit ? _aspectFitFactor : _aspectFillFactor;
     _scrollView.maximumZoomScale = _aspectFillFactor * _maximumScaleFactor;
     _scrollView.zoomScale = _aspectFillFactor;
     [self scrollViewDidZoom:_scrollView];
-    
+
     // Center the scrollView
     [_scrollView scrollRectToVisible:CGRectMake((_scrollView.contentSize.width - _scrollView.bounds.size.width) / 2.0,
-                                                (_scrollView.contentSize.height - _scrollView.bounds.size.height) / 2.0,
-                                                _scrollView.bounds.size.width,
-                                                _scrollView.bounds.size.height)
+                    (_scrollView.contentSize.height - _scrollView.bounds.size.height) / 2.0,
+                    _scrollView.bounds.size.width,
+                    _scrollView.bounds.size.height)
                             animated:NO];
-    
+
     NBULogVerbose(@"layoutSubviews viewToCrop: %@ cropGuideView: %@ cropOrigin/size: %@/%@",
-                  NSStringFromCGRect(_viewToCrop.frame),
-                  NSStringFromCGRect(_cropGuideView.frame),
-                  NSStringFromCGPoint(_cropOrigin),
-                  NSStringFromCGSize(_cropGuideSize));
+            NSStringFromCGRect(_viewToCrop.frame),
+            NSStringFromCGRect(_cropGuideView.frame),
+            NSStringFromCGPoint(_cropOrigin),
+            NSStringFromCGSize(_cropGuideSize));
 }
 
 #pragma mark - ScrollView management/delegate
 
-- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
-{
+- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
     return _viewToCrop;
 }
 
-- (void)scrollViewDidZoom:(UIScrollView *)scrollView
-{
+- (void)scrollViewDidZoom:(UIScrollView *)scrollView {
     // Adjust scrollView contentSize
     _scrollView.contentSize = CGSizeMake(_viewToCrop.frame.size.width + (2.0 * _cropOrigin.x),
-                                         _viewToCrop.frame.size.height + (2.0 * _cropOrigin.y));
-    
+            _viewToCrop.frame.size.height + (2.0 * _cropOrigin.y));
+
     // Also adjust the viewToCrop's origin?
-    if (_allowAspectFit)
-    {
+    if (_allowAspectFit) {
         // Normal
-        if (_scrollView.zoomScale >= _aspectFillFactor)
-        {
+        if (_scrollView.zoomScale >= _aspectFillFactor) {
             _viewToCrop.origin = _cropOrigin;
         }
-        // Centered
-        else
-        {
+            // Centered
+        else {
             BOOL landscape = _viewToCrop.size.width > _viewToCrop.size.height;
-            _viewToCrop.origin = CGPointMake(_cropOrigin.x + (landscape ? 0.0 :(_cropGuideSize.width - _viewToCrop.size.width) / 2.0),
-                                             _cropOrigin.y + (landscape ? (_cropGuideSize.height - _viewToCrop.size.height) / 2.0 : 0.0));
+            _viewToCrop.origin = CGPointMake(_cropOrigin.x + (landscape ? 0.0 : (_cropGuideSize.width - _viewToCrop.size.width) / 2.0),
+                    _cropOrigin.y + (landscape ? (_cropGuideSize.height - _viewToCrop.size.height) / 2.0 : 0.0));
         }
     }
 }
@@ -256,22 +239,21 @@
 
 @implementation CropGuideView
 
-- (void)drawRect:(CGRect)rect
-{
+- (void)drawRect:(CGRect)rect {
     // Settings
-    UIColor * brightColor = [UIColor colorWithRed: 1.0 green: 1.0 blue: 1.0 alpha: 0.75];
-    UIColor * darkColor = [UIColor colorWithRed: 0.5 green: 0.5 blue: 0.5 alpha: 0.75];
+    UIColor *brightColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:0.75];
+    UIColor *darkColor = [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.75];
     CGFloat rectangleStrokeWidth = 4;
     CGFloat rectanglePattern[] = {4, 4, 4, 4};
     CGRect rectangleFrame = self.bounds;
-    
+
     // Rectangle drawing
-    UIBezierPath * rectanglePath = [UIBezierPath bezierPathWithRect: rectangleFrame];
+    UIBezierPath *rectanglePath = [UIBezierPath bezierPathWithRect:rectangleFrame];
     rectanglePath.lineWidth = rectangleStrokeWidth;
     [darkColor setStroke];
     [rectanglePath setLineDash:rectanglePattern count:4 phase:2];
     [rectanglePath stroke];
-    
+
     // Dashed line drawing
     [brightColor setStroke];
     [rectanglePath setLineDash:rectanglePattern count:4 phase:6];

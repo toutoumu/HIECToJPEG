@@ -27,36 +27,27 @@
 @synthesize mediaInfo = _mediaInfo;
 @synthesize filters = _filters;
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
-    
-    #if __has_include("NBUFilters.h")
+
+#if __has_include("NBUFilters.h")
     // Configure filterView
-    if (!_filterView)
-    {
+    if (!_filterView) {
         NBULogVerbose(@"Filters disabled");
-    }
-    else
-    {
+    } else {
         _filterView.filters = self.filters;
         _filterView.workingSize = _workingSize;
     }
-    #endif
-    
+#endif
+
     // Configure cropView
-    if (!_cropView)
-    {
+    if (!_cropView) {
         NBULogVerbose(@"Crop disabled");
-    }
-    else
-    {
-        if (_maximumScaleFactor == 0.0)
-        {
+    } else {
+        if (_maximumScaleFactor == 0.0) {
             _maximumScaleFactor = 1.5;
         }
-        if (CGSizeEqualToSize(_cropGuideSize, CGSizeZero))
-        {
+        if (CGSizeEqualToSize(_cropGuideSize, CGSizeZero)) {
             CGFloat cropGuide = MIN(self.view.bounds.size.width, self.view.bounds.size.height);
             _cropGuideSize = CGSizeMake(cropGuide - 20.0, cropGuide - 20.0);
         }
@@ -66,157 +57,143 @@
 }
 
 #if __has_include("NBUFilters.h")
-- (void)setFilters:(NSArray *)filters
-{
+
+- (void)setFilters:(NSArray *)filters {
     _filters = filters;
-    
+
     _filterView.filters = filters;
 }
 
-- (NSArray *)filters
-{
-    if (!_filters)
-    {
+- (NSArray *)filters {
+    if (!_filters) {
         // Set some default filters
         _filters = @[
-                     [NBUFilterProvider filterWithName:nil
-                                                  type:NBUFilterTypeNone
-                                                values:nil],
-                     [NBUFilterProvider filterWithName:nil
-                                                  type:NBUFilterTypeGamma
-                                                values:nil],
-                     [NBUFilterProvider filterWithName:nil
-                                                  type:NBUFilterTypeSaturation
-                                                values:nil],
-                     [NBUFilterProvider filterWithName:nil
-                                                  type:NBUFilterTypeAuto
-                                                values:nil]
-                     ];
-        
+                [NBUFilterProvider filterWithName:nil
+                                             type:NBUFilterTypeNone
+                                           values:nil],
+                [NBUFilterProvider filterWithName:nil
+                                             type:NBUFilterTypeGamma
+                                           values:nil],
+                [NBUFilterProvider filterWithName:nil
+                                             type:NBUFilterTypeSaturation
+                                           values:nil],
+                [NBUFilterProvider filterWithName:nil
+                                             type:NBUFilterTypeAuto
+                                           values:nil]
+        ];
+
         NBULogInfo(@"Initialized with filters: %@", _filters);
     }
     return _filters;
 }
+
 #endif
 
-- (void)objectUpdated:(NSDictionary *)userInfo
-{
+- (void)objectUpdated:(NSDictionary *)userInfo {
     [super objectUpdated:userInfo];
-    
+
     // Start with cropView if present
-    if (_cropView)
-    {
+    if (_cropView) {
         _cropView.image = self.image;
     }
-    
-    #if __has_include("NBUFilters.h")
-    // Or just filterView
-    else
-    {
+
+#if __has_include("NBUFilters.h")
+        // Or just filterView
+    else {
         _filterView.image = self.image;
     }
-    #endif
+#endif
 }
 
-- (UIImage *)editedImage
-{
+- (UIImage *)editedImage {
     NBULogVerbose(@"Processing image...");
-    
+
     // Get the resulting image from cropView if present
-    UIImage * image;
-    if (_cropView)
-    {
+    UIImage *image;
+    if (_cropView) {
         image = _cropView.image;
     }
-    
-    #if __has_include("NBUFilters.h")
-    // Or from filterView
-    else
-    {
+
+#if __has_include("NBUFilters.h")
+        // Or from filterView
+    else {
         image = _filterView.image;
     }
-    #endif
-    
+#endif
+
     // Set to target size?
-    if (!CGSizeEqualToSize(_cropTargetSize, CGSizeZero))
-    {
+    if (!CGSizeEqualToSize(_cropTargetSize, CGSizeZero)) {
         image = [image imageDonwsizedToFill:_cropTargetSize];
     }
-    
+
     NBULogInfo(@"Processed image with size: %@", NSStringFromCGSize(image.size));
-    
+
     return image;
 }
 
-- (void)setMediaInfo:(NBUMediaInfo *)mediaInfo
-{
+- (void)setMediaInfo:(NBUMediaInfo *)mediaInfo {
     NBULogInfo(@"%@ %@", THIS_METHOD, mediaInfo);
-    
+
     _mediaInfo = mediaInfo;
-    
+
     self.object = mediaInfo.originalImage;
-    
-    #if __has_include("NBUFilters.h")
+
+#if __has_include("NBUFilters.h")
     // Restore state
-    NBUFilter * filter = mediaInfo.attributes[NBUMediaInfoFiltersKey];
-    if (filter)
-    {
+    NBUFilter *filter = mediaInfo.attributes[NBUMediaInfoFiltersKey];
+    if (filter) {
         _filterView.currentFilter = filter;
     }
-    #endif
+#endif
 }
 
-- (NBUMediaInfo *)mediaInfo
-{
+- (NBUMediaInfo *)mediaInfo {
     // Add metadata
-    if (_cropView)
-    {
+    if (_cropView) {
         _mediaInfo.attributes[NBUMediaInfoCropRectKey] = [NSValue valueWithCGRect:_cropView.currentCropRect];
     }
-    #if __has_include("NBUFilters.h")
-    if (_filterView)
-    {
-        NBUFilter * currentFilter = _filterView.currentFilter;
+#if __has_include("NBUFilters.h")
+    if (_filterView) {
+        NBUFilter *currentFilter = _filterView.currentFilter;
         if (currentFilter)
             _mediaInfo.attributes[NBUMediaInfoFiltersKey] = currentFilter;
     }
-    #endif
-    
+#endif
+
     return _mediaInfo;
 }
 
-- (NBUMediaInfo *)editedMediaInfo
-{
+- (NBUMediaInfo *)editedMediaInfo {
     // Try to refresh the edited image
-    UIImage * editedImage = self.editedImage;
-    if (editedImage)
-    {
+    UIImage *editedImage = self.editedImage;
+    if (editedImage) {
         _mediaInfo.editedImage = editedImage;
     }
-    
+
     return self.mediaInfo;
 }
 
-- (void)reset:(id)sender
-{
+- (void)reset:(id)sender {
     [self objectUpdated:nil];
 }
 
-- (void)apply:(id)sender
-{
-    if (_resultBlock)
-    {
-        #if __has_include("NBUFilters.h")
+- (void)apply:(id)sender {
+    if (_resultBlock) {
+        if (_startBlock) {
+            _startBlock();
+        }
+#if __has_include("NBUFilters.h")
         _filterView.activityView.hidden = NO;
-        #endif
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
-        {
-            UIImage * processedImage = self.editedImage;
-            dispatch_async(dispatch_get_main_queue(), ^
-            {
-                #if __has_include("NBUFilters.h")
+#endif
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            UIImage *processedImage = self.editedImage;
+            dispatch_async(dispatch_get_main_queue(), ^{
+#if __has_include("NBUFilters.h")
                 _filterView.activityView.hidden = YES;
-                #endif
+#endif
+                if (_finishBlock) {
+                    _finishBlock();
+                }
                 _resultBlock(processedImage);
             });
         });

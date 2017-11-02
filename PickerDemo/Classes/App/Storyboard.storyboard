@@ -716,6 +716,63 @@
             </objects>
             <point key="canvasLocation" x="-346" y="1449"/>
         </scene>
+        <!--Edit-->
+        <scene sceneID="gTi-3k-Jah">
+            <objects>
+                <viewController storyboardIdentifier="CropViewController" id="hEe-1H-jyo" customClass="CropViewController" sceneMemberID="viewController">
+                    <scrollView key="view" multipleTouchEnabled="YES" contentMode="scaleToFill" id="fDx-By-KSy">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" id="X9Z-tt-KC1" customClass="NBUCropView">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <scrollView multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" id="wae-DT-FMg">
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        <subviews>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" id="erp-P0-XDQ">
+                                                <rect key="frame" x="68" y="268" width="240" height="128"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                            </imageView>
+                                        </subviews>
+                                        <connections>
+                                            <outlet property="delegate" destination="X9Z-tt-KC1" id="PGa-5f-zD9"/>
+                                        </connections>
+                                    </scrollView>
+                                </subviews>
+                                <color key="backgroundColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
+                                <connections>
+                                    <outlet property="scrollView" destination="wae-DT-FMg" id="QKu-gw-IEW"/>
+                                    <outlet property="viewToCrop" destination="erp-P0-XDQ" id="Gvx-Cg-lkw"/>
+                                </connections>
+                            </view>
+                        </subviews>
+                    </scrollView>
+                    <extendedEdge key="edgesForExtendedLayout" top="YES"/>
+                    <navigationItem key="navigationItem" title="Edit" leftItemsSupplementBackButton="YES" id="Lxr-1g-YgX">
+                        <barButtonItem key="leftBarButtonItem" systemItem="undo" id="qVo-rt-Zkt">
+                            <connections>
+                                <action selector="reset:" destination="hEe-1H-jyo" id="u7h-XN-Fox"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="save" id="0CS-su-6W4">
+                            <connections>
+                                <action selector="apply:" destination="hEe-1H-jyo" id="coL-gc-fOU"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                    <connections>
+                        <outlet property="cropView" destination="X9Z-tt-KC1" id="nH9-EE-ngb"/>
+                        <outlet property="scroolView" destination="fDx-By-KSy" id="d6l-k4-5wW"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4gZ-Fp-KFd" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="129.5" y="1448.5"/>
+        </scene>
     </scenes>
     <resources>
         <image name="cameraButton.png" width="80" height="80"/>
