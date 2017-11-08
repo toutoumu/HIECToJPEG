@@ -20,7 +20,9 @@
 
 #import "CropViewController.h"
 
-@implementation CropViewController
+@implementation CropViewController{
+    
+}
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
@@ -28,18 +30,17 @@
         //包含状态栏的Rect
         self.maximumScaleFactor = 10.0;
         self.cropGuideSize = [[UIScreen mainScreen] bounds].size;
-
-        // 剪切后的回调方法
+        
         __unsafe_unretained CropViewController *weakSelf = self;
-        self.resultBlock = ^(UIImage *image) {
+        self.resultBlock = ^(UIImage *image) {// 剪切后的回调方法
             weakSelf.cropView.image = image;
         };
-
-        self.startBlock = ^() {
+        
+        self.startBlock = ^() {// 调用剪切时调用
             [weakSelf showProgressHUDWithMessage:@"剪切中..."];
         };
 
-        self.finishBlock = ^() {
+        self.finishBlock = ^() {//剪切完成之后调用
             [weakSelf.navigationController popViewController:weakSelf];
             [weakSelf hideProgressHUD:YES];
         };
@@ -48,12 +49,13 @@
 }
 
 - (void)viewDidLoad {
+    // 使内容在状态栏下显示(状态栏覆盖在其上方)
     self.automaticallyAdjustsScrollViewInsets = YES;
-    if (@available
-    (iOS
-    11.0, *)) {
-        self.scroolView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    if (@available(iOS 11.0, *)) {
+        self.scroolView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;        
     }
+    
+    // 透明状态栏
     self.navigationController.navigationBar.translucent = YES;
     self.navigationController.navigationBar.shadowImage = [UIImage new];
     [self.navigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];

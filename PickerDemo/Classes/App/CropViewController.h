@@ -23,11 +23,7 @@
 @interface CropViewController : NBUEditImageViewController
 
 @property (weak, nonatomic) IBOutlet                UIScrollView * scroolView;
-@property(nonatomic) MBProgressHUD *progressHUD;
 
-- (void)hideProgressHUD:(BOOL)animated;
-- (void)showProgressHUDWithMessage:(NSString *)message;
-- (void)showProgressHUDCompleteMessage:(NSString *)message;
-- (void)setProgressMessage:(NSString *)message;
+@property(nonatomic) MBProgressHUD *progressHUD;
 @end
 

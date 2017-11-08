@@ -45,6 +45,14 @@
     _maximumScaleFactor = 1.5;
 }
 
+-(void)awakeFromNib{
+    [super awakeFromNib];
+    if (@available(iOS 11.0, *)) {
+        // 使内容在状态栏下显示(状态栏覆盖在其上方)
+        _scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    }
+}
+
 @synthesize image = _image;
 
 /**
@@ -111,6 +119,7 @@
         // Create a view if needed
         _scrollView = [UIScrollView new];
         if (@available(iOS 11.0, *)) {
+            // 使内容在状态栏下显示(状态栏覆盖在其上方)
             _scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
         }
         _scrollView.autoresizingMask = (UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth);
@@ -157,6 +166,7 @@
         _cropGuideSize = cropGuideView.size;
     }
 }
+
 
 #pragma mark - Layout
 

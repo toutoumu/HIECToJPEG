@@ -48,7 +48,7 @@
     self.objectTableView.nibNameForViews = @"CustomAssetsGroupView";
 
     // 下一个页面返回按钮标题,图片列表页面返回按钮的名称 Customization
-    self.customBackButtonTitle = @"Albums";
+    self.customBackButtonTitle = @"Album";
 
     __weak AlbumViewController *weakSelf = self;
     __block NSMutableArray *weakSelections = _selections;
@@ -66,11 +66,11 @@
             browser.displayActionButton = YES;//分享按钮
             browser.displayNavArrows = YES;//翻页箭头
             browser.displaySelectionButtons = NO;//是否显示选择按钮
-            browser.alwaysShowControls = NO;//是否总是显示底部工具条
+            browser.alwaysShowControls = YES;//是否总是显示底部工具条
             browser.zoomPhotosToFill = NO;
             browser.enableGrid = YES;//启用网格列表
             browser.startOnGrid = YES;//从网格列表显示
-            browser.enableSwipeToDismiss = YES;
+            browser.enableSwipeToDismiss = NO;
             browser.autoPlayOnAppear = NO;//显示时播放
             browser.currentAlbumName = group.name;//当前相册名称
             browser.optionButtonClickBlock = optionButtonClickBlock;//图片列表页面右上角按钮点击事件block

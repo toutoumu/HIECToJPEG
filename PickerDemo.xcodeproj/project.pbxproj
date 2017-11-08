@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		182364551FA87F0900A43FCA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 182364541FA87F0900A43FCA /* Main.storyboard */; };
 		188663631F3869EE002D38DC /* videoStart.png in Resources */ = {isa = PBXBuildFile; fileRef = 1886635D1F3869EE002D38DC /* videoStart.png */; };
 		188663641F3869EE002D38DC /* videoStart@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1886635E1F3869EE002D38DC /* videoStart@2x.png */; };
 		188663651F3869EE002D38DC /* videoStart@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1886635F1F3869EE002D38DC /* videoStart@3x.png */; };
@@ -63,7 +62,6 @@
 
 /* Begin PBXFileReference section */
 		033994116E7C15DDD5FE5DCD /* libPods-PickerDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PickerDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		182364541FA87F0900A43FCA /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = SOURCE_ROOT; };
 		1886635D1F3869EE002D38DC /* videoStart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = videoStart.png; sourceTree = "<group>"; };
 		1886635E1F3869EE002D38DC /* videoStart@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "videoStart@2x.png"; sourceTree = "<group>"; };
 		1886635F1F3869EE002D38DC /* videoStart@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "videoStart@3x.png"; sourceTree = "<group>"; };
@@ -224,7 +222,6 @@
 		58B83E002344E23F2DBE9967 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				182364541FA87F0900A43FCA /* Main.storyboard */,
 				18AFA71B1FA85ADF00519BBE /* CropViewController.h */,
 				18AFA71C1FA85ADF00519BBE /* CropViewController.m */,
 				58B8375A816B67A304B1F28B /* AlbumViewController.h */,
@@ -410,7 +407,6 @@
 				4039F31C1CE33FB90073F9E9 /* camera_switch.png in Resources */,
 				403CDE5C1C48E04D00806269 /* nocontent.png in Resources */,
 				188663661F3869EE002D38DC /* videoStop.png in Resources */,
-				182364551FA87F0900A43FCA /* Main.storyboard in Resources */,
 				403CDE5D1C48E04D00806269 /* nocontent@2x.png in Resources */,
 				4039F31D1CE33FB90073F9E9 /* camera_switch@2x.png in Resources */,
 				18FD37231F1E167E001FE220 /* image_notloaded@2x.png in Resources */,
