@@ -13,6 +13,7 @@
  * 将状态栏颜色的修改交给当前显示的 UIViewController.
  * 当我们需要在 UIViewController 显示出来以后再次修改 状态栏颜色 只需要 调用 setNeedsStatusBarAppearanceUpdate 方法通知系统
  * 调用 preferredStatusBarStyle 方法来设置新的状态栏文字颜色
+ * 注意需要将这个类设置为 navigationController 的实现类 : <navigationController id="ukS-Zu-KTb" customClass="NavigationController" sceneMemberID="viewController">
  *
  */
 @implementation NavigationController

@@ -55,6 +55,11 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 - (void)_initialisation {
 
     // Defaults
+    /* 在info.plist中可以设置状态栏的外观是否是基于视图控制器，
+     * 键的名称就是UIViewControllerBasedStatusBarAppearance，
+     * 如果不设置那么它的默认值是YES,表示视图控制器决定了状态栏的风格；
+     * 如果值设置为NO，则表示每个视图控制器必须显式地使用UIApplication对象来设置状态栏的风格。
+     */
     NSNumber *isVCBasedStatusBarAppearanceNum = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"];
     if (isVCBasedStatusBarAppearanceNum) {
         _isVCBasedStatusBarAppearance = isVCBasedStatusBarAppearanceNum.boolValue;
@@ -85,8 +90,8 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _thumbPhotos = [[NSMutableArray alloc] init];
     _currentGridContentOffset = CGPointMake(0, CGFLOAT_MAX);
     _didSavePreviousStateOfNavBar = NO;
-    self.automaticallyAdjustsScrollViewInsets = NO;
     _statusBarStyle = UIStatusBarStyleLightContent;
+    self.automaticallyAdjustsScrollViewInsets = NO;
     // Listen for MWPhoto notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleMWPhotoLoadingDidEndNotification:)
@@ -151,31 +156,36 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     self.view.backgroundColor = [UIColor blackColor];
     self.view.clipsToBounds = YES;
 
-    // 初始化单张图片浏览 Setup paging scrolling view
+    // 初始化图片浏览 Setup paging scrolling view
     CGRect pagingScrollViewFrame = [self frameForPagingScrollView];
     _pagingScrollView = [[UIScrollView alloc] initWithFrame:pagingScrollViewFrame];
-    _pagingScrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    _pagingScrollView.pagingEnabled = YES;
     _pagingScrollView.delegate = self;
-    _pagingScrollView.showsHorizontalScrollIndicator = NO;
+    _pagingScrollView.pagingEnabled = YES;
     _pagingScrollView.showsVerticalScrollIndicator = NO;
+    _pagingScrollView.showsHorizontalScrollIndicator = NO;
     _pagingScrollView.backgroundColor = [UIColor blackColor];
+    _pagingScrollView.userInteractionEnabled = YES;
     _pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
+    _pagingScrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    if (@available(iOS 11.0, *)) {//解决ios11,图片放大后点击图片会造成图片偏移
+        _pagingScrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    }
+    if (_enableSwipeToDismiss) {// 添加拖拽消失手势
+        [_pagingScrollView.panGestureRecognizer addTarget:self action:@selector(scrollViewPanMethod:)];
+    }
     [self.view addSubview:_pagingScrollView];
 
     // 底部栏 Toolbar
     _toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:self.interfaceOrientation]];
-    _toolbar.tintColor = [UIColor whiteColor];
+    _toolbar.translucent = YES;
     _toolbar.barTintColor = nil;
+    _toolbar.barStyle = UIBarStyleBlack;
+    _toolbar.tintColor = [UIColor whiteColor];
+    _toolbar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
     [_toolbar setBackgroundImage:nil forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
     [_toolbar setBackgroundImage:nil forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsCompact];
-    _toolbar.translucent = YES;
-    _toolbar.barStyle = UIBarStyleBlack;
-    _toolbar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
-    
+
     // 透明底部栏
-    //_toolbar.tintColor = [UIColor colorWithWhite:0.0 alpha:1.0];
-    //_toolbar.barTintColor = [UIColor colorWithWhite:0.0 alpha:1.0];
     _toolbar.alpha = 1;
     _toolbar.barStyle = UIBarStyleDefault;
     [_toolbar setShadowImage:[UIImage new] forToolbarPosition:UIToolbarPositionAny];
@@ -210,6 +220,35 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 }
 
+/**
+ * 下拉隐藏
+ * @param panGestureRecognizer
+ */
+- (void)scrollViewPanMethod:(UIPanGestureRecognizer *)panGestureRecognizer {
+    if (_pagingScrollView.zoomScale != 1.0f || _pagingScrollView.contentOffset.y > 0) {
+        return;
+    }
+    //最小拖拽返回相应距离
+    static CGFloat minPanLength = 100.0f;
+    //拖拽结束后判断位置
+    if (panGestureRecognizer.state == UIGestureRecognizerStateEnded) {
+        if (ABS(_pagingScrollView.contentOffset.y) < minPanLength) {
+            _pagingScrollView.alpha = 1;
+        } else {
+            [self showGrid:YES];
+            [UIView animateWithDuration:0.35 animations:^{
+                _pagingScrollView.alpha = 0;
+            }                completion:^(BOOL finished) {
+                _pagingScrollView.alpha = 1;
+            }];
+        }
+    } else {
+        //拖拽过程中逐渐改变透明度
+        CGFloat alpha = 1 - ABS(_pagingScrollView.contentOffset.y / (_pagingScrollView.bounds.size.height));
+        _pagingScrollView.alpha = alpha;
+    }
+}
+
 - (void)performLayout {
 
     // Setup
@@ -241,7 +280,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         } else {
             self.navigationItem.rightBarButtonItem = nil;
         }
-        // 获取前一项(UIViewcontrol)因为是count所以,减一是代表自己,减二代表前一个页面 We're not first so show back button
+        // 获取前一项(UIViewControl)因为是count所以,减一是代表自己,减二代表前一个页面 We're not first so show back button
         UIViewController *previousViewController = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count - 2];
         NSString *backButtonTitle = previousViewController.navigationItem.backBarButtonItem ? previousViewController.navigationItem.backBarButtonItem.title : previousViewController.title;
         UIBarButtonItem *newBackButton = [[UIBarButtonItem alloc] initWithTitle:backButtonTitle style:UIBarButtonItemStylePlain target:nil action:nil];
@@ -256,7 +295,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         previousViewController.navigationItem.backBarButtonItem = newBackButton;
     }
 
-    // 底部工具栏 Toolbar items
+    // 底部栏 Toolbar items
     BOOL hasItems = NO;
     UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:self action:nil];
     fixedSpace.width = 32; // To balance action button
@@ -487,7 +526,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     navBar.barStyle = UIBarStyleBlack;
     [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     [navBar setBackgroundImage:nil forBarMetrics:UIBarMetricsCompact];
-    
+
     // 透明状态栏
     navBar.translucent = YES;
     navBar.shadowImage = [UIImage new];
@@ -531,7 +570,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     // https://github.com/mwaterfall/MWPhotoBrowser/issues/620
     if (@available(iOS 11.0, *)) {
         // do nothing
-    }else{
+    } else {
         [self layoutVisiblePages];
     }
 }
@@ -921,10 +960,8 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 - (void)updateVisiblePageStates {
     NSSet *copy = [_visiblePages copy];
     for (MWZoomingScrollView *page in copy) {
-
         // Update selection
         page.selectedButton.selected = [self photoIsSelectedAtIndex:page.index];
-
     }
 }
 
@@ -1054,7 +1091,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 - (CGSize)contentSizeForPagingScrollView {
     // We have to use the paging scroll view's bounds to calculate the contentSize, for the same reason outlined above.
     CGRect bounds = _pagingScrollView.bounds;
-    return CGSizeMake(bounds.size.width * [self numberOfPhotos], bounds.size.height);
+    return CGSizeMake(bounds.size.width * [self numberOfPhotos], bounds.size.height + 1);
 }
 
 - (CGPoint)contentOffsetForPageAtIndex:(NSUInteger)index {
@@ -1127,7 +1164,6 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     if (_currentPageIndex != previousCurrentPage) {
         [self didStartViewingPageAtIndex:index];
     }
-
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
@@ -1465,7 +1501,6 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [tmpGridController removeFromParentViewController];
         [self setControlsHidden:NO animated:YES permanent:NO]; // retrigger timer
     }];
-
 }
 
 #pragma mark - Control Hiding / Showing
@@ -1760,7 +1795,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 - (void)showProgressHUDCompleteMessage:(NSString *)message {
     if (message) {
         if (self.progressHUD.isHidden) [self.progressHUD showAnimated:YES];
-        self.progressHUD.label.text  = message;
+        self.progressHUD.label.text = message;
         self.progressHUD.mode = MBProgressHUDModeCustomView;
         [self.progressHUD hideAnimated:YES afterDelay:0.6];
     } else {
@@ -1790,26 +1825,25 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 #pragma mark 返回按钮事件监听
 
-- (BOOL)navigationShouldPopOnBackButton {//在这个方法里写返回按钮的事件处理
+- (BOOL)navigationShouldPopOnBackButton {//在这个方法里写返回按钮的事件处理,true允许返回,false不允许返回
     // 如果没有数据直接允许返回
-    if ([_delegate numberOfPhotosInPhotoBrowser:self] == 0){
+    if ([_delegate numberOfPhotosInPhotoBrowser:self] == 0) {
         return YES;
     }
 
     // 如果当前是单张图片浏览,回到Grid模式
-    if (_enableGrid && _gridController == nil){
+    if (_enableGrid && _gridController == nil) {
         [self showGridAnimated];
         return NO;
     }
-    if ([_delegate isReturn:self]) {
-        return YES;
-    }
-    [[[UIAlertView alloc] initWithTitle:@"警告"
+    return [_delegate isReturn:self];
+    /*[[[UIAlertView alloc] initWithTitle:@"警告"
                                 message:@"确定退出?"
                                delegate:self
                       cancelButtonTitle:@"取消"
                       otherButtonTitles:@"确定", nil] show];
-    return NO;
+      return NO;
+     */
 }
 
 #pragma mark UIAlertViewDelegate协议实现--根据被点击按钮的索引处理点击事件

@@ -808,9 +808,12 @@
  * @return false 不允许退出, true 允许退出
  */
 - (BOOL)isReturn:(MWPhotoBrowser *)photoBrowser {
-    // 有选择的图片是不允许直接退出
-    return ![self hasSelectedItem];
-    //退出
+    // 如果当前为选择模式 或者 有选择的图片那么取消选择,并设置为不可选择模式
+    if (photoBrowser.displaySelectionButtons || [self hasSelectedItem]) {
+        [self photoBrowser:photoBrowser toggleSelectModel:NO];
+        return NO;
+    }
+    return YES;
 }
 
 #pragma mark 网格列表页面, 显示移动对话框
