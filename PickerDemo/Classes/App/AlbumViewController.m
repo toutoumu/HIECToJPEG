@@ -70,7 +70,7 @@
             browser.zoomPhotosToFill = NO;
             browser.enableGrid = YES;//启用网格列表
             browser.startOnGrid = YES;//从网格列表显示
-            browser.enableSwipeToDismiss = NO;
+            browser.enableSwipeToDismiss = YES;
             browser.autoPlayOnAppear = NO;//显示时播放
             browser.currentAlbumName = group.name;//当前相册名称
             browser.optionButtonClickBlock = optionButtonClickBlock;//图片列表页面右上角按钮点击事件block
