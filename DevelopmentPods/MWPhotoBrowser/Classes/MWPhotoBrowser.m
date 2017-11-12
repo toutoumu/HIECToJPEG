@@ -170,9 +170,6 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     if (@available(iOS 11.0, *)) {//解决ios11,图片放大后点击图片会造成图片偏移
         _pagingScrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     }
-    if (_enableSwipeToDismiss) {// 添加拖拽消失手势
-        //[_pagingScrollView.panGestureRecognizer addTarget:self action:@selector(scrollViewPanMethod:)];
-    }
     [self.view addSubview:_pagingScrollView];
 
     // 底部栏 Toolbar
@@ -220,102 +217,6 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 }
 
-/**
- * 下拉隐藏
- * @param panGestureRecognizer
- */
-UISwipeGestureRecognizerDirection direction;//拖拽方向
-- (void)scrollViewPanMethod:(UIPanGestureRecognizer *)panGestureRecognizer {
-    //最小拖拽返回相应距离
-    static CGFloat minPanLength = 100.0f;
-    switch (panGestureRecognizer.state) {
-        case UIGestureRecognizerStateBegan: {
-            NSLog(@"拖拽-----开始");
-            direction = 0;
-            break;
-        }
-        case UIGestureRecognizerStateChanged: {
-            NSLog(@"拖拽-----改变");
-            if (direction == 0) {// 方向未知
-                CGPoint translation = [panGestureRecognizer translationInView:_pagingScrollView];
-                if (ABS(translation.x) < ABS(translation.y)) {//竖直方向移动的距离大于水平方向移动的距离
-                    if (translation.y > 0) {
-                        direction = UISwipeGestureRecognizerDirectionDown;//向上滑动
-                    } else {
-                        direction = UISwipeGestureRecognizerDirectionUp;//向下滑动
-                    }
-                    // 设置contentSize不允许水平滚动
-                    CGRect bounds = _pagingScrollView.bounds;
-                    _pagingScrollView.contentSize = CGSizeMake(bounds.size.width, bounds.size.height + 1);
-                    // 隐藏不需要滑动的View
-                    MWZoomingScrollView *current = [self pageDisplayedAtIndex:_currentPageIndex];
-                    for (MWZoomingScrollView *page in _visiblePages) {
-                        if (page != current) {
-                            page.hidden = YES;
-                        }
-                    }
-                } else {// 水平滚动
-                    if (translation.x > 0) {
-                        direction = UISwipeGestureRecognizerDirectionRight;//水平方向滚动
-                    } else {
-                        direction = UISwipeGestureRecognizerDirectionLeft;//水平方向滚动
-                    }
-                    // 设置contentSize不允许竖直滚动,横向内容尺寸为实际尺寸,高度为可见边界高度
-                    CGRect bounds = _pagingScrollView.bounds;
-                    _pagingScrollView.contentSize = CGSizeMake(_pagingScrollView.contentSize.width, bounds.size.height);
-                }
-            }
-            // 不处理水平滚动
-            if (direction == UISwipeGestureRecognizerDirectionLeft || direction == UISwipeGestureRecognizerDirectionRight) {
-                return;
-            }
-            //拖拽过程中逐渐改变透明度
-            CGFloat alpha = 1 - ABS(_pagingScrollView.contentOffset.y / (_pagingScrollView.bounds.size.height));
-            _pagingScrollView.alpha = alpha;
-            break;
-        }
-        case UIGestureRecognizerStateEnded: {
-            NSLog(@"拖拽-----结束");
-            // 不处理水平滚动
-            if (direction == UISwipeGestureRecognizerDirectionLeft || direction == UISwipeGestureRecognizerDirectionRight) {
-                // 只有横向滚动改变了contentSize因此需要还原这个值
-                _pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
-                return;
-            }
-            if (ABS(_pagingScrollView.contentOffset.y) < minPanLength) {
-                _pagingScrollView.alpha = 1;
-                _pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
-                for (MWZoomingScrollView *page in _visiblePages) {
-                    page.hidden = NO;
-                }
-            } else {
-                [self showGrid:YES];
-                [UIView animateWithDuration:0.35 animations:^{
-                    _pagingScrollView.alpha = 0;
-                }                completion:^(BOOL finished) {
-                    _pagingScrollView.alpha = 1;
-                    _pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
-                    for (MWZoomingScrollView *page in _visiblePages) {
-                        page.hidden = NO;
-                    }
-                }];
-            }
-            break;
-        }
-        case UIGestureRecognizerStatePossible:
-        case UIGestureRecognizerStateCancelled:
-        case UIGestureRecognizerStateFailed: {
-            NSLog(@"拖拽-----失败,取消");
-            // 拖拽未知情况,还原所有设置
-            _pagingScrollView.alpha = 1;
-            _pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
-            for (MWZoomingScrollView *page in _visiblePages) {
-                page.hidden = NO;
-            }
-            break;
-        }
-    }
-}
 
 - (void)performLayout {
 
@@ -1159,7 +1060,7 @@ UISwipeGestureRecognizerDirection direction;//拖拽方向
 - (CGSize)contentSizeForPagingScrollView {
     // We have to use the paging scroll view's bounds to calculate the contentSize, for the same reason outlined above.
     CGRect bounds = _pagingScrollView.bounds;
-    return CGSizeMake(bounds.size.width * [self numberOfPhotos], bounds.size.height /*+ 1*/);
+    return CGSizeMake(bounds.size.width * [self numberOfPhotos], bounds.size.height);
 }
 
 - (CGPoint)contentOffsetForPageAtIndex:(NSUInteger)index {
@@ -1759,25 +1660,25 @@ UISwipeGestureRecognizerDirection direction;//拖拽方向
 
 - (void)doneButtonPressed:(id)sender {
     // Only if we're modal and there's a done button
-    //if (_doneButton) {
-    // See if we actually just want to show/hide grid
-    if (self.enableGrid) {
-        if (self.startOnGrid && !_gridController) {
-            [self showGrid:YES];
-            return;
-        } else if (!self.startOnGrid && _gridController) {
-            [self hideGrid];
-            return;
+    if (_doneButton) {
+        // See if we actually just want to show/hide grid
+        if (self.enableGrid) {
+            if (self.startOnGrid && !_gridController) {
+                [self showGrid:YES];
+                return;
+            } else if (!self.startOnGrid && _gridController) {
+                [self hideGrid];
+                return;
+            }
+        }
+        // Dismiss view controller
+        if ([_delegate respondsToSelector:@selector(photoBrowserDidFinishModalPresentation:)]) {
+            // Call delegate method and let them dismiss us
+            [_delegate photoBrowserDidFinishModalPresentation:self];
+        } else {
+            [self dismissViewControllerAnimated:YES completion:nil];
         }
     }
-    // Dismiss view controller
-    if ([_delegate respondsToSelector:@selector(photoBrowserDidFinishModalPresentation:)]) {
-        // Call delegate method and let them dismiss us
-        [_delegate photoBrowserDidFinishModalPresentation:self];
-    } else {
-        [self dismissViewControllerAnimated:YES completion:nil];
-    }
-    //}
 }
 
 #pragma mark - Actions
