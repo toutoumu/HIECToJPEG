@@ -90,6 +90,8 @@ typedef NS_ENUM(NSUInteger, NBUAssetOrientation) {
 
 /// @name Properties
 
+@property(nonatomic) BOOL isSelected;
+
 /** 文件类型 图片|视频 等*/
 @property(nonatomic, readonly) NBUAssetType type;
 
