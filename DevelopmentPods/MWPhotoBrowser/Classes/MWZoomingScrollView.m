@@ -31,9 +31,7 @@
 
 - (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser {
     if ((self = [super init])) {
-        if (@available(iOS 11.0, *)) {//解决ios11,图片放大后点击图片会造成图片偏移
-            self.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-        }
+
         // Setup
         _index = NSUIntegerMax;
         _photoBrowser = browser;
@@ -68,31 +66,37 @@
                                                    object:nil];
 
         // Setup
-        self.backgroundColor = [UIColor blackColor];
         self.delegate = self;
+        self.scrollsToTop = NO;//点击状态栏不让其滚动到顶部
+        self.backgroundColor = [UIColor blackColor];
         self.showsHorizontalScrollIndicator = NO;
         self.showsVerticalScrollIndicator = NO;
         self.decelerationRate = UIScrollViewDecelerationRateFast;
-        [self.panGestureRecognizer addTarget:self action:@selector(scrollViewPanMethod:)];
-
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        if (@available(iOS 11.0, *)) {//解决ios11,图片放大后点击图片会造成图片偏移
+            self.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+        }
+        [self.panGestureRecognizer addTarget:self action:@selector(scrollViewPanMethod:)];
 
     }
     return self;
 }
 
-UISwipeGestureRecognizerDirection direction;//拖拽方向
 - (void)scrollViewPanMethod:(UIPanGestureRecognizer *)panGestureRecognizer {
-    //最小拖拽返回相应距离
-    static CGFloat minPanLength = 100.0f;
+    if (self.zoomScale != self.minimumZoomScale) {//如果手动进行了缩放
+        return;
+    }
+
+    static CGFloat minPanLength = 100.0f;//最小拖拽返回相应距离
+    static UISwipeGestureRecognizerDirection direction;//拖拽方向
     switch (panGestureRecognizer.state) {
         case UIGestureRecognizerStateBegan: {
-            NSLog(@"拖拽-----开始");
+            NSLog(@"拖拽-----开始%f / %f", self.contentOffset.y, self.bounds.size.height);
             direction = 0;
             break;
         }
         case UIGestureRecognizerStateChanged: {
-            NSLog(@"拖拽-----改变");
+            NSLog(@"拖拽-----改变%f / %f", self.contentOffset.y, self.bounds.size.height);
             if (direction == 0) {// 方向未知
                 CGPoint translation = [panGestureRecognizer translationInView:self];
                 if (ABS(translation.x) < ABS(translation.y)) {//竖直方向移动的距离大于水平方向移动的距离
@@ -114,24 +118,42 @@ UISwipeGestureRecognizerDirection direction;//拖拽方向
                 return;
             }
             //拖拽过程中逐渐改变透明度
-            CGFloat alpha = 1 - ABS(self.contentOffset.y / (self.bounds.size.height));
+            CGFloat alpha = 1.0f - ABS(self.contentOffset.y / self.bounds.size.height);
             self.alpha = alpha;
+
+            self.contentInset = UIEdgeInsetsMake(-self.contentOffset.y, -self.contentOffset.x, 0, 0);;
+            if (@available(iOS 11.0, *)) {// 兼容IOS11
+                self.scrollIndicatorInsets = self.contentInset;
+            }
             break;
         }
         case UIGestureRecognizerStateEnded: {
-            NSLog(@"拖拽-----结束");
+            NSLog(@"拖拽-----结束%f", [panGestureRecognizer velocityInView:self].y);
             // 不处理水平滚动
             if (direction == UISwipeGestureRecognizerDirectionLeft || direction == UISwipeGestureRecognizerDirectionRight) {
                 return;
             }
-            if (UISwipeGestureRecognizerDirectionUp == direction || ABS(self.contentOffset.y) < minPanLength) {
-                self.alpha = 1;
-            } else {
-                [_photoBrowser showGrid:YES];
-                [UIView animateWithDuration:0.35 animations:^{
-                    self.alpha = 0;
+            CGPoint velocity = [panGestureRecognizer velocityInView:self];
+            if (ABS(self.contentOffset.y) < minPanLength && ABS(velocity.y) < 50) {
+                [UIView animateWithDuration:0.3 animations:^{
+                    self.alpha = 1.0f;
+                    self.contentInset = UIEdgeInsetsZero;
+                    if (@available(iOS 11.0, *)) {// 兼容IOS11
+                        self.scrollIndicatorInsets = UIEdgeInsetsZero;
+                    }
                 }                completion:^(BOOL finished) {
-                    self.alpha = 1;
+
+                }];
+            } else {// 退出图片浏览
+                [_photoBrowser showGrid:YES];
+                [UIView animateWithDuration:0.3 animations:^{
+                    self.alpha = 0.0f;
+                }                completion:^(BOOL finished) {
+                    self.alpha = 1.0f;
+                    self.contentInset = UIEdgeInsetsZero;
+                    if (@available(iOS 11.0, *)) {// 兼容IOS11
+                        self.scrollIndicatorInsets = UIEdgeInsetsZero;
+                    }
                 }];
             }
             break;
@@ -141,7 +163,11 @@ UISwipeGestureRecognizerDirection direction;//拖拽方向
         case UIGestureRecognizerStateFailed: {
             NSLog(@"拖拽-----失败,取消");
             // 拖拽未知情况,还原所有设置
-            self.alpha = 1;
+            self.alpha = 1.0f;
+            self.contentInset = UIEdgeInsetsZero;
+            if (@available(iOS 11.0, *)) {// 兼容IOS11
+                self.scrollIndicatorInsets = UIEdgeInsetsZero;
+            }
             break;
         }
     }
@@ -447,7 +473,7 @@ UISwipeGestureRecognizerDirection direction;//拖拽方向
     [self layoutIfNeeded];
     // 2017年11月12日 如果当前缩放是缩放到最小时允许,上下滑动使得图片浏览界面消失
     if (self.zoomScale == self.minimumZoomScale) {
-        self.contentSize = CGSizeMake(self.frame.size.width, self.frame.size.height + 1);// photoImageViewFrame.size;
+        self.contentSize = CGSizeMake(self.frame.size.width, self.frame.size.height + 1);
     }
 }
 

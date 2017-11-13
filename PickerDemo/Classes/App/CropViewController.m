@@ -20,8 +20,8 @@
 
 #import "CropViewController.h"
 
-@implementation CropViewController{
-    
+@implementation CropViewController {
+
 }
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
@@ -30,12 +30,12 @@
         //包含状态栏的Rect
         self.maximumScaleFactor = 10.0;
         self.cropGuideSize = [[UIScreen mainScreen] bounds].size;
-        
+
         __unsafe_unretained CropViewController *weakSelf = self;
         self.resultBlock = ^(UIImage *image) {// 剪切后的回调方法
             weakSelf.cropView.image = image;
         };
-        
+
         self.startBlock = ^() {// 调用剪切时调用
             [weakSelf showProgressHUDWithMessage:@"剪切中..."];
         };
@@ -50,11 +50,12 @@
 
 - (void)viewDidLoad {
     // 使内容在状态栏下显示(状态栏覆盖在其上方)
-    self.automaticallyAdjustsScrollViewInsets = YES;
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    self.scroolView.scrollsToTop = NO;//点击状态栏不让其滚动到顶部
     if (@available(iOS 11.0, *)) {
-        self.scroolView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;        
+        self.scroolView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     }
-    
+
     // 透明状态栏
     self.navigationController.navigationBar.translucent = YES;
     self.navigationController.navigationBar.shadowImage = [UIImage new];
@@ -72,7 +73,6 @@
 
 - (void)setCropView:(NBUCropView *)cropView {
     super.cropView = cropView;
-
     // The image can be downsized until it fits inside the cropGuideView
     cropView.allowAspectFit = YES;
 }
