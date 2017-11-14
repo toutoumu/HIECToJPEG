@@ -208,7 +208,7 @@
 
 - (void)selectionButtonDoublePressed {
     [_gridController.browser setCurrentPhotoIndex:_index];
-    [_gridController.browser hideGrid];
+    [_gridController.browser hideGrid:self.frame];
 }
 
 #pragma mark - Touches

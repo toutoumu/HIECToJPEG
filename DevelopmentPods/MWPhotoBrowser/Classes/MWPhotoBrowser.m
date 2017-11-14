@@ -244,7 +244,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         self.navigationItem.rightBarButtonItem = _doneButton;
     } else {// 如果图片浏览器是跳转过来的而不是模态窗口,右上角显示的是Option按钮
         _optionButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Option", nil) style:UIBarButtonItemStylePlain target:self action:@selector(optionButtonPressed:)];
-        if (_gridController != nil) {//只有网格列表显示
+        if (_gridController != nil && _gridShow == YES) {//只有网格列表显示
             self.navigationItem.rightBarButtonItem = _optionButton;
         } else {
             self.navigationItem.rightBarButtonItem = nil;
@@ -405,11 +405,12 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
 
     // Layout
-    if (@available(iOS 11.0, *)) {
+    // https://github.com/mwaterfall/MWPhotoBrowser/issues/620
+    // 跳转后网格列表变成了单张图片浏览,所以加上&& !_viewHasAppearedInitially判断
+    if (@available(iOS 11.0, *) && !_viewHasAppearedInitially) {
         [self layoutVisiblePages];
     }
     [self.view setNeedsLayout];
-
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -536,6 +537,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
+
     // https://github.com/mwaterfall/MWPhotoBrowser/issues/620
     if (@available(iOS 11.0, *)) {
         // do nothing
@@ -872,7 +874,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
             // Add new page
             MWZoomingScrollView *page = [self dequeueRecycledPage];
             if (!page) {
-                page = [[MWZoomingScrollView alloc] initWithPhotoBrowser:self];
+                page = [[MWZoomingScrollView alloc] initWithPhotoBrowser:self parent:_pagingScrollView];
             }
             [_visiblePages addObject:page];
             [self configurePage:page forIndex:index];
@@ -1151,7 +1153,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
     // Title
     NSUInteger numberOfPhotos = [self numberOfPhotos];
-    if (_gridController) {
+    if (_gridController && _gridShow == YES) {
         if (_gridController.selectionMode) {
             self.title = NSLocalizedString(@"Select Photos", nil);
         } else {
@@ -1377,8 +1379,9 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 }
 
 - (void)showGrid:(BOOL)animated {
-
-    if (_gridController) return;
+    if (_gridShow == YES) return;
+    //if (_gridController) return;
+    _gridShow = YES;
 
     // Clear video
     [self clearCurrentVideo];
@@ -1388,19 +1391,20 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
 
     // Init grid controller
-    _gridController = [[MWGridViewController alloc] init];
-    _gridController.initialContentOffset = _currentGridContentOffset;
-    _gridController.browser = self;
-    _gridController.selectionMode = _displaySelectionButtons;
-    _gridController.view.frame = self.view.bounds;
-    _gridController.view.frame = CGRectOffset(_gridController.view.frame, 0, (self.startOnGrid ? -1 : 1) * self.view.bounds.size.height);
-
-    // Stop specific layout being triggered
-    _skipNextPagingScrollViewPositioning = YES;
-
-    // Add as a child view controller
-    [self addChildViewController:_gridController];
-    [self.view addSubview:_gridController.view];
+    if (_gridController == nil) {
+        _gridController = [[MWGridViewController alloc] init];
+        _gridController.initialContentOffset = _currentGridContentOffset;
+        _gridController.browser = self;
+        _gridController.selectionMode = _displaySelectionButtons;
+        _gridController.view.frame = self.view.bounds;
+        _gridController.view.frame = CGRectOffset(_gridController.view.frame, 0, (self.startOnGrid ? -1 : 1) * self.view.bounds.size.height);
+        // Stop specific layout being triggered
+        _skipNextPagingScrollViewPositioning = YES;
+        // Add as a child view controller
+        [self addChildViewController:_gridController];
+        //[self.view addSubview:_gridController.view];
+        [self.view insertSubview:_gridController.view belowSubview:_pagingScrollView];
+    }
 
     // Perform any adjustments
     [_gridController.view layoutIfNeeded];
@@ -1431,9 +1435,15 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 }
 
-- (void)hideGrid {
-
+/**
+ * 显示单张图片浏览
+ * @param cellFrame 单张图片浏览View的初始位置
+ */
+- (void)hideGrid:(CGRect)cellFrame {
+    if (_gridShow == NO) return;
     if (!_gridController) return;
+
+    _gridShow = NO;
 
     if (_optionButton == self.navigationItem.rightBarButtonItem) {
         self.navigationItem.rightBarButtonItem = nil;
@@ -1447,14 +1457,14 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [self.navigationItem setRightBarButtonItem:_gridPreviousRightNavItem animated:YES];
     }
 
-    // Position prior to hide animation
+    // 单张图片浏览隐藏的时候的位置,Position prior to hide animation
     CGRect newPagingFrame = [self frameForPagingScrollView];
     newPagingFrame = CGRectOffset(newPagingFrame, 0, (self.startOnGrid ? 1 : -1) * newPagingFrame.size.height);
     _pagingScrollView.frame = newPagingFrame;
 
     // Remember and remove controller now so things can detect a nil grid controller
-    MWGridViewController *tmpGridController = _gridController;
-    _gridController = nil;
+    //MWGridViewController *tmpGridController = _gridController;
+    //_gridController = nil;
 
     // Update
     [self updateNavigation];
@@ -1462,12 +1472,12 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
     // Animate, hide grid and show paging scroll view
     [UIView animateWithDuration:0.3 animations:^{
-        tmpGridController.view.frame = CGRectOffset(self.view.bounds, 0, (self.startOnGrid ? -1 : 1) * self.view.bounds.size.height);
+        //tmpGridController.view.frame = CGRectOffset(self.view.bounds, 0, (self.startOnGrid ? -1 : 1) * self.view.bounds.size.height);
         _pagingScrollView.frame = [self frameForPagingScrollView];
     }                completion:^(BOOL finished) {
-        [tmpGridController willMoveToParentViewController:nil];
-        [tmpGridController.view removeFromSuperview];
-        [tmpGridController removeFromParentViewController];
+        //[tmpGridController willMoveToParentViewController:nil];
+        //[tmpGridController.view removeFromSuperview];
+        //[tmpGridController removeFromParentViewController];
         [self setControlsHidden:NO animated:YES permanent:NO]; // retrigger timer
     }];
 }
@@ -1479,7 +1489,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 // hidden == YES 隐藏 NO 显示
 - (void)setControlsHidden:(BOOL)hidden animated:(BOOL)animated permanent:(BOOL)permanent {
     // Force visible
-    if (![self numberOfPhotos] || _gridController != nil || _alwaysShowControls) {
+    if (![self numberOfPhotos] || (_gridController != nil && _gridShow == YES) || _alwaysShowControls) {
         hidden = NO;
     }
 
@@ -1539,7 +1549,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [self.navigationController.navigationBar setAlpha:alpha];
 
         // Toolbar
-        if (_gridController) {// 这里的if是我加的,如果w
+        if (_gridController && _gridShow == YES) {// 这里的if是我加的,如果w
             _toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
             //_toolbar.frame = CGRectOffset(_toolbar.frame, 0, animatonOffset);
             _toolbar.alpha = 0;
@@ -1663,11 +1673,13 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     if (_doneButton) {
         // See if we actually just want to show/hide grid
         if (self.enableGrid) {
-            if (self.startOnGrid && !_gridController) {
+            if (self.startOnGrid && _gridShow == NO/*!_gridController*/) {
                 [self showGrid:YES];
                 return;
-            } else if (!self.startOnGrid && _gridController) {
-                [self hideGrid];
+            } else if (!self.startOnGrid && _gridController && _gridShow == YES) {
+                CGRect newPagingFrame = [self frameForPagingScrollView];
+                newPagingFrame = CGRectOffset(newPagingFrame, 0, (self.startOnGrid ? 1 : -1) * newPagingFrame.size.height);
+                [self hideGrid:newPagingFrame];
                 return;
             }
         }
@@ -1801,7 +1813,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
 
     // 如果当前是单张图片浏览,回到Grid模式
-    if (_enableGrid && _gridController == nil) {
+    if (_enableGrid && _gridShow == NO /*_gridController == nil*/) {
         [self showGridAnimated];
         return NO;
     }

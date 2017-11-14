@@ -14,34 +14,35 @@
 
 // Declare private methods of browser
 @interface MWPhotoBrowser () {
-    
+
 	// Data
     NSUInteger _photoCount;
     NSMutableArray *_photos;
     NSMutableArray *_thumbPhotos;
 	NSArray *_fixedPhotosArray; // Provided via init
-	
+
 	// Views
 	UIScrollView *_pagingScrollView;
-	
+
 	// Paging & layout
 	NSMutableSet *_visiblePages, *_recycledPages;
 	NSUInteger _currentPageIndex;
     NSUInteger _previousPageIndex;
     CGRect _previousLayoutBounds;
 	NSUInteger _pageIndexBeforeRotation;
-	
+
 	// Navigation & controls
 	UIToolbar *_toolbar;
 	NSTimer *_controlVisibilityTimer;
 	UIBarButtonItem *_previousButton, *_nextButton, *_actionButton, *_doneButton, *_optionButton;
     MBProgressHUD *_progressHUD;
-    
+
     // Grid
+    BOOL _gridShow;//详情是否显示了网格视图
     MWGridViewController *_gridController;
     UIBarButtonItem *_gridPreviousLeftNavItem;
     UIBarButtonItem *_gridPreviousRightNavItem;
-    
+
     // Appearance
     UIStatusBarStyle _statusBarStyle;//将要设置的导航栏文字样式
     BOOL _previousNavBarHidden;
@@ -53,12 +54,12 @@
     UIBarButtonItem *_previousViewControllerBackButton;
     UIImage *_previousNavigationBarBackgroundImageDefault;
     UIImage *_previousNavigationBarBackgroundImageLandscapePhone;
-    
+
     // Video
     MPMoviePlayerViewController *_currentVideoPlayerViewController;
     NSUInteger _currentVideoIndex;
     UIActivityIndicatorView *_currentVideoLoadingIndicator;
-    
+
     // Misc
     BOOL _hasBelongedToViewController;
     BOOL _isVCBasedStatusBarAppearance;
@@ -72,7 +73,7 @@
     BOOL _skipNextPagingScrollViewPositioning;
     BOOL _viewHasAppearedInitially;
     CGPoint _currentGridContentOffset;
-    
+
 }
 
 // Properties
@@ -114,7 +115,7 @@
 
 // Grid
 - (void)showGrid:(BOOL)animated;
-- (void)hideGrid;
+- (void)hideGrid:(CGRect)cellFrame;
 
 // Controls
 - (void)cancelControlHiding;
