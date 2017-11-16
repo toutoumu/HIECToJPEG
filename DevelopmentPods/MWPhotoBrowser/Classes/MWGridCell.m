@@ -76,13 +76,14 @@
         //给self.view添加一个手势监测；
         [_tapButton addGestureRecognizer:singleRecognizer];
         
-        // 双击的 Recognizer
+        // S双击的 Recognizer
         /*UITapGestureRecognizer* doubleRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DoubleTap:)];
         doubleRecognizer.numberOfTapsRequired = 2; // 双击
         //关键语句，给self.view添加一个手势监测；
         [_tapButton addGestureRecognizer:doubleRecognizer];
         // 关键在这一行，双击手势确定监测失败才会触发单击手势的相应操作
         [singleRecognizer requireGestureRecognizerToFail:doubleRecognizer];*/
+        // E双击的 Recognizer
         ////E单击双击事件
         
         // 调整了图片大小
@@ -208,7 +209,7 @@
 
 - (void)selectionButtonDoublePressed {
     [_gridController.browser setCurrentPhotoIndex:_index];
-    [_gridController.browser hideGrid:self.frame];
+    [_gridController.browser hideGrid:self];
 }
 
 #pragma mark - Touches

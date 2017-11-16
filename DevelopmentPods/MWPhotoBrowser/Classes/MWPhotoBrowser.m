@@ -11,6 +11,7 @@
 #import "MWPhotoBrowserPrivate.h"
 #import "SDImageCache.h"
 #import "UIImage+MWPhotoBrowser.h"
+#import "NBUAdditions.h"
 
 #define PADDING                  10
 
@@ -230,7 +231,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
     // 标题栏按钮操作 Navigation buttons
     if ([self.navigationController.viewControllers objectAtIndex:0] == self) {
-        // 如果图片浏览器作为模态窗口出现那么在右上角显示Done按钮
+        // [模态窗口] 右上角显示 [Done] 按钮
         // We're first on stack so show done button
         _doneButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", nil) style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)];
 
@@ -242,9 +243,9 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [_doneButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateNormal];
         [_doneButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateHighlighted];
         self.navigationItem.rightBarButtonItem = _doneButton;
-    } else {// 如果图片浏览器是跳转过来的而不是模态窗口,右上角显示的是Option按钮
+    } else {// [非模态窗口] 右上角显示 [Option] 按钮
         _optionButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Option", nil) style:UIBarButtonItemStylePlain target:self action:@selector(optionButtonPressed:)];
-        if (_gridController != nil && _gridShow == YES) {//只有网格列表显示
+        if (_gridController != nil && _gridShow == YES) {//如果当前显示的是网格列表,那么右上角显示 [Option] 按钮
             self.navigationItem.rightBarButtonItem = _optionButton;
         } else {
             self.navigationItem.rightBarButtonItem = nil;
@@ -405,11 +406,6 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     }
 
     // Layout
-    // https://github.com/mwaterfall/MWPhotoBrowser/issues/620
-    // 跳转后网格列表变成了单张图片浏览,所以加上&& !_viewHasAppearedInitially判断
-    if (@available(iOS 11.0, *) && !_viewHasAppearedInitially) {
-        [self layoutVisiblePages];
-    }
     [self.view setNeedsLayout];
 }
 
@@ -537,13 +533,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
-
-    // https://github.com/mwaterfall/MWPhotoBrowser/issues/620
-    if (@available(iOS 11.0, *)) {
-        // do nothing
-    } else {
-        [self layoutVisiblePages];
-    }
+    [self layoutVisiblePages];
 }
 
 - (void)layoutVisiblePages {
@@ -557,6 +547,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     // Remember index
     NSUInteger indexPriorToLayout = _currentPageIndex;
 
+    /*
     // Get paging scroll view frame to determine if anything needs changing
     CGRect pagingScrollViewFrame = [self frameForPagingScrollView];
 
@@ -565,6 +556,17 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         _pagingScrollView.frame = pagingScrollViewFrame;
     }
     _skipNextPagingScrollViewPositioning = NO;
+    */
+    // https://github.com/mwaterfall/MWPhotoBrowser/issues/620
+    if (_gridShow) {
+        CGRect newPagingFrame = [self frameForPagingScrollView];
+        newPagingFrame = CGRectOffset(newPagingFrame, 0, (self.startOnGrid ? 1 : -1) * newPagingFrame.size.height);
+        _pagingScrollView.frame = newPagingFrame;
+    } else {
+        // Get paging scroll view frame to determine if anything needs changing
+        CGRect pagingScrollViewFrame = [self frameForPagingScrollView];
+        _pagingScrollView.frame = pagingScrollViewFrame;
+    }
 
     // Recalculate contentSize based on current orientation
     _pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
@@ -831,6 +833,10 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         }
         // Update nav
         [self updateNavigation];
+        // 加载完成之后更新动画遮罩层的图片
+        if (_coverImage != nil && page.index == _coverImage.tag) {
+            _coverImage.image = [photo underlyingImage];
+        }
     }
 }
 
@@ -922,16 +928,15 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
                 page.selectedButton = selectedButton;
                 selectedButton.selected = [self photoIsSelectedAtIndex:index];
             }
-
         }
     }
-
 }
 
 - (void)updateVisiblePageStates {
     NSSet *copy = [_visiblePages copy];
     for (MWZoomingScrollView *page in copy) {
         // Update selection
+        page.selectedButton.hidden = !self.displaySelectionButtons;
         page.selectedButton.selected = [self photoIsSelectedAtIndex:page.index];
     }
 }
@@ -1118,7 +1123,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 #pragma mark - UIScrollView Delegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-
+    NSLog(@"scrollViewDidScroll---MWPhotoBrowser");
     // Checks
     if (!_viewIsActive || _performingLayout || _rotating) return;
 
@@ -1138,11 +1143,20 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    NSLog(@"scrollViewWillBeginDragging---MWPhotoBrowser");
+
     // Hide controls when dragging begins
     [self setControlsHidden:YES animated:YES permanent:NO];
 }
 
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    NSLog(@"scrollViewDidEndDragging---MWPhotoBrowser");
+}
+
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    NSLog(@"scrollViewDidEndDecelerating---MWPhotoBrowser");
+
     // Update nav when page changes
     [self updateNavigation];
 }
@@ -1234,6 +1248,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         }
     }
     if (index != NSUIntegerMax) {
+        [self reloadGridData];// 选择状态改变,更新网格列表数据
         [self setPhotoSelected:selectedButton.selected atIndex:index];
     }
 }
@@ -1378,6 +1393,10 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [self showGrid:YES];
 }
 
+/**
+ * 显示网格列表
+ * @param animated
+ */
 - (void)showGrid:(BOOL)animated {
     if (_gridShow == YES) return;
     //if (_gridController) return;
@@ -1398,11 +1417,8 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         _gridController.selectionMode = _displaySelectionButtons;
         _gridController.view.frame = self.view.bounds;
         _gridController.view.frame = CGRectOffset(_gridController.view.frame, 0, (self.startOnGrid ? -1 : 1) * self.view.bounds.size.height);
-        // Stop specific layout being triggered
-        _skipNextPagingScrollViewPositioning = YES;
         // Add as a child view controller
         [self addChildViewController:_gridController];
-        //[self.view addSubview:_gridController.view];
         [self.view insertSubview:_gridController.view belowSubview:_pagingScrollView];
     }
 
@@ -1410,7 +1426,10 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [_gridController.view layoutIfNeeded];
     [_gridController adjustOffsetsAsRequired];
 
-    // 如果右上角的按钮是action按钮那么隐藏 Hide action button on nav bar if it exists
+    // Stop specific layout being triggered
+    // _skipNextPagingScrollViewPositioning = YES;
+
+    // 模态窗口图片列表模式下,如果右上角的按钮是 action 按钮那么隐藏 Hide action button on nav bar if it exists
     if (self.navigationItem.rightBarButtonItem == _actionButton) {
         _gridPreviousRightNavItem = _actionButton;
         [self.navigationItem setRightBarButtonItem:nil animated:YES];
@@ -1439,47 +1458,61 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
  * 显示单张图片浏览
  * @param cellFrame 单张图片浏览View的初始位置
  */
-- (void)hideGrid:(CGRect)cellFrame {
+- (void)hideGrid:(UIView *)cell {
     if (_gridShow == NO) return;
     if (!_gridController) return;
-
     _gridShow = NO;
 
+    // 图片浏览模式不显示右上角按钮
     if (_optionButton == self.navigationItem.rightBarButtonItem) {
         self.navigationItem.rightBarButtonItem = nil;
     }
 
-    // Remember previous content offset
+    // 记住当前网格列表偏移值,重建网格时需要 Remember previous content offset
     _currentGridContentOffset = _gridController.collectionView.contentOffset;
 
-    // Restore action button if it was removed
+    // 导航栏右上角按钮如果有,加上 Restore action button if it was removed
     if (_gridPreviousRightNavItem == _actionButton && _actionButton) {
         [self.navigationItem setRightBarButtonItem:_gridPreviousRightNavItem animated:YES];
     }
-
-    // 单张图片浏览隐藏的时候的位置,Position prior to hide animation
-    CGRect newPagingFrame = [self frameForPagingScrollView];
-    newPagingFrame = CGRectOffset(newPagingFrame, 0, (self.startOnGrid ? 1 : -1) * newPagingFrame.size.height);
-    _pagingScrollView.frame = newPagingFrame;
-
-    // Remember and remove controller now so things can detect a nil grid controller
-    //MWGridViewController *tmpGridController = _gridController;
-    //_gridController = nil;
 
     // Update
     [self updateNavigation];
     [self updateVisiblePageStates];
 
     // Animate, hide grid and show paging scroll view
-    [UIView animateWithDuration:0.3 animations:^{
-        //tmpGridController.view.frame = CGRectOffset(self.view.bounds, 0, (self.startOnGrid ? -1 : 1) * self.view.bounds.size.height);
-        _pagingScrollView.frame = [self frameForPagingScrollView];
-    }                completion:^(BOOL finished) {
-        //[tmpGridController willMoveToParentViewController:nil];
-        //[tmpGridController.view removeFromSuperview];
-        //[tmpGridController removeFromParentViewController];
-        [self setControlsHidden:NO animated:YES permanent:NO]; // retrigger timer
-    }];
+    _pagingScrollView.alpha = 0.0f;
+    _pagingScrollView.frame = [self frameForPagingScrollView];
+
+    // 当前需要显示的图片
+    MWZoomingScrollView *currentPage = [self pageDisplayedAtIndex:_currentPageIndex];
+    currentPage.hidden = YES;
+
+    // 用于动画的遮罩层
+    //cell 在 self.view 的位置及大小
+    CGRect cellFrame = [cell convertRect:cell.bounds toCoordinateSpace:self.view];
+    _coverImage = [[UIImageView alloc] initWithFrame:cellFrame];
+    _coverImage.image = [self imageForPhoto:currentPage.photo];
+    if (_coverImage.image == nil) {
+        _coverImage.tag = _currentPageIndex;//设置tag让大图加载完成之后能够找到对应的图片加载
+        //如果大图没有加载,先加载缩略图,当图片加载完成之后替换为大图,见方法 handleMWPhotoLoadingDidEndNotification
+        _coverImage.image = [self imageForPhoto:[self thumbPhotoAtIndex:_currentPageIndex]];
+        //如果没加载大图(此时的frame是全屏)图片保持比例,内容全部显示,内容缩放以适应屏幕。其余部分是透明的
+        _coverImage.contentMode = UIViewContentModeScaleAspectFit;
+    }
+    [self.view addSubview:_coverImage];
+
+    [UIView animateWithDuration:0.3
+                     animations:^{
+                         _pagingScrollView.alpha = 1.0f;
+                         _coverImage.frame = currentPage.imageFrame;
+                     }
+                     completion:^(BOOL finished) {
+                         currentPage.hidden = NO;
+                         [_coverImage removeFromSuperview];
+                         _coverImage = nil;
+                         [self setControlsHidden:NO animated:YES permanent:NO]; // retrigger timer
+                     }];
 }
 
 #pragma mark - Control Hiding / Showing
@@ -1677,9 +1710,10 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
                 [self showGrid:YES];
                 return;
             } else if (!self.startOnGrid && _gridController && _gridShow == YES) {
-                CGRect newPagingFrame = [self frameForPagingScrollView];
-                newPagingFrame = CGRectOffset(newPagingFrame, 0, (self.startOnGrid ? 1 : -1) * newPagingFrame.size.height);
-                [self hideGrid:newPagingFrame];
+                // todo 需要获取当前cell
+                /*CGRect newPagingFrame = [self frameForPagingScrollView];
+                newPagingFrame = CGRectOffset(newPagingFrame, 0, (self.startOnGrid ? 1 : -1) * newPagingFrame.size.height);*/
+                [self hideGrid:_pagingScrollView];
                 return;
             }
         }

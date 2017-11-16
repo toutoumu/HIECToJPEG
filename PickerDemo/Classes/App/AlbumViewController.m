@@ -683,9 +683,9 @@
                 [_selections removeObjectAtIndex:index];
                 [_asses removeObjectAtIndex:index];
                 [photoBrowser reloadData];
-                if (_asses.count == 0) {//全部移动完成才刷新这个否则会有bug
+                //if (_asses.count == 0) {//全部移动完成才刷新这个否则会有bug
                     [photoBrowser reloadGridData];
-                }
+                //}
                 [photoBrowser showProgressHUDCompleteMessage:@"移动成功"];
             } else {
                 [photoBrowser showProgressHUDCompleteMessage:@"移动失败"];
@@ -734,9 +734,9 @@
                     [_selections removeObjectAtIndex:index];
                     [_asses removeObjectAtIndex:index];
                     [photoBrowser reloadData];
-                    if (_asses.count == 0) {//全部移动完成才刷新这个否则会有bug
+                    //if (_asses.count == 0) {//全部移动完成才刷新这个否则会有bug
                         [photoBrowser reloadGridData];
-                    }
+                    //}
                     [photoBrowser showProgressHUDCompleteMessage:@"删除成功"];
                 } else {//移动文件失败
                     [photoBrowser showProgressHUDCompleteMessage:@"删除失败"];
@@ -771,9 +771,9 @@
                         [_selections removeObjectAtIndex:index];
                         [_asses removeObjectAtIndex:index];
                         [photoBrowser reloadData];
-                        if (_asses.count == 0) {//全部移动完成才刷新这个否则会有bug
+                        //if (_asses.count == 0) {//全部移动完成才刷新这个否则会有bug
                             [photoBrowser reloadGridData];
-                        }
+                        //}
                         [photoBrowser showProgressHUDCompleteMessage:@"删除成功"];
 
                     } else {

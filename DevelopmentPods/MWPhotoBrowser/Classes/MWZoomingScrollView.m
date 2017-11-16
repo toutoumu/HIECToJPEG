@@ -18,11 +18,12 @@
 @interface MWZoomingScrollView () {
 
     MWPhotoBrowser __weak *_photoBrowser;
+    UIScrollView __weak *_parentView;
+
     MWTapDetectingView *_tapView; // for background taps
     MWTapDetectingImageView *_photoImageView;
     DACircularProgressView *_loadingIndicator;
     UIImageView *_loadingError;
-    UIScrollView *_parentView;
 
 }
 
@@ -327,6 +328,18 @@
     }
 }
 
+/**
+ * 图片的布局
+ * @return
+ */
+- (CGRect)imageFrame {
+    if (_photoImageView.image != nil) {
+        return _photoImageView.frame;
+    }
+    // 图片未加载返回视图frame
+    return CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
+}
+
 #pragma mark - Loading Progress
 
 - (void)setProgressFromNotification:(NSNotification *)notification {
@@ -481,8 +494,13 @@
     }
 
     // Center
-    if (!CGRectEqualToRect(_photoImageView.frame, frameToCenter))
+    if (!CGRectEqualToRect(_photoImageView.frame, frameToCenter)) {
         _photoImageView.frame = frameToCenter;
+        // 解决当图片分辨率不足以沾满屏幕,时候无法下滑关闭问题
+        if (self.zoomScale == self.minimumZoomScale) {
+            self.contentSize = CGSizeMake(self.frame.size.width, self.frame.size.height + 1);
+        }
+    }
 
 }
 
@@ -492,29 +510,34 @@
     return _photoImageView;
 }
 
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    NSLog(@"scrollViewDidScroll");
+}
+
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    NSLog(@"scrollViewWillBeginDragging");
     [_photoBrowser cancelControlHiding];
     _parentView.scrollEnabled = NO;
     // 2017年11月12日 如果当前缩放是缩放到最小时允许,滑动使得图片浏览界面消失
     if (self.zoomScale == self.minimumZoomScale) {
         self.contentSize = CGSizeMake(self.frame.size.width + 1, self.frame.size.height + 1);
     }
-    NSLog(@"scrollViewWillBeginDragging");
-}
-
-- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view {
-    self.scrollEnabled = YES; // reset
-    [_photoBrowser cancelControlHiding];
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    NSLog(@"scrollViewDidEndDragging");
+
     [_photoBrowser hideControlsAfterDelay];
     _parentView.scrollEnabled = YES;
     // 2017年11月12日 如果当前缩放是缩放到最小时允许,上下滑动使得图片浏览界面消失
     if (self.zoomScale == self.minimumZoomScale) {
         self.contentSize = CGSizeMake(self.frame.size.width, self.frame.size.height + 1);
     }
-    NSLog(@"scrollViewDidEndDragging");
+}
+
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view {
+    self.scrollEnabled = YES; // reset
+    [_photoBrowser cancelControlHiding];
 }
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView {

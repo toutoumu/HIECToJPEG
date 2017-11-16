@@ -23,8 +23,10 @@
 
 	// Views
 	UIScrollView *_pagingScrollView;
+    UIImageView *_coverImage;//点击cell展开图片的动画
 
-	// Paging & layout
+
+    // Paging & layout
 	NSMutableSet *_visiblePages, *_recycledPages;
 	NSUInteger _currentPageIndex;
     NSUInteger _previousPageIndex;
@@ -115,7 +117,7 @@
 
 // Grid
 - (void)showGrid:(BOOL)animated;
-- (void)hideGrid:(CGRect)cellFrame;
+- (void)hideGrid:(UIView *)cell;
 
 // Controls
 - (void)cancelControlHiding;

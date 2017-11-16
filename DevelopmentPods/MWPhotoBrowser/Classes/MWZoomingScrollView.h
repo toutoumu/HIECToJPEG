@@ -17,6 +17,7 @@
 
 }
 
+@property (nonatomic, readonly) CGRect imageFrame;
 @property () NSUInteger index;
 @property (nonatomic) id <MWPhoto> photo;
 @property (nonatomic, weak) MWCaptionView *captionView;
