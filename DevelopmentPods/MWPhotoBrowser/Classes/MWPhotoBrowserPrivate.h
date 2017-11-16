@@ -23,8 +23,6 @@
 
 	// Views
 	UIScrollView *_pagingScrollView;
-    UIImageView *_coverImage;//点击cell展开图片的动画
-
 
     // Paging & layout
 	NSMutableSet *_visiblePages, *_recycledPages;

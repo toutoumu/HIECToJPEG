@@ -157,6 +157,16 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     self.view.backgroundColor = [UIColor blackColor];
     self.view.clipsToBounds = YES;
 
+    // 动画相关的View
+    _backGroundView = [[UIView alloc] initWithFrame:self.view.bounds];
+    _backGroundView.backgroundColor = [UIColor blackColor];
+    _backGroundView.hidden = YES;
+    [self.view addSubview:_backGroundView];
+
+    _coverImage = [[UIImageView alloc] initWithFrame:self.view.bounds];
+    _coverImage.hidden = YES;
+    [self.view addSubview:_coverImage];
+
     // 初始化图片浏览 Setup paging scrolling view
     CGRect pagingScrollViewFrame = [self frameForPagingScrollView];
     _pagingScrollView = [[UIScrollView alloc] initWithFrame:pagingScrollViewFrame];
@@ -697,7 +707,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
             _gridController.selectionMode = _displaySelectionButtons;
             [_gridController.collectionView reloadData];
         } else {
-            [self showGridAnimated];
+            [self showGrid:YES];
         }
     }
 }
@@ -834,7 +844,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         // Update nav
         [self updateNavigation];
         // 加载完成之后更新动画遮罩层的图片
-        if (_coverImage != nil && page.index == _coverImage.tag) {
+        if (!_coverImage.isHidden && page.index == _coverImage.tag) {
             _coverImage.image = [photo underlyingImage];
         }
     }
@@ -869,7 +879,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
             MWLog(@"Removed page at index %lu", (unsigned long) pageIndex);
         }
     }
-    [_visiblePages minusSet:_recycledPages];
+    [_visiblePages minusSet:_recycledPages];// 删除 _visiblePages 中与 _recycledPages 相同的元素
     while (_recycledPages.count > 2) // Only keep 2 recycled pages
         [_recycledPages removeObject:[_recycledPages anyObject]];
 
@@ -880,7 +890,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
             // Add new page
             MWZoomingScrollView *page = [self dequeueRecycledPage];
             if (!page) {
-                page = [[MWZoomingScrollView alloc] initWithPhotoBrowser:self parent:_pagingScrollView];
+                page = [[MWZoomingScrollView alloc] initWithPhotoBrowser:self parent:_pagingScrollView container:self.view];
             }
             [_visiblePages addObject:page];
             [self configurePage:page forIndex:index];
@@ -1389,6 +1399,26 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 #pragma mark - Grid
 
+/**
+ * 网格列表当前单元格的布局Rect
+ * @return
+ */
+- (UICollectionViewCell *)currentGridCell {
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:_currentPageIndex inSection:0];
+    UIView *sourceCell = [_gridController.collectionView cellForItemAtIndexPath:indexPath];
+    if (!sourceCell) {//如果没有显示出来那么滚动到那里
+        [_gridController.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
+        [_gridController.collectionView layoutIfNeeded];
+        sourceCell = [_gridController.collectionView cellForItemAtIndexPath:indexPath];
+    }
+
+    if (sourceCell != nil) {
+        [sourceCell convertRect:sourceCell.bounds toCoordinateSpace:self.view];
+    }
+    return [_gridController.collectionView cellForItemAtIndexPath:indexPath];;
+}
+
+
 - (void)showGridAnimated {
     [self showGrid:YES];
 }
@@ -1419,12 +1449,12 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         _gridController.view.frame = CGRectOffset(_gridController.view.frame, 0, (self.startOnGrid ? -1 : 1) * self.view.bounds.size.height);
         // Add as a child view controller
         [self addChildViewController:_gridController];
-        [self.view insertSubview:_gridController.view belowSubview:_pagingScrollView];
+        [self.view insertSubview:_gridController.view belowSubview:_backGroundView];
     }
 
     // Perform any adjustments
     [_gridController.view layoutIfNeeded];
-    [_gridController adjustOffsetsAsRequired];
+    [_gridController adjustOffsetsAsRequired];//单张图片浏览,切换了页面之后,网格列表跳转到当前显示的图片位置
 
     // Stop specific layout being triggered
     // _skipNextPagingScrollViewPositioning = YES;
@@ -1443,14 +1473,53 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
     // Animate grid in and photo scroller out
     [_gridController willMoveToParentViewController:self];
-    [UIView animateWithDuration:animated ? 0.3 : 0 animations:^(void) {
-        _gridController.view.frame = self.view.bounds;
-        CGRect newPagingFrame = [self frameForPagingScrollView];
-        newPagingFrame = CGRectOffset(newPagingFrame, 0, (self.startOnGrid ? 1 : -1) * newPagingFrame.size.height);
-        _pagingScrollView.frame = newPagingFrame;
-    }                completion:^(BOOL finished) {
+    _gridController.view.frame = self.view.bounds;
+
+    // 隐藏单张图片浏览
+    CGRect newPagingFrame = [self frameForPagingScrollView];
+    newPagingFrame = CGRectOffset(newPagingFrame, 0, (self.startOnGrid ? 1 : -1) * newPagingFrame.size.height);
+    _pagingScrollView.frame = newPagingFrame;
+
+    if (!animated) {//如果不需要显示动画
         [_gridController didMoveToParentViewController:self];
-    }];
+        return;
+    }
+
+    // 当前需要显示的图片
+    MWZoomingScrollView *currentPage = [self pageDisplayedAtIndex:_currentPageIndex];
+    // 用于动画的遮罩层
+    _coverImage.frame = currentPage.imageFrame;
+    _coverImage.image = [self imageForPhoto:currentPage.photo];
+    _coverImage.contentMode = UIViewContentModeScaleToFill;
+    if (_coverImage.image == nil) {
+        _coverImage.tag = _currentPageIndex;//设置tag让大图加载完成之后能够找到对应的图片加载
+        //如果大图没有加载,先加载缩略图,当图片加载完成之后替换为大图,见方法 handleMWPhotoLoadingDidEndNotification
+        _coverImage.image = [self imageForPhoto:[self thumbPhotoAtIndex:_currentPageIndex]];
+        //如果没加载大图(此时的frame是全屏)图片保持比例,内容全部显示,内容缩放以适应屏幕。其余部分是透明的
+        _coverImage.contentMode = UIViewContentModeScaleAspectFit;
+    }
+    _coverImage.hidden = NO;
+    _backGroundView.hidden = NO;
+    _pagingScrollView.hidden = YES;
+
+    _backGroundView.alpha = 0.8f;
+    [UIView animateWithDuration:0.3
+                     animations:^{
+                         _backGroundView.alpha = 0.0f;
+                         UICollectionViewCell *cell = self.currentGridCell;
+                         if (cell) {// 如果当前的图片显示的单元格获取不到则使用下滑消失动画
+                             _coverImage.frame = [cell convertRect:cell.bounds toCoordinateSpace:self.view];
+                         } else {
+                             _coverImage.frame = newPagingFrame;
+                         }
+                     }
+                     completion:^(BOOL finished) {
+                         _coverImage.frame = newPagingFrame;
+                         _coverImage.hidden = YES;
+                         _backGroundView.hidden = YES;
+                         _pagingScrollView.hidden = NO;
+                         [_gridController didMoveToParentViewController:self];
+                     }];
 
 }
 
@@ -1481,18 +1550,15 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [self updateVisiblePageStates];
 
     // Animate, hide grid and show paging scroll view
-    _pagingScrollView.alpha = 0.0f;
     _pagingScrollView.frame = [self frameForPagingScrollView];
 
     // 当前需要显示的图片
     MWZoomingScrollView *currentPage = [self pageDisplayedAtIndex:_currentPageIndex];
-    currentPage.hidden = YES;
-
     // 用于动画的遮罩层
     //cell 在 self.view 的位置及大小
-    CGRect cellFrame = [cell convertRect:cell.bounds toCoordinateSpace:self.view];
-    _coverImage = [[UIImageView alloc] initWithFrame:cellFrame];
+    _coverImage.frame = [cell convertRect:cell.bounds toCoordinateSpace:self.view];
     _coverImage.image = [self imageForPhoto:currentPage.photo];
+    _coverImage.contentMode = UIViewContentModeScaleToFill;
     if (_coverImage.image == nil) {
         _coverImage.tag = _currentPageIndex;//设置tag让大图加载完成之后能够找到对应的图片加载
         //如果大图没有加载,先加载缩略图,当图片加载完成之后替换为大图,见方法 handleMWPhotoLoadingDidEndNotification
@@ -1500,17 +1566,20 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         //如果没加载大图(此时的frame是全屏)图片保持比例,内容全部显示,内容缩放以适应屏幕。其余部分是透明的
         _coverImage.contentMode = UIViewContentModeScaleAspectFit;
     }
-    [self.view addSubview:_coverImage];
+    _coverImage.hidden = NO;
+    _backGroundView.hidden = NO;
+    _pagingScrollView.hidden = YES;
 
+    _backGroundView.alpha = 0;
     [UIView animateWithDuration:0.3
                      animations:^{
-                         _pagingScrollView.alpha = 1.0f;
+                         _backGroundView.alpha = 1.0f;
                          _coverImage.frame = currentPage.imageFrame;
                      }
                      completion:^(BOOL finished) {
-                         currentPage.hidden = NO;
-                         [_coverImage removeFromSuperview];
-                         _coverImage = nil;
+                         _coverImage.hidden = YES;
+                         _backGroundView.hidden = YES;
+                         _pagingScrollView.hidden = NO;
                          [self setControlsHidden:NO animated:YES permanent:NO]; // retrigger timer
                      }];
 }
@@ -1710,10 +1779,8 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
                 [self showGrid:YES];
                 return;
             } else if (!self.startOnGrid && _gridController && _gridShow == YES) {
-                // todo 需要获取当前cell
-                /*CGRect newPagingFrame = [self frameForPagingScrollView];
-                newPagingFrame = CGRectOffset(newPagingFrame, 0, (self.startOnGrid ? 1 : -1) * newPagingFrame.size.height);*/
-                [self hideGrid:_pagingScrollView];
+                //单张图片浏览,切换了页面之后,网格列表跳转到当前显示的图片位置
+                [self hideGrid:self.currentGridCell];
                 return;
             }
         }
@@ -1848,7 +1915,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
     // 如果当前是单张图片浏览,回到Grid模式
     if (_enableGrid && _gridShow == NO /*_gridController == nil*/) {
-        [self showGridAnimated];
+        [self showGrid:YES];
         return NO;
     }
     return [_delegate isReturn:self];

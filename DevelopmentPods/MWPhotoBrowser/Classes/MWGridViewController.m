@@ -104,6 +104,7 @@
         }
         if (!currentVisible) {
             [self.collectionView scrollToItemAtIndexPath:currentPhotoIndexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
+            [self.collectionView layoutIfNeeded];
         }
     }
 

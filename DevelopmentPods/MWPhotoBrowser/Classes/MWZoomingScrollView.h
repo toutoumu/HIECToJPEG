@@ -16,7 +16,6 @@
 @interface MWZoomingScrollView : UIScrollView <UIScrollViewDelegate, MWTapDetectingImageViewDelegate, MWTapDetectingViewDelegate> {
 
 }
-
 @property (nonatomic, readonly) CGRect imageFrame;
 @property () NSUInteger index;
 @property (nonatomic) id <MWPhoto> photo;
@@ -24,7 +23,7 @@
 @property (nonatomic, weak) UIButton *selectedButton;
 @property (nonatomic, weak) UIButton *playButton;
 
-- (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser parent:(UIScrollView *)parentView;
+- (id)initWithPhotoBrowser:(MWPhotoBrowser *)browser parent:(UIScrollView *)parentView  container:(UIView *)container;
 - (void)displayImage;
 - (void)displayImageFailure;
 - (void)setMaxMinZoomScalesForCurrentBounds;

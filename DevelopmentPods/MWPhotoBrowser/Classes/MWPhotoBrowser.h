@@ -110,6 +110,10 @@
 // 这个值是为了禁用侧滑返回而定义的,由于第三方库没有放到当前目录所以就在这里定义一个一样的变量,让其不报错
 @property (nonatomic, assign) BOOL fd_interactivePopDisabled;
 
+@property (nonatomic, assign, readonly) UICollectionViewCell* currentGridCell;//当前浏览图片的cell的View
+@property (nonatomic, strong) UIImageView *coverImage;//点击cell展开图片的动画
+@property (nonatomic, strong) UIView *backGroundView;//点击cell展开图片的动画
+
 @property (nonatomic, weak) IBOutlet id<MWPhotoBrowserDelegate> delegate;
 @property (nonatomic) BOOL zoomPhotosToFill;
 @property (nonatomic) BOOL displayNavArrows;
