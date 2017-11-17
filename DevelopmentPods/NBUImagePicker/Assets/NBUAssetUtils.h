@@ -27,14 +27,14 @@
 
 /**
  *  在document目录下创建相册
- *  @param albumName 相册名称 eg:album
- *  @return 相册路径
+ *  @param albumName 相册名称 eg:albumName
+ *  @return 包含相册名称的路径 eg:/data/albumName
  */
 + (NSString *)createAlbum:(NSString *)albumName;
 
 /**
  * 创建文件名称
- * @return
+ * @return 文件名称.jpg
  */
 + (NSString *)createFileName;
 
@@ -57,7 +57,7 @@
  * 保存视频
  * @param image 视频图片
  * @param albumName  相册名称 eg:album
- * @param fileName 文件名称
+ * @param fileName 文件名称  eg:xxx.mp4
  * @return 是否成功
  */
 + (BOOL)saveVideo:(UIImage *)image toAlubm:(NSString *)albumName fileName:(NSString *)fileName;

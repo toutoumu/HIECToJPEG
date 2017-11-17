@@ -22,9 +22,11 @@
 @property (nonatomic, strong) NSString *caption;
 @property (nonatomic, strong) NSURL *videoURL;
 @property (nonatomic) BOOL emptyImage;
-@property (nonatomic) BOOL isVideo;
+@property (nonatomic) BOOL isVideo;//是否为视频
 @property (nonatomic) BOOL isThumb;//是否为缩略图
 @property (nonatomic) BOOL isNeedDecrypt;//是否需要解密
+@property (nonatomic, copy) UIImage * (^decrypt)(NSString *);//解密方法
+
 
 
 + (MWPhoto *)photoWithImage:(UIImage *)image;

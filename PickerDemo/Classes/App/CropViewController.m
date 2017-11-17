@@ -52,6 +52,7 @@
     // 使内容在状态栏下显示(状态栏覆盖在其上方)
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.scroolView.scrollsToTop = NO;//点击状态栏不让其滚动到顶部
+    self.scrollView.scrollsToTop = NO;
     if (@available(iOS 11.0, *)) {
         self.scroolView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     }

@@ -16,7 +16,6 @@ PODS:
   - MWPhotoBrowser (2.1.1):
     - DACircularProgress (~> 2.3)
     - MBProgressHUD (~> 1.0.0)
-    - RNCryptor (= 3.0.1)
     - SDWebImage (!= 3.7.2, ~> 3.7)
   - NBUCore (2.1.0)
   - NBUImagePicker (1.5.3):
@@ -130,7 +129,7 @@ SPEC CHECKSUMS:
   LumberjackConsole: 8cfc0f8c1c3459b2b88f9abfa3dc68a6810a3708
   MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
   MotionOrientation@PTEz: 5c92c6c1fe6c2cb6c60348ec66b42d466668037f
-  MWPhotoBrowser: 6af7fbf66a2792a0c77e792e63f4025bdfb7f0a1
+  MWPhotoBrowser: b8ca1571765feeae3629f610d2fe0d6d8c15ef47
   NBUCore: 201af50441f48513ef6d5823a5fc12c9e1f288cd
   NBUImagePicker: 1603bd60cc64907aacb53b38c405a611cf12e933
   NBUKit: a2ae5a4d2e8d23ea046f1fc5b2854e449786df28

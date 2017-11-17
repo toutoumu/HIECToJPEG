@@ -36,8 +36,6 @@ static NSString *_documentsDirectory;
 
 + (NSString *)createFileName {
     UInt64 recordTime = (UInt64) ([[NSDate date] timeIntervalSince1970] * 1000);
-    // NSString *name =  [NSString stringWithFormat:@"%llu", recordTime];
-    // NSString *name = [dateFormatter stringFromDate:[NSDate date]];
     return [NSString stringWithFormat:@"%llu%@", recordTime, @".jpg"];
 }
 
@@ -72,7 +70,7 @@ static NSString *_documentsDirectory;
     return albumPath;
 }
 
-#pragma mark 获取所有相册
+#pragma mark 获取所有相册(相册名称列表)
 
 + (NSArray *)getAllAlbums {
     NSError *error;
@@ -83,7 +81,7 @@ static NSString *_documentsDirectory;
     }
 
     NSUInteger count = fileNames.count;
-    NSMutableArray *urls = [[NSMutableArray alloc] init];
+    NSMutableArray *urls = [[NSMutableArray alloc] initWithCapacity:count];
 
     for (NSUInteger i = 0; i < count; i++) {
         if ([[fileNames[i] pathExtension] isEqualToString:@""]) {
@@ -96,27 +94,24 @@ static NSString *_documentsDirectory;
 
 #pragma mark 保存相片到指定相册
 
-+ (BOOL)saveImage:(UIImage *)image toAlubm:(NSString *)albumName withFileName:(NSString *)fileName{
++ (BOOL)saveImage:(UIImage *)image toAlubm:(NSString *)albumName withFileName:(NSString *)fileName {
     NSString *albumPath = [_documentsDirectory stringByAppendingPathComponent:albumName];//相册路径
     NSString *fullName; //临时存储保存的文件全路径名称
 
     //原图
     fullName = [albumPath stringByAppendingPathComponent:fileName];// 相册名+文件名
-    //[image writeToFile:fullName];
     [self encryptImage:image imageType:0 toPath:fullName withPwd:fileName];
 
     //预览图
     UIImage *fullScreenImage = [image imageDonwsizedToFit:[NBUFileAsset fullScreenSize]];//预览图图片对象
     NSString *fullScreenDir = [albumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];//预览图文件夹 相册名+预览图文件夹名称
     fullName = [fullScreenDir stringByAppendingPathComponent:fileName];//预览图全路径文件名
-    //[fullScreenImage writeToFile:fullName];
     [self encryptImage:fullScreenImage imageType:1 toPath:fullName withPwd:fileName];
 
     //缩略图,由于thumbnailWithSize需要的尺寸是point值所以传thumbnailSizeNoScale
     UIImage *thumbImage = [fullScreenImage thumbnailWithSize:[NBUFileAsset thumbnailSizeNoScale]];
     NSString *thumbPath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
     fullName = [thumbPath stringByAppendingPathComponent:fileName];
-    //[thumbImage writeToFile:fullName];
     [self encryptImage:thumbImage imageType:2 toPath:fullName withPwd:fileName];
 
     return YES;
@@ -132,14 +127,12 @@ static NSString *_documentsDirectory;
     UIImage *fullScreenImage = [image imageDonwsizedToFit:[NBUFileAsset fullScreenSize]];//预览图图片对象
     NSString *fullScreenDir = [albumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];//预览图文件夹 相册名+预览图文件夹名称
     fullName = [fullScreenDir stringByAppendingPathComponent:fileName];//预览图全路径文件名
-    //[fullScreenImage writeToFile:fullName];
     [self encryptImage:fullScreenImage imageType:1 toPath:fullName withPwd:fileName];
 
     //缩略图,由于thumbnailWithSize需要的尺寸是point值所以传thumbnailSizeNoScale
     UIImage *thumbImage = [fullScreenImage thumbnailWithSize:[NBUFileAsset thumbnailSizeNoScale]];
     NSString *thumbPath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
     fullName = [thumbPath stringByAppendingPathComponent:fileName];
-    //[thumbImage writeToFile:fullName];
     [self encryptImage:thumbImage imageType:2 toPath:fullName withPwd:fileName];
 
     return YES;
@@ -183,7 +176,7 @@ static NSString *_documentsDirectory;
 
 
 + (UIImage *)decryImage:(NBUFileAsset *)image {
-    if (image == nil) {
+    if (image == nil || image.URL == nil) {
         return nil;
     }
     BOOL isDir = NO;
@@ -192,7 +185,7 @@ static NSString *_documentsDirectory;
     //检查文件是否已经存在
     NSFileManager *manager = [NSFileManager defaultManager];
     existed = [manager fileExistsAtPath:image.fullResolutionImagePath isDirectory:&isDir];
-    if (!existed || isDir) {//如果已经存在
+    if (!existed || isDir) {
         NBULogError(@"Error: %@", @"文件不存在");
         return nil;
     }
@@ -206,9 +199,9 @@ static NSString *_documentsDirectory;
         NBULogInfo(@"Error: %@", error);
         return nil;
     }
-    UIImage *img = [UIImage imageWithData:outData];
-    return img;
+    return [UIImage imageWithData:outData];
 }
+
 
 #pragma mark 解密数据到指定相册
 
@@ -297,10 +290,7 @@ static NSString *_documentsDirectory;
     //    NBULogInfo(@"执行时间 = %f",  [[NSDate date] timeIntervalSinceDate:tmpStartData]);
     NSData *data = UIImageJPEGRepresentation(image, (CGFloat) (0.8 - type * 0.3));
     NSError *error;
-    NSData *encryptedData = [RNEncryptor encryptData:data
-                                        withSettings:kRNCryptorAES256Settings
-                                            password:pwd
-                                               error:&error];
+    NSData *encryptedData = [RNEncryptor encryptData:data withSettings:kRNCryptorAES256Settings password:pwd error:&error];
 
     if (error != nil) {
         NBULogInfo(@"Error: %@", error);

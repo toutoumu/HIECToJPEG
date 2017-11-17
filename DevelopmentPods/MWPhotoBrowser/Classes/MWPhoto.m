@@ -13,25 +13,20 @@
 #import "MWPhoto.h"
 #import "MWPhotoBrowser.h"
 
-#import "RNCryptor.h"
-#import "RNDecryptor.h"
-#import "RNEncryptor.h"
-#import "RNCryptorEngine.h"
-
 @interface MWPhoto () {
 
     BOOL _loadingInProgress;
     id <SDWebImageOperation> _webImageOperation;
     PHImageRequestID _assetRequestID;
     PHImageRequestID _assetVideoRequestID;
-    
+
 }
 
-@property (nonatomic, strong) UIImage *image;
-@property (nonatomic, strong) NSURL *photoURL;
-@property (nonatomic, strong) ALAsset *alAsset;
-@property (nonatomic, strong) PHAsset *asset;
-@property (nonatomic) CGSize assetTargetSize;
+@property(nonatomic, strong) UIImage *image;
+@property(nonatomic, strong) NSURL *photoURL;
+@property(nonatomic, strong) ALAsset *alAsset;
+@property(nonatomic, strong) PHAsset *asset;
+@property(nonatomic) CGSize assetTargetSize;
 
 - (void)imageLoadingComplete;
 
@@ -44,15 +39,15 @@
 #pragma mark - Class Methods
 
 + (MWPhoto *)photoWithImage:(UIImage *)image {
-	return [[MWPhoto alloc] initWithImage:image];
+    return [[MWPhoto alloc] initWithImage:image];
 }
 
-+ (MWPhoto *)photoWithURL:(NSURL *)url isNeedDecrypt:(BOOL) isNeedDecrypt{
++ (MWPhoto *)photoWithURL:(NSURL *)url isNeedDecrypt:(BOOL)isNeedDecrypt {
     return [[MWPhoto alloc] initWithURL:url isNeedDecrypt:isNeedDecrypt];
 }
 
-+(MWPhoto *)photoWithALAsset:(ALAsset *)asset isThumb:(BOOL)isThumb{
-    return [[MWPhoto alloc]initWithALAsset:asset isThumb:isThumb];
++ (MWPhoto *)photoWithALAsset:(ALAsset *)asset isThumb:(BOOL)isThumb {
+    return [[MWPhoto alloc] initWithALAsset:asset isThumb:isThumb];
 }
 
 + (MWPhoto *)photoWithAsset:(PHAsset *)asset targetSize:(CGSize)targetSize {
@@ -81,7 +76,7 @@
     return self;
 }
 
-- (id)initWithURL:(NSURL *)url isNeedDecrypt:(BOOL) isNeedDecrypt {
+- (id)initWithURL:(NSURL *)url isNeedDecrypt:(BOOL)isNeedDecrypt {
     if ((self = [super init])) {
         self.photoURL = url;
         self.isNeedDecrypt = isNeedDecrypt;
@@ -90,7 +85,7 @@
     return self;
 }
 
--(id)initWithALAsset:(ALAsset *)asset isThumb:(BOOL)isThumb{
+- (id)initWithALAsset:(ALAsset *)asset isThumb:(BOOL)isThumb {
     if ((self = [super init])) {
         self.alAsset = asset;
         self.isThumb = isThumb;
@@ -120,13 +115,13 @@
 }
 
 - (void)setup {
-        _assetRequestID = PHInvalidImageRequestID;
-        _assetVideoRequestID = PHInvalidImageRequestID;
-    }
+    _assetRequestID = PHInvalidImageRequestID;
+    _assetVideoRequestID = PHInvalidImageRequestID;
+}
 
 - (void)dealloc {
-       [self cancelAnyLoading];
-    }
+    [self cancelAnyLoading];
+}
 
 #pragma mark - Video
 
@@ -144,17 +139,17 @@
         options.networkAccessAllowed = YES;
         typeof(self) __weak weakSelf = self;
         _assetVideoRequestID = [[PHImageManager defaultManager] requestAVAssetForVideo:_asset options:options resultHandler:^(AVAsset *asset, AVAudioMix *audioMix, NSDictionary *info) {
-            
+
             // dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{ // Testing
             typeof(self) strongSelf = weakSelf;
             if (!strongSelf) return;
             strongSelf->_assetVideoRequestID = PHInvalidImageRequestID;
             if ([asset isKindOfClass:[AVURLAsset class]]) {
-                completion(((AVURLAsset *)asset).URL);
+                completion(((AVURLAsset *) asset).URL);
             } else {
                 completion(nil);
             }
-            
+
         }];
     }
 }
@@ -187,50 +182,50 @@
 
 // Set the underlyingImage
 - (void)performLoadUnderlyingImageAndNotify {
-    
+
     // Get underlying image
     if (_image) {
-        
+
         // We have UIImage!
         self.underlyingImage = _image;
         [self imageLoadingComplete];
-        
+
     } else if (_photoURL) {
-        
+
         // Check what type of url it is
         if ([[[_photoURL scheme] lowercaseString] isEqualToString:@"assets-library"]) {
-            
+
             // Load from ALAssetsLibrary
-            [self _performLoadUnderlyingImageAndNotifyWithAssetsLibraryURL: _photoURL];
-            
+            [self _performLoadUnderlyingImageAndNotifyWithAssetsLibraryURL:_photoURL];
+
         }
-        // fileURLWithPath 初始化的URL会以file:///开头,isFileURL = YES ,isFileReferenceURL = NO
-        // URLWithString   初始化的URL会以 / 开头,     isFileURL = NO  ,isFileReferenceURL = NO
-        else if ([_photoURL isFileURL]||[_photoURL isFileReferenceURL]) {
+            // fileURLWithPath 初始化的URL会以file:///开头,isFileURL = YES ,isFileReferenceURL = NO
+            // URLWithString   初始化的URL会以 / 开头,     isFileURL = NO  ,isFileReferenceURL = NO
+        else if ([_photoURL isFileURL] || [_photoURL isFileReferenceURL]) {
             // Load from local file async
-            [self _performLoadUnderlyingImageAndNotifyWithLocalFileReferenceURL: _photoURL];
-            
+            [self _performLoadUnderlyingImageAndNotifyWithLocalFileReferenceURL:_photoURL];
+
         } else {
-            
+
             // Load async from web (using SDWebImage)
-            [self _performLoadUnderlyingImageAndNotifyWithWebURL: _photoURL];
-            
+            [self _performLoadUnderlyingImageAndNotifyWithWebURL:_photoURL];
+
         }
-        
-    } else if(_alAsset){
+
+    } else if (_alAsset) {
         // Load from ALAsset
-        [self _performLoadUnderlyingImageAndNotifyWithAssetsLibraryAlAsset: _alAsset];
-        
-    }else if (_asset) {
-        
+        [self _performLoadUnderlyingImageAndNotifyWithAssetsLibraryAlAsset:_alAsset];
+
+    } else if (_asset) {
+
         // Load from PHAsset
-        [self _performLoadUnderlyingImageAndNotifyWithAsset: _asset targetSize:_assetTargetSize];
-        
+        [self _performLoadUnderlyingImageAndNotifyWithAsset:_asset targetSize:_assetTargetSize];
+
     } else {
-        
+
         // Image is empty
         [self imageLoadingComplete];
-        
+
     }
 }
 
@@ -242,10 +237,10 @@
                                                    options:0
                                                   progress:^(NSInteger receivedSize, NSInteger expectedSize) {
                                                       if (expectedSize > 0) {
-                                                          float progress = receivedSize / (float)expectedSize;
-                                                          NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                                                                                [NSNumber numberWithFloat:progress], @"progress",
-                                                                                self, @"photo", nil];
+                                                          float progress = receivedSize / (float) expectedSize;
+                                                          NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                                                  [NSNumber numberWithFloat:progress], @"progress",
+                                                                  self, @"photo", nil];
                                                           [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION object:dict];
                                                       }
                                                   }
@@ -272,16 +267,9 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         @autoreleasepool {
             @try {
-                if(self.isNeedDecrypt){// 解密数据
-                    NSError *error = nil;
-                    NSData *inData = [NSData dataWithContentsOfURL:url];
-                    if (inData != nil){
-                        NSString *pwd = url.lastPathComponent;
-                        NSData *outData = [RNDecryptor decryptData:inData withSettings:kRNCryptorAES256Settings password:pwd error:&error];
-                        self.underlyingImage = [UIImage imageWithData:outData];
-                    }
-                }
-                else{
+                if (self.isNeedDecrypt) {// 解密数据
+                    self.underlyingImage = self.decrypt(url.path);
+                } else {
                     self.underlyingImage = [UIImage imageWithContentsOfFile:url.path];
                 }
                 if (!_underlyingImage) {
@@ -301,8 +289,8 @@
             @try {
                 ALAssetsLibrary *assetslibrary = [[ALAssetsLibrary alloc] init];
                 [assetslibrary assetForURL:url
-                               resultBlock:^(ALAsset *asset){
-                                   CGImageRef iref = self.isThumb?  [asset thumbnail]:[[asset defaultRepresentation] fullScreenImage];
+                               resultBlock:^(ALAsset *asset) {
+                                   CGImageRef iref = self.isThumb ? [asset thumbnail] : [[asset defaultRepresentation] fullScreenImage];
                                    if (iref) {
                                        self.underlyingImage = [UIImage imageWithCGImage:iref];
                                    }
@@ -310,7 +298,7 @@
                                }
                               failureBlock:^(NSError *error) {
                                   self.underlyingImage = nil;
-                                  MWLog(@"Photo from asset library error: %@",error);
+                                  MWLog(@"Photo from asset library error: %@", error);
                                   [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
                               }];
             } @catch (NSException *e) {
@@ -322,16 +310,16 @@
 }
 
 // Load from asset library async
-- (void)_performLoadUnderlyingImageAndNotifyWithAssetsLibraryAlAsset:(ALAsset *) asset {
+- (void)_performLoadUnderlyingImageAndNotifyWithAssetsLibraryAlAsset:(ALAsset *)asset {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         @autoreleasepool {
             @try {
-                CGImageRef iref = self.isThumb?  [asset thumbnail]:[[asset defaultRepresentation] fullScreenImage];
+                CGImageRef iref = self.isThumb ? [asset thumbnail] : [[asset defaultRepresentation] fullScreenImage];
                 if (iref) {
                     self.underlyingImage = [UIImage imageWithCGImage:iref];
                 }
                 [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
-                
+
             } @catch (NSException *e) {
                 MWLog(@"Photo from asset library error: %@", e);
                 [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
@@ -343,21 +331,21 @@
 
 // Load from photos library
 - (void)_performLoadUnderlyingImageAndNotifyWithAsset:(PHAsset *)asset targetSize:(CGSize)targetSize {
-    
+
     PHImageManager *imageManager = [PHImageManager defaultManager];
-    
+
     PHImageRequestOptions *options = [PHImageRequestOptions new];
     options.networkAccessAllowed = YES;
     options.resizeMode = PHImageRequestOptionsResizeModeFast;
     options.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
     options.synchronous = false;
     options.progressHandler = ^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
-        NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                              [NSNumber numberWithDouble: progress], @"progress",
-                              self, @"photo", nil];
+        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                [NSNumber numberWithDouble:progress], @"progress",
+                self, @"photo", nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION object:dict];
     };
-    
+
     _assetRequestID = [imageManager requestImageForAsset:asset targetSize:targetSize contentMode:PHImageContentModeAspectFit options:options resultHandler:^(UIImage *result, NSDictionary *info) {
         dispatch_async(dispatch_get_main_queue(), ^{
             self.underlyingImage = result;
@@ -370,7 +358,7 @@
 // Release if we can get it again from path or url
 - (void)unloadUnderlyingImage {
     _loadingInProgress = NO;
-	self.underlyingImage = nil;
+    self.underlyingImage = nil;
 }
 
 - (void)imageLoadingComplete {

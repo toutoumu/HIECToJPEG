@@ -1153,20 +1153,12 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    NSLog(@"scrollViewWillBeginDragging---MWPhotoBrowser");
-
     // Hide controls when dragging begins
-    [self setControlsHidden:YES animated:YES permanent:NO];
+    [self setControlsHidden:NO animated:YES permanent:NO];
 }
 
-
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    NSLog(@"scrollViewDidEndDragging---MWPhotoBrowser");
-}
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    NSLog(@"scrollViewDidEndDecelerating---MWPhotoBrowser");
-
     // Update nav when page changes
     [self updateNavigation];
 }
@@ -1404,18 +1396,17 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
  * @return
  */
 - (UICollectionViewCell *)currentGridCell {
+    if ([self numberOfPhotos] == 0) {
+        return nil;
+    }
     NSIndexPath *indexPath = [NSIndexPath indexPathForItem:_currentPageIndex inSection:0];
-    UIView *sourceCell = [_gridController.collectionView cellForItemAtIndexPath:indexPath];
-    if (!sourceCell) {//如果没有显示出来那么滚动到那里
+    UICollectionViewCell *cell = [_gridController.collectionView cellForItemAtIndexPath:indexPath];
+    if (!cell) {//如果没有显示出来那么滚动到那里
         [_gridController.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
         [_gridController.collectionView layoutIfNeeded];
-        sourceCell = [_gridController.collectionView cellForItemAtIndexPath:indexPath];
+        cell = [_gridController.collectionView cellForItemAtIndexPath:indexPath];
     }
-
-    if (sourceCell != nil) {
-        [sourceCell convertRect:sourceCell.bounds toCoordinateSpace:self.view];
-    }
-    return [_gridController.collectionView cellForItemAtIndexPath:indexPath];;
+    return cell;
 }
 
 
@@ -1428,8 +1419,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
  * @param animated
  */
 - (void)showGrid:(BOOL)animated {
-    if (_gridShow == YES) return;
-    //if (_gridController) return;
+    if (_gridController && _gridShow) return;
     _gridShow = YES;
 
     // Clear video
@@ -1514,7 +1504,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
                          }
                      }
                      completion:^(BOOL finished) {
-                         _coverImage.frame = newPagingFrame;
+                         //_coverImage.frame = newPagingFrame;
                          _coverImage.hidden = YES;
                          _backGroundView.hidden = YES;
                          _pagingScrollView.hidden = NO;
@@ -1589,9 +1579,15 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 // If permanent then we don't set timers to hide again
 // Fades all controls on iOS 5 & 6, and iOS 7 controls slide and fade
 // hidden == YES 隐藏 NO 显示
+/**
+ * 设置状态栏,导航栏是否隐藏,单张图片列表时候才显示 [底部栏]
+ * @param hidden 是否隐藏 YES 隐藏 NO 显示
+ * @param animated 是否执行动画
+ * @param permanent NO 触发timer
+ */
 - (void)setControlsHidden:(BOOL)hidden animated:(BOOL)animated permanent:(BOOL)permanent {
-    // Force visible
-    if (![self numberOfPhotos] || (_gridController != nil && _gridShow == YES) || _alwaysShowControls) {
+    // 如果图片数不为0 总是显示控件 那么状态栏,导航栏保持显示 Force visible
+    if (_alwaysShowControls || [self numberOfPhotos] == 0  /*|| _gridController != nil && _gridShow == YES */) {
         hidden = NO;
     }
 
@@ -1602,26 +1598,20 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     CGFloat animationOffset = 20;
     CGFloat animationDuration = (animated ? 0.35f : 0);
 
-    // Status bar
+    // 状态栏 Status bar
     if (!_leaveStatusBarAlone) {
-
         // 隐藏状态栏 Hide status bar
         if (!_isVCBasedStatusBarAppearance) {
-
             // Non-view controller based
             [[UIApplication sharedApplication] setStatusBarHidden:hidden withAnimation:animated ? UIStatusBarAnimationSlide : UIStatusBarAnimationNone];
-
         } else {
-
             // View controller based so animate away
             _statusBarShouldBeHidden = hidden;
             [UIView animateWithDuration:animationDuration animations:^(void) {
                 [self setNeedsStatusBarAppearanceUpdate];
             }                completion:^(BOOL finished) {
             }];
-
         }
-
     }
 
     // Toolbar, nav bar and captions
@@ -1643,49 +1633,49 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         }
 
     }
-    [UIView animateWithDuration:animationDuration animations:^(void) {
+    [UIView animateWithDuration:animationDuration
+                     animations:^(void) {
+                         CGFloat alpha = hidden ? 0 : 1;
+                         // Nav bar slides up on it's own on iOS 7+
+                         [self.navigationController.navigationBar setAlpha:alpha];
+                         // Toolbar
+                         if (_gridShow) {//如果网格列表显示,那么隐藏 [底部栏]
+                             _toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
+                             // _toolbar.frame = CGRectOffset(_toolbar.frame, 0, animationOffset);
+                             _toolbar.alpha = 0;
+                         } else {
+                             _toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
+                             if (hidden) _toolbar.frame = CGRectOffset(_toolbar.frame, 0, animationOffset);
+                             _toolbar.alpha = alpha;
+                         }
 
-        CGFloat alpha = hidden ? 0 : 1;
+                         // Captions
+                         for (MWZoomingScrollView *page in _visiblePages) {
+                             if (page.captionView) {
+                                 MWCaptionView *v = page.captionView;
+                                 // Pass any index, all we're interested in is the Y
+                                 CGRect captionFrame = [self frameForCaptionView:v atIndex:0];
+                                 captionFrame.origin.x = v.frame.origin.x; // Reset X
+                                 if (hidden) captionFrame = CGRectOffset(captionFrame, 0, animationOffset);
+                                 v.frame = captionFrame;
+                                 v.alpha = alpha;
+                             }
+                         }
 
-        // Nav bar slides up on it's own on iOS 7+
-        [self.navigationController.navigationBar setAlpha:alpha];
+                         // Selected buttons
+                         for (MWZoomingScrollView *page in _visiblePages) {
+                             if (page.selectedButton) {
+                                 UIButton *v = page.selectedButton;
+                                 CGRect newFrame = [self frameForSelectedButton:v atIndex:0];
+                                 newFrame.origin.x = v.frame.origin.x;
+                                 v.frame = newFrame;
+                             }
+                         }
 
-        // Toolbar
-        if (_gridController && _gridShow == YES) {// 这里的if是我加的,如果w
-            _toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
-            //_toolbar.frame = CGRectOffset(_toolbar.frame, 0, animatonOffset);
-            _toolbar.alpha = 0;
-        } else {
-            _toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
-            if (hidden) _toolbar.frame = CGRectOffset(_toolbar.frame, 0, animationOffset);
-            _toolbar.alpha = alpha;
-        }
-
-        // Captions
-        for (MWZoomingScrollView *page in _visiblePages) {
-            if (page.captionView) {
-                MWCaptionView *v = page.captionView;
-                // Pass any index, all we're interested in is the Y
-                CGRect captionFrame = [self frameForCaptionView:v atIndex:0];
-                captionFrame.origin.x = v.frame.origin.x; // Reset X
-                if (hidden) captionFrame = CGRectOffset(captionFrame, 0, animationOffset);
-                v.frame = captionFrame;
-                v.alpha = alpha;
-            }
-        }
-
-        // Selected buttons
-        for (MWZoomingScrollView *page in _visiblePages) {
-            if (page.selectedButton) {
-                UIButton *v = page.selectedButton;
-                CGRect newFrame = [self frameForSelectedButton:v atIndex:0];
-                newFrame.origin.x = v.frame.origin.x;
-                v.frame = newFrame;
-            }
-        }
-
-    }                completion:^(BOOL finished) {
-    }];
+                     }
+                     completion:^(BOOL finished) {
+                     }
+    ];
 
     // Control hiding timer
     // Will cancel existing timer but only begin hiding if

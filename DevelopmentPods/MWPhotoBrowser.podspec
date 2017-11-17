@@ -39,7 +39,6 @@ Pod::Spec.new do |s|
 
   s.dependency 'MBProgressHUD', '~> 1.0.0'
   s.dependency 'DACircularProgress', '~> 2.3'
-  s.dependency 'RNCryptor',      '3.0.1'
 
 
   # SDWebImage

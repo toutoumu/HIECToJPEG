@@ -99,11 +99,14 @@
         NSLog(@"跳过了");
         return;
     }
-
-    static CGFloat minPanLength = 100.0f;//最小拖拽返回相应距离
+    static CGPoint imageOrigin;
+    static CGFloat minPanLength = 150.0f;//最小拖拽返回相应距离
     switch (panGestureRecognizer.state) {
         case UIGestureRecognizerStateBegan: {
-            NSLog(@"拖拽-----开始%f / %f", self.contentOffset.y, self.bounds.size.height);
+            NSLog(@"拖拽-----开始");
+
+            imageOrigin = _photoImageView.frame.origin;
+
             _parentView.hidden = YES;
             _photoBrowser.coverImage.hidden = NO;
             _photoBrowser.backGroundView.hidden = NO;
@@ -123,8 +126,8 @@
             break;
         }
         case UIGestureRecognizerStateChanged: {
-            NSLog(@"拖拽-----改变 x: %f / y: %f", self.contentOffset.x, self.contentOffset.y);
             CGPoint translation = [panGestureRecognizer translationInView:self];
+            NSLog(@"拖拽-----改变 x: %f / y: %f", translation.x, translation.y);
 
             // 背景透明度
             CGFloat alpha = 1.0f - MAX(ABS(translation.x), ABS(translation.y)) / minPanLength;
@@ -133,16 +136,17 @@
 
             // 改变图片的位置
             CGRect coverFrame = _photoBrowser.coverImage.frame;
-            coverFrame.origin.x = translation.x;
-            coverFrame.origin.y = translation.y + _photoImageView.frame.origin.y;
+            coverFrame.origin.x = translation.x + imageOrigin.x;
+            coverFrame.origin.y = translation.y + imageOrigin.y;
             _photoBrowser.coverImage.frame = coverFrame;
 
             break;
         }
         case UIGestureRecognizerStateEnded: {
-            NSLog(@"拖拽-----结束%f", [panGestureRecognizer velocityInView:self].y);
+            CGPoint translation = [panGestureRecognizer translationInView:self];
             CGPoint velocity = [panGestureRecognizer velocityInView:self];
-            if (ABS(self.contentOffset.y) < minPanLength && ABS(velocity.y) < 50) {//还原
+            NSLog(@"拖拽-----结束%f", velocity.y);
+            if (ABS(translation.y) < minPanLength && ABS(velocity.y) < 50) {//还原
                 [UIView animateWithDuration:0.3
                                  animations:^{
                                      _photoBrowser.backGroundView.alpha = 1.0f;
@@ -155,12 +159,13 @@
                                      _photoBrowser.backGroundView.hidden = YES;
                                  }];
             } else {// 退出图片浏览
+                [_photoBrowser showGrid:NO];
                 [UIView animateWithDuration:0.3
                                  animations:^{
                                      _photoBrowser.backGroundView.alpha = 0.0f;
 
                                      UICollectionViewCell *cell = _photoBrowser.currentGridCell;
-                                     if (cell != nil) {
+                                     if (cell != nil) {// 移动到单元格所在位置
                                          _photoBrowser.coverImage.frame = [cell convertRect:cell.bounds toCoordinateSpace:_container];
                                      } else {
                                          CGRect frame = _photoBrowser.coverImage.frame;
@@ -177,7 +182,6 @@
                                      _photoBrowser.coverImage.hidden = YES;
                                      _photoBrowser.backGroundView.hidden = YES;
                                  }];
-                [_photoBrowser showGrid:NO];
             }
             break;
         }
@@ -494,27 +498,22 @@
     return _photoImageView;
 }
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    NSLog(@"scrollViewDidScroll");
-}
-
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    NSLog(@"scrollViewWillBeginDragging");
     [_photoBrowser cancelControlHiding];
     _parentView.scrollEnabled = NO;
     // 2017年11月12日 如果当前缩放是缩放到最小时允许,滑动使得图片浏览界面消失
     if (self.zoomScale == self.minimumZoomScale) {
+        [_photoBrowser setControlsHidden:YES animated:YES permanent:YES];
         self.contentSize = CGSizeMake(self.frame.size.width + 1, self.frame.size.height + 1);
     }
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    NSLog(@"scrollViewDidEndDragging");
-
     [_photoBrowser hideControlsAfterDelay];
     _parentView.scrollEnabled = YES;
     // 2017年11月12日 如果当前缩放是缩放到最小时允许,上下滑动使得图片浏览界面消失
     if (self.zoomScale == self.minimumZoomScale) {
+        [_photoBrowser setControlsHidden:NO animated:YES permanent:NO];
         self.contentSize = CGSizeMake(self.frame.size.width, self.frame.size.height + 1);
     }
 }

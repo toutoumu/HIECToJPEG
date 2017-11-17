@@ -47,6 +47,7 @@
 
 -(void)awakeFromNib{
     [super awakeFromNib];
+    _scrollView.scrollsToTop = NO;
     if (@available(iOS 11.0, *)) {
         // 使内容在状态栏下显示(状态栏覆盖在其上方)
         _scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
@@ -118,6 +119,7 @@
     if (!_scrollView) {
         // Create a view if needed
         _scrollView = [UIScrollView new];
+        _scrollView.scrollsToTop = NO;
         if (@available(iOS 11.0, *)) {
             // 使内容在状态栏下显示(状态栏覆盖在其上方)
             _scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
