@@ -41,7 +41,7 @@ static CGFloat _preBrightness;//保存之前的屏幕亮度
     // Add dashboard logger
     //[NBULog addDashboardLogger];
 #endif
-    // pods 项目 >> build settings >> 搜索PreprocessorMacros 设置 debug 中 debug1 = 1 改为 debug = 1 这样就有日志了
+    // pods 项目 >> build settings >> 搜索 Preprocessor Macros 设置 debug 中 debug1 = 1 改为 debug = 1 这样就有日志了
     NBULogTrace();
 
     UIColor *tintColor = [UIColor colorWithRed:(CGFloat) (0 / 255.0) green:(CGFloat) (0 / 255.0) blue:(CGFloat) (0 / 255.0) alpha:1.0];

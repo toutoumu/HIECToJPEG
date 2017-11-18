@@ -96,14 +96,14 @@
 
 - (void)scrollViewPanMethod:(UIPanGestureRecognizer *)panGestureRecognizer {
     if (self.zoomScale != self.minimumZoomScale) {//如果手动进行了缩放
-        NSLog(@"跳过了");
+        // NSLog(@"跳过了");
         return;
     }
     static CGPoint imageOrigin;
     static CGFloat minPanLength = 150.0f;//最小拖拽返回相应距离
     switch (panGestureRecognizer.state) {
         case UIGestureRecognizerStateBegan: {
-            NSLog(@"拖拽-----开始");
+            // NSLog(@"拖拽-----开始");
 
             imageOrigin = _photoImageView.frame.origin;
 
@@ -127,7 +127,7 @@
         }
         case UIGestureRecognizerStateChanged: {
             CGPoint translation = [panGestureRecognizer translationInView:self];
-            NSLog(@"拖拽-----改变 x: %f / y: %f", translation.x, translation.y);
+            // NSLog(@"拖拽-----改变 x: %f / y: %f", translation.x, translation.y);
 
             // 背景透明度
             CGFloat alpha = 1.0f - MAX(ABS(translation.x), ABS(translation.y)) / minPanLength;
@@ -145,7 +145,7 @@
         case UIGestureRecognizerStateEnded: {
             CGPoint translation = [panGestureRecognizer translationInView:self];
             CGPoint velocity = [panGestureRecognizer velocityInView:self];
-            NSLog(@"拖拽-----结束%f", velocity.y);
+            // NSLog(@"拖拽-----结束%f", velocity.y);
             if (ABS(translation.y) < minPanLength && ABS(velocity.y) < 50) {//还原
                 [UIView animateWithDuration:0.3
                                  animations:^{
@@ -188,7 +188,7 @@
         case UIGestureRecognizerStatePossible:
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateFailed: {
-            NSLog(@"拖拽-----失败,取消");
+            // NSLog(@"拖拽-----失败,取消");
             // 拖拽未知情况,还原所有设置
             _parentView.scrollEnabled = YES;
             _parentView.hidden = NO;

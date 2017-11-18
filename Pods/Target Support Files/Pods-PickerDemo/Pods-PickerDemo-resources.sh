@@ -93,6 +93,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MWPhotoBrowser/MWPhotoBrowser.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/NBUImagePicker/NBUImagePicker.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/NBUKit/NBUKit.bundle"
+  install_resource "${PODS_CONFIGURATION_BUILD_DIR}/TOCropViewController/TOCropViewControllerBundle.bundle"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_resource "${PODS_ROOT}/GPUImage/framework/Resources/lookup.png"
@@ -104,6 +105,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MWPhotoBrowser/MWPhotoBrowser.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/NBUImagePicker/NBUImagePicker.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/NBUKit/NBUKit.bundle"
+  install_resource "${PODS_CONFIGURATION_BUILD_DIR}/TOCropViewController/TOCropViewControllerBundle.bundle"
 fi
 
 mkdir -p "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"

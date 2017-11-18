@@ -15,13 +15,12 @@
 #define VIDEO_INDICATOR_PADDING 10
 
 @interface MWGridCell () {
-    
+
     UIImageView *_imageView;
     UIImageView *_videoIndicator;
     UIImageView *_loadingError;
     DACircularProgressView *_loadingIndicator;
     UIButton *_selectedButton;
-    UIButton *_tapButton;
 }
 
 @end
@@ -30,10 +29,10 @@
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
-        
+
         // Grey background
         self.backgroundColor = [UIColor colorWithWhite:0.12 alpha:1];
-        
+
         // Image
         _imageView = [UIImageView new];
         _imageView.frame = self.bounds;
@@ -41,7 +40,7 @@
         _imageView.clipsToBounds = YES;
         _imageView.autoresizesSubviews = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         [self addSubview:_imageView];
-        
+
         // Video Image
         _videoIndicator = [UIImageView new];
         _videoIndicator.hidden = NO;
@@ -50,58 +49,42 @@
         _videoIndicator.image = videoIndicatorImage;
         _videoIndicator.autoresizesSubviews = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin;
         [self addSubview:_videoIndicator];
-        
+
         // Selection button
         _selectedButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _selectedButton.contentMode = UIViewContentModeTopRight;
         _selectedButton.adjustsImageWhenHighlighted = NO;
-        
+        _selectedButton.frame = self.bounds;
+        _selectedButton.hidden = YES;
         [_selectedButton setImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageSelectedSmallOff" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]] forState:UIControlStateNormal];
         [_selectedButton setImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/ImageSelectedSmallOn" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]] forState:UIControlStateSelected];
-        /*[_selectedButton addTarget:self action:@selector(selectionButtonPressed) forControlEvents:
-         UIControlEventTouchDown];
-        _selectedButton.frame = CGRectMake(0, 0, 44, 44);*/
-
-        //S************替换点击事件,并添加双击事件************
-        _tapButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        UIColor * tintColor = [UIColor colorWithRed:76.0/255.0 green:19.0/255.0 blue:136.0/255.0 alpha:0.0];
-        _tapButton.backgroundColor = tintColor;
-        _tapButton.frame = self.bounds;
-        ////S单击双击事件
-        // 单击的 Recognizer
-        UITapGestureRecognizer* singleRecognizer;
-        singleRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(SingleTap:)];
-        //点击的次数
-        singleRecognizer.numberOfTapsRequired = 1; // 单击
-        //给self.view添加一个手势监测；
-        [_tapButton addGestureRecognizer:singleRecognizer];
-        
-        // S双击的 Recognizer
-        /*UITapGestureRecognizer* doubleRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DoubleTap:)];
-        doubleRecognizer.numberOfTapsRequired = 2; // 双击
-        //关键语句，给self.view添加一个手势监测；
-        [_tapButton addGestureRecognizer:doubleRecognizer];
-        // 关键在这一行，双击手势确定监测失败才会触发单击手势的相应操作
-        [singleRecognizer requireGestureRecognizerToFail:doubleRecognizer];*/
-        // E双击的 Recognizer
-        ////E单击双击事件
-        
-        // 调整了图片大小
-        _selectedButton.frame = self.bounds;//CGRectMake(0, 0, 84, 84);
-        _tapButton.hidden = YES;
-        //************E替换点击事件,并添加双击事件************
-        
-        _selectedButton.hidden = YES;
         [self addSubview:_selectedButton];
-        [self addSubview:_tapButton];
-        
+
         // Loading indicator
         _loadingIndicator = [[DACircularProgressView alloc] initWithFrame:CGRectMake(0, 0, 40.0f, 40.0f)];
         _loadingIndicator.userInteractionEnabled = NO;
         _loadingIndicator.thicknessRatio = 0.1;
         _loadingIndicator.roundedCorners = NO;
         [self addSubview:_loadingIndicator];
-        
+
+        //单击双击事件
+        UITapGestureRecognizer *singleRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(SingleTap:)];
+        singleRecognizer.numberOfTapsRequired = 1; // 单击
+        [_selectedButton addGestureRecognizer:singleRecognizer];
+
+        /*//双击事件
+        UITapGestureRecognizer *doubleRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DoubleTap:)];
+        doubleRecognizer.numberOfTapsRequired = 2; // 双击
+        [_selectedButton addGestureRecognizer:doubleRecognizer];
+        // 双击手势确定监测失败才会触发单击手势的相应操作
+        [singleRecognizer requireGestureRecognizerToFail:doubleRecognizer];*/
+
+        //长按手势
+        UILongPressGestureRecognizer *longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(LongTap:)];
+        longPressGesture.minimumPressDuration = 1.0f;//长按等待时间
+        longPressGesture.allowableMovement = 30;//长按时候,手指头可以移动的距离
+        [self addGestureRecognizer:longPressGesture];
+
         // Listen for photo loading notifications
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(setProgressFromNotification:)
@@ -111,20 +94,27 @@
                                                  selector:@selector(handleMWPhotoLoadingDidEndNotification:)
                                                      name:MWPHOTO_LOADING_DID_END_NOTIFICATION
                                                    object:nil];
-        
+
     }
     return self;
 }
 
-- (void) SingleTap:(UITapGestureRecognizer*) gesture
-{
+- (void)SingleTap:(UITapGestureRecognizer *)gesture {
     [self selectionButtonPressed];
 }
 
-- (void) DoubleTap:(UITapGestureRecognizer*) gesture
-{
+- (void)DoubleTap:(UITapGestureRecognizer *)gesture {
     [self selectionButtonDoublePressed];
 }
+
+- (void)LongTap:(UILongPressGestureRecognizer *)longPressGesture {
+    if (longPressGesture.state == UIGestureRecognizerStateBegan) {
+        [self selectionButtonLongPressed];
+    } else if (longPressGesture.state == UIGestureRecognizerStateEnded) {
+        // do nothing
+    }
+}
+
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -143,12 +133,11 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     _imageView.frame = self.bounds;
+    _selectedButton.frame = self.bounds;
     _loadingIndicator.frame = CGRectMake(floorf((self.bounds.size.width - _loadingIndicator.frame.size.width) / 2.),
-                                         floorf((self.bounds.size.height - _loadingIndicator.frame.size.height) / 2),
-                                         _loadingIndicator.frame.size.width,
-                                         _loadingIndicator.frame.size.height);
-    _selectedButton.frame = CGRectMake(self.bounds.size.width - _selectedButton.frame.size.width - 0,
-                                       0, _selectedButton.frame.size.width, _selectedButton.frame.size.height);
+            floorf((self.bounds.size.height - _loadingIndicator.frame.size.height) / 2),
+            _loadingIndicator.frame.size.width,
+            _loadingIndicator.frame.size.height);
 }
 
 #pragma mark - Cell
@@ -159,7 +148,6 @@
     _imageView.image = nil;
     _loadingIndicator.progress = 0;
     _selectedButton.hidden = YES;
-    _tapButton.hidden = YES;
     [self hideImageFailure];
     [super prepareForReuse];
 }
@@ -187,7 +175,6 @@
 - (void)displayImage {
     _imageView.image = [_photo underlyingImage];
     _selectedButton.hidden = !_selectionMode;
-    _tapButton.hidden =  !_selectionMode;
     [self hideImageFailure];
 }
 
@@ -199,17 +186,25 @@
 
 - (void)setIsSelected:(BOOL)isSelected {
     _isSelected = isSelected;
+    _imageView.alpha = isSelected ? 0.5f : 1.0f;
     _selectedButton.selected = isSelected;
 }
 
 - (void)selectionButtonPressed {
     _selectedButton.selected = !_selectedButton.selected;
+    _isSelected = _selectedButton.selected;
+    _imageView.alpha = _isSelected ? 0.5f : 1.0f;
     [_gridController.browser setPhotoSelected:_selectedButton.selected atIndex:_index];
 }
 
 - (void)selectionButtonDoublePressed {
     [_gridController.browser setCurrentPhotoIndex:_index];
     [_gridController.browser hideGrid:self];
+}
+
+- (void)selectionButtonLongPressed {
+    MWPhotoBrowser *browser = _gridController.browser;
+    [browser.delegate photoBrowser:browser toggleSelectModel:!browser.displaySelectionButtons];
 }
 
 #pragma mark - Touches
@@ -252,9 +247,9 @@
             [self addSubview:_loadingError];
         }
         _loadingError.frame = CGRectMake(floorf((self.bounds.size.width - _loadingError.frame.size.width) / 2.),
-                                         floorf((self.bounds.size.height - _loadingError.frame.size.height) / 2),
-                                         _loadingError.frame.size.width,
-                                         _loadingError.frame.size.height);
+                floorf((self.bounds.size.height - _loadingError.frame.size.height) / 2),
+                _loadingError.frame.size.width,
+                _loadingError.frame.size.height);
     }
     [self hideLoadingIndicator];
     _imageView.image = nil;

@@ -5,6 +5,10 @@
 #import "CropViewController.h"
 #import "NBUAssetUtils.h"
 #import "RNDecryptor.h"
+#import "TOCropViewController.h"
+
+@interface AlbumViewController () <TOCropViewControllerDelegate>
+@end
 
 // 相册列表,图片列表,图片浏览
 @implementation AlbumViewController {
@@ -12,6 +16,7 @@
     NBUAssetsGroup *_group;// 当前相册引用
     NSMutableArray *_asses;// 图片数据集合
     NSMutableArray *_selections;// 与图片数据集合一一对应,是否选中
+    MWPhotoBrowser *browser;
 }
 
 // 类初始化
@@ -71,7 +76,7 @@
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             _group = group;
             // 初始化图片浏览器
-            MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:weakSelf];
+            browser = [[MWPhotoBrowser alloc] initWithDelegate:weakSelf];
             browser.displayActionButton = YES;//分享按钮
             browser.displayNavArrows = YES;//翻页箭头
             browser.displaySelectionButtons = NO;//是否显示选择按钮
@@ -148,6 +153,9 @@
     NBUFileAsset *asset = [[NBUFileAsset alloc] initWithFileURL:photo.photoURL];
     return [NBUAssetUtils decryImage:asset];
 }*/
+
+#pragma mark 图片数量
+
 /**
  *  图片数量
  *
@@ -155,8 +163,6 @@
  *
  *  @return 图片数量
  */
-#pragma mark 图片数量
-
 - (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser {
     if (_asses == nil) {
         return 0;
@@ -164,6 +170,8 @@
 
     return _asses.count;
 }
+
+#pragma mark 全屏图片
 
 /**
  *  构建全屏图片
@@ -173,9 +181,6 @@
  *
  *  @return 全屏图片
  */
-#pragma mark 全屏图片
-
-
 - (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
     if (_asses && _asses.count > 0 && index < _asses.count) {
         NBUAsset *data = _asses[index];
@@ -203,6 +208,8 @@
     return nil;
 }
 
+#pragma mark 缩略图
+
 /**
  *  构建缩略图
  *
@@ -211,8 +218,6 @@
  *
  *  @return 缩略图
  */
-#pragma mark 缩略图
-
 - (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser thumbPhotoAtIndex:(NSUInteger)index {
     if (_asses && _asses.count > 0 && index < _asses.count) {
         NBUAsset *data = _asses[index];
@@ -357,14 +362,14 @@
     }
 }
 
+#pragma mark[全选] 或者[取消全选]
+
 /**
  *  设置全选或者取消全选
  *
  *  @param photoBrowser 图片浏览器引用
  *  @param select       true全选|false取消全选
  */
-#pragma mark[全选] 或者[取消全选]
-
 - (void)photoBrowser:(MWPhotoBrowser *)photoBrowser toggleSelect:(BOOL)select {
     if (select) {//如果是全选,显示选择标记
         photoBrowser.displaySelectionButtons = YES;
@@ -378,13 +383,13 @@
 }
 
 
+#pragma mark[导出] 或[解密]选择的图片
+
 /**
  *  导出选中的图片
  *
  *  @param photoBrowser 图片浏览器引用
  */
-#pragma mark[导出] 或[解密]选择的图片
-
 - (void)exportSelected:(MWPhotoBrowser *)photoBrowser {
     NSString *message = @"解密";
     if ([_group.name isEqualToString:@"Decrypted"]) {
@@ -526,13 +531,13 @@
     });
 }
 
+#pragma mark[删除] 选择的图片
+
 /**
  *  删除选中的图片
  *
  *  @param photoBrowser 图片浏览器引用
  */
-#pragma mark[删除] 选择的图片
-
 - (void)deleteSelected:(MWPhotoBrowser *)photoBrowser {
     // 沙盒文件夹中的加密相册,删除操作直接移动到Deleteed相册
     // 如果是 [沙箱] 文件且不是Deleted或Decrypted相册文件夹,移动文件到Deleted相册文件夹
@@ -656,6 +661,47 @@
 }
 
 
+#pragma mark[单张图片浏览]-- 显示裁剪页面
+
+/**
+ *
+ * @param photoBrowser
+ * @param image
+ */
+- (void)photoBrowser:(MWPhotoBrowser *)photoBrowser showCrop:(UIImage *)image {
+    TOCropViewController *cropController = [[TOCropViewController alloc] initWithCroppingStyle:TOCropViewCroppingStyleDefault image:image];
+    cropController.delegate = self;
+    // Uncomment this if you wish to provide extra instructions via a title label
+    // cropController.title = @"Crop Image";//标题
+
+    // -- Uncomment these if you want to test out restoring to a previous crop setting --
+    //cropController.angle = 90; // 旋转角度The initial angle in which the image will be rotated
+    //cropController.imageCropFrame = CGRectMake(0, 0, 2848, 4288); //The initial frame that the crop controller will have visible.
+
+    // -- Uncomment the following lines of code to test out the aspect ratio features --
+    cropController.aspectRatioPreset = TOCropViewControllerAspectRatioPresetCustom; // 裁剪的比例Set the initial aspect ratio as a square
+    cropController.aspectRatioLockEnabled = NO; // 是否可以拖动改变裁剪框尺寸 The crop box is locked to the aspect ratio and can't be resized away from it
+    cropController.resetAspectRatioEnabled = NO; // 重置按钮是否可以重置到默认值 When tapping 'reset', the aspect ratio will NOT be reset back to default
+    cropController.aspectRatioPickerButtonHidden = NO;//是否隐藏裁剪框尺寸选择按钮
+    cropController.customAspectRatio = CGSizeMake(9.0f, 16.0f);//自定义尺寸
+
+    // -- Uncomment this line of code to place the toolbar at the top of the view controller --
+    //cropController.toolbarPosition = TOCropViewControllerToolbarPositionTop;//工具类位置
+
+    cropController.rotateButtonsHidden = NO;//旋转图片按钮是否隐藏
+    cropController.rotateClockwiseButtonHidden = NO;
+
+    //cropController.doneButtonTitle = @"Title";// 确定按钮文字
+    //cropController.cancelButtonTitle = @"Title";// 取消按钮文字
+
+    cropController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    [browser presentViewController:cropController animated:YES completion:nil];
+    //[self.navigationController pushViewController:cropController animated:YES];
+}
+
+
+#pragma mark[单张图片浏览]--[导出] 或[解密] 指定索引的图片
+
 /**
  *  导出指定索引的图片
  *
@@ -664,8 +710,6 @@
  *
  *  @return 是否导出成功
  */
-#pragma mark[单张图片浏览]--[导出] 或[解密] 指定索引的图片
-
 - (BOOL)photoBrowser:(MWPhotoBrowser *)photoBrowser exportAtIndex:(NSUInteger)index {
     NSString *message = @"解密";
     if ([_group.name isEqualToString:@"Decrypted"]) {
@@ -771,6 +815,8 @@
     return YES;
 }
 
+#pragma mark[单张图片浏览]--删除指定索引的图片
+
 /**
  *  删除指定索引的图片
  *
@@ -779,8 +825,6 @@
  *
  *  @return 是否删除成功
  */
-#pragma mark[单张图片浏览]--删除指定索引的图片
-
 - (BOOL)photoBrowser:(MWPhotoBrowser *)photoBrowser deleteAtIndex:(NSUInteger)index {
     void (^moveToDeleteBlock)()=^() {// 移动到 Deleted 相册
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -906,8 +950,9 @@
             });
             return;
         }
-
-        CropViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CropViewController"];
+        // 开始剪切
+        [self photoBrowser:photoBrowser showCrop:[NBUAssetUtils decryImage:_asses[index]]];
+        /*CropViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CropViewController"];
         controller.image = [NBUAssetUtils decryImage:_asses[index]];//需要剪切的图片
         controller.resultBlock = ^(UIImage *image) {// 剪切后的回调方法
             [photoBrowser showProgressHUDWithMessage:@"保存中..."];
@@ -929,7 +974,7 @@
                                                                                          style:UIBarButtonItemStylePlain
                                                                                         target:self
                                                                                         action:nil];
-        [self.navigationController pushViewController:controller animated:YES];
+        [self.navigationController pushViewController:controller animated:YES];*/
     };
 
     NSString *message = @"解密";
@@ -1090,6 +1135,38 @@
             self.progressHUD.label.text = message;
         }
     }
+}
+
+
+#pragma mark - -
+#pragma mark - ------图片裁剪协议实现 TOCropViewControllerDelegate
+
+#pragma mark 裁剪成长方形图片回调
+
+- (void)cropViewController:(TOCropViewController *)cropViewController didCropToImage:(UIImage *)image withRect:(CGRect)cropRect angle:(NSInteger)angle {
+    [browser dismissViewControllerAnimated:YES completion:^{
+        [self showAlertWithTitle:@"提示" message:@"保存后将覆盖原来图片,是否保存?" okTitle:@"保存" action:^() {
+            [browser showProgressHUDWithMessage:@"保存中..."];
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                NSString *fileName = ((NBUFileAsset *) _asses[browser.currentIndex]).fullResolutionImagePath.lastPathComponent;
+                BOOL success = [NBUAssetUtils saveImage:image toAlubm:_group.name withFileName:fileName];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (success) {
+                        [browser reloadData];// 刷新数据
+                        [browser hideProgressHUD:YES];
+                    } else {
+                        [browser showProgressHUDCompleteMessage:@"保存失败"];
+                    }
+                });
+            });
+        }];
+    }];
+}
+
+#pragma mark 裁剪成圆形图片回调
+
+- (void)cropViewController:(nonnull TOCropViewController *)cropViewController didCropToCircularImage:(nonnull UIImage *)image withRect:(CGRect)cropRect angle:(NSInteger)angle {
+
 }
 
 #pragma mark - -
