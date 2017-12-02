@@ -92,7 +92,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _currentGridContentOffset = CGPointMake(0, CGFLOAT_MAX);
     _didSavePreviousStateOfNavBar = NO;
     _statusBarStyle = UIStatusBarStyleLightContent;
-    self.automaticallyAdjustsScrollViewInsets = NO;
+    self.automaticallyAdjustsScrollViewInsets = NO;// 内容被状态栏挡住
     // Listen for MWPhoto notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleMWPhotoLoadingDidEndNotification:)
@@ -568,11 +568,11 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     _skipNextPagingScrollViewPositioning = NO;
     */
     // https://github.com/mwaterfall/MWPhotoBrowser/issues/620
-    if (_gridShow) {
+    if (_gridShow) {//"隐藏"图片浏览
         CGRect newPagingFrame = [self frameForPagingScrollView];
         newPagingFrame = CGRectOffset(newPagingFrame, 0, (self.startOnGrid ? 1 : -1) * newPagingFrame.size.height);
         _pagingScrollView.frame = newPagingFrame;
-    } else {
+    } else {//显示图片浏览
         // Get paging scroll view frame to determine if anything needs changing
         CGRect pagingScrollViewFrame = [self frameForPagingScrollView];
         _pagingScrollView.frame = pagingScrollViewFrame;
@@ -1133,7 +1133,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 #pragma mark - UIScrollView Delegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    NSLog(@"scrollViewDidScroll---MWPhotoBrowser");
+    //NSLog(@"scrollViewDidScroll---MWPhotoBrowser");
     // Checks
     if (!_viewIsActive || _performingLayout || _rotating) return;
 
@@ -1222,10 +1222,16 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 }
 
 - (void)gotoPreviousPage {
+    // 如果不可见不允许翻页(底部栏按钮点击)
+    if (_pagingScrollView.isHidden)
+        return;
     [self showPreviousPhotoAnimated:NO];
 }
 
 - (void)gotoNextPage {
+    // 如果不可见不允许翻页(底部栏按钮点击)
+    if (_pagingScrollView.isHidden)
+        return;
     [self showNextPhotoAnimated:NO];
 }
 
@@ -1411,6 +1417,9 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 
 
 - (void)showGridAnimated {
+    // 如果不可见不允许(底部栏左下角按钮点击)
+    if (_pagingScrollView.isHidden)
+        return;
     [self showGrid:YES];
 }
 
@@ -1787,7 +1796,9 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
 #pragma mark - Actions
 
 - (void)actionButtonPressed:(id)sender {
-
+    // 如果不可见不允许(底部栏右下角按钮点击)
+    if (_pagingScrollView.isHidden)
+        return;
     // Only react when image has loaded
     id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
     if ([self numberOfPhotos] > 0 && [photo underlyingImage]) {

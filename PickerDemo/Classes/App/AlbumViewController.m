@@ -52,7 +52,7 @@
  * @return
  */
 - (UIStatusBarStyle)preferredStatusBarStyle {//
-    return UIStatusBarStyleLightContent;//UIStatusBarStyleDefault;
+    return UIStatusBarStyleLightContent;
 }
 
 - (void)viewDidLoad {
@@ -148,11 +148,6 @@
 
 #pragma mark - -
 #pragma mark - -------图片浏览器协议实现 MWPhotoBrowserDelegate
-
-/*- (UIImage *)photoBrowser:(MWPhotoBrowser *)photoBrowser decodeImage:(id<MWPhoto>)photo {
-    NBUFileAsset *asset = [[NBUFileAsset alloc] initWithFileURL:photo.photoURL];
-    return [NBUAssetUtils decryImage:asset];
-}*/
 
 #pragma mark 图片数量
 
@@ -401,6 +396,12 @@
         [photoBrowser showProgressHUDCompleteMessage:[NSString stringWithFormat:@"该相册文件不能%@", message]];
         return;
     }
+    // 判断是否选择了文件
+    if (![self hasSelectedItem]) {
+        [photoBrowser showProgressHUDWithMessage:@""];
+        [photoBrowser showProgressHUDCompleteMessage:[NSString stringWithFormat:@"请选择要%@的文件", message]];
+        return;
+    }
     void (^exportBlock)() = ^() {// 导出或解密操作
         [photoBrowser showProgressHUDWithMessage:message];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -415,14 +416,8 @@
                 }
             }
 
-            if (selectedAssets.count == 0) {// 如果没有可以操作的文件
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [photoBrowser showProgressHUDCompleteMessage:[NSString stringWithFormat:@"请选择要%@的文件", message]];//@"请选择要导出的文件"];
-                });
-                return;
-            }
-            if ([_group.name isEqualToString:@"Decrypted"]) {//导出到系统相册
-                [NBUAssetsLibrary addAll:selectedAssets toAlbum:@"test" withBlock:^(NSError *error, BOOL fihisn, int index) {
+            if ([_group.name isEqualToString:@"Decrypted"]) {//解密相册文件,导出到系统相册
+                [NBUAssetsLibrary addAll:selectedAssets toAlbum:@"test" withBlock:^(NSError *error, BOOL finish, int index) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         if (index == selectedAssets.count) {
                             [photoBrowser setProgressMessage:@"正在保存请稍后..."];
@@ -430,7 +425,7 @@
                             NSString *messageResult = [NSString stringWithFormat:@"%d/%lu", index, (unsigned long) selectedAssets.count];
                             [photoBrowser setProgressMessage:messageResult];
                         }
-                        if (fihisn) {// 如果已经执行完成
+                        if (finish) {// 如果已经执行完成
                             _isUpdated = true;// 由于有可能显示了系统相册所以需要更新数据
                             if (error) {// 执行完成但是出错了
                                 [photoBrowser showProgressHUDCompleteMessage:@"部分导出成功"];
@@ -441,7 +436,7 @@
                         }
                     });
                 }];
-            } else {//解密文件
+            } else {//加密相册文件,解密文件
                 int i = 0;
                 for (NBUFileAsset *asset in selectedAssets) {
                     i++;
@@ -539,22 +534,29 @@
  *  @param photoBrowser 图片浏览器引用
  */
 - (void)deleteSelected:(MWPhotoBrowser *)photoBrowser {
-    // 沙盒文件夹中的加密相册,删除操作直接移动到Deleteed相册
-    // 如果是 [沙箱] 文件且不是Deleted或Decrypted相册文件夹,移动文件到Deleted相册文件夹
+    // 检查是否有选择文件
+    if (![self hasSelectedItem]) {
+        [photoBrowser showProgressHUDWithMessage:@""];
+        [photoBrowser showProgressHUDCompleteMessage:@"请选择要删除的文件"];
+        return;
+    }
+
+    // 如果是沙盒文件,且不是 [Deleted] 或 [Decrypted] 相册的文件直接移动到 [Deleted]
     if ([_group isMemberOfClass:[NBUDirectoryAssetsGroup class]] &&//是沙盒
             ![_group.name isEqualToString:@"Deleted"] &&//不是回收站
             ![_group.name isEqualToString:@"Decrypted"]) {//不是解密文件夹
+        // 执行文件移动操作
         [self photoBrowser:photoBrowser moveSelectedToAlbum:@"Deleted"];
         return;
     }
 
-    //删除操作block
+    // 删除操作block
     void (^deleteBlock)() = ^() {
         [photoBrowser showProgressHUDWithMessage:@""];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            // 获取选中项中可以删除的文件
             NSMutableArray *removedArray = [[NSMutableArray alloc] init];
             if (_selections != nil && _selections.count > 0) {
-                // 获取选中项中可以删除的文件
                 for (NSUInteger i = 0; i < _selections.count; i++) {
                     if ([_selections[i] boolValue]) {
                         NBUAsset *asset = _asses[i];
@@ -602,9 +604,10 @@
 
         });
     };
+
     if ([_group isKindOfClass:[NBUDirectoryAssetsGroup class]]) {//如果是沙盒相册
         [self showAlertWithTitle:@"警告" message:@"确定要删除,删除后文件将不可恢复?" okTitle:@"删除" action:deleteBlock];
-    } else {//系统相册
+    } else {//系统相册,系统会弹出删除确认对话框
         deleteBlock();
     }
 }
@@ -715,58 +718,55 @@
     if ([_group.name isEqualToString:@"Decrypted"]) {
         message = @"导出";
     }
-    // 如果当前不是沙盒相册
+    // 只有沙盒相册才能执行 [导出] 和 [解密] 操作
     if (![_group isMemberOfClass:[NBUDirectoryAssetsGroup class]]) {
         [photoBrowser showProgressHUDWithMessage:@""];
         [photoBrowser showProgressHUDCompleteMessage:[NSString stringWithFormat:@"该相册文件不能%@", message]];
         return YES;
     }
 
-    if (_asses == nil || _asses.count == 0 || _asses[index] == nil) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [photoBrowser showProgressHUDWithMessage:@"数据异常,删除失败"];
-            [photoBrowser showProgressHUDCompleteMessage:@"数据异常,删除失败"];
-        });
-        return YES;// 如果没有数据
-    }
-
-    NBUAsset *asset = _asses[index];
-    if (asset == nil) return YES;// 如果当前项为空
-
-    [photoBrowser showProgressHUDWithMessage:[NSString stringWithFormat:@"正在%@", message]];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if ([_group.name isEqualToString:@"Decrypted"]) {//导出---解密相册导出到系统相册
-            [[NBUAssetsLibrary sharedLibrary] saveImageToCameraRoll:[asset.fullResolutionImage imageWithOrientationUp]
-                                                           metadata:nil
-                                           addToAssetsGroupWithName:@"test"
-                                                        resultBlock:^(NSURL *assetURL, NSError *error) {
-                                                            dispatch_async(dispatch_get_main_queue(), ^{
-                                                                if (!error) {
-                                                                    _isUpdated = YES;
-                                                                    [photoBrowser showProgressHUDCompleteMessage:@"导出成功"];
-                                                                } else {
-                                                                    [photoBrowser showProgressHUDCompleteMessage:@"导出失败"];
-                                                                    [self showAlertWithTitle:@"警告" message:@"导出失败"];
-                                                                }
-                                                            });
-                                                        }];
-        } else {// 解密---加密相册解密到解密相册
-            if ([asset isMemberOfClass:[NBUFileAsset class]]) {
-                NSString *pwd = ((NBUFileAsset *) asset).fullResolutionImagePath.lastPathComponent;
-                BOOL b = [NBUAssetUtils decryImage:(NBUFileAsset *) asset toAlubm:@"Decrypted" withPwd:pwd];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    if (b) {
-                        [photoBrowser showProgressHUDCompleteMessage:@"解密成功"];
-                        _isUpdated = YES;
-                    } else {
-                        [photoBrowser showProgressHUDCompleteMessage:@"解密失败"];
-                        [self showAlertWithTitle:@"警告" message:@"解密失败"];
-                    }
-                });
+    void (^optionBlock)() = ^() {
+        [photoBrowser showProgressHUDWithMessage:[NSString stringWithFormat:@"正在%@", message]];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NBUAsset *asset = _asses[index];
+            if ([_group.name isEqualToString:@"Decrypted"]) {//导出---解密相册导出到系统相册
+                [[NBUAssetsLibrary sharedLibrary] saveImageToCameraRoll:[asset.fullResolutionImage imageWithOrientationUp]
+                                                               metadata:nil
+                                               addToAssetsGroupWithName:@"test"
+                                                            resultBlock:^(NSURL *assetURL, NSError *error) {
+                                                                dispatch_async(dispatch_get_main_queue(), ^{
+                                                                    if (!error) {
+                                                                        _isUpdated = YES;
+                                                                        [photoBrowser showProgressHUDCompleteMessage:@"导出成功"];
+                                                                    } else {
+                                                                        [photoBrowser showProgressHUDCompleteMessage:@"导出失败"];
+                                                                        [self showAlertWithTitle:@"警告" message:@"导出失败"];
+                                                                    }
+                                                                });
+                                                            }];
+            } else {// 解密---加密相册解密到解密相册
+                if ([asset isMemberOfClass:[NBUFileAsset class]]) {
+                    NSString *pwd = ((NBUFileAsset *) asset).fullResolutionImagePath.lastPathComponent;
+                    BOOL success = [NBUAssetUtils decryImage:(NBUFileAsset *) asset toAlubm:@"Decrypted" withPwd:pwd];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        if (success) {
+                            _isUpdated = YES;
+                            [photoBrowser showProgressHUDCompleteMessage:@"解密成功"];
+                        } else {
+                            [photoBrowser showProgressHUDCompleteMessage:@"解密失败"];
+                            [self showAlertWithTitle:@"警告" message:@"解密失败"];
+                        }
+                    });
+                }
             }
-        }
-    });
-
+        });
+    };
+    // 弹出 [导出] 对话框
+    if ([_group.name isEqualToString:@"Decrypted"]) {
+        [self showAlertWithTitle:@"警告" message:[NSString stringWithFormat:@"确定要%@", message] okTitle:message action:optionBlock];
+    } else {//解密操作直接执行
+        optionBlock();
+    }
     return YES;
 }
 
@@ -1084,7 +1084,7 @@
     return _progressHUD;
 }
 
-#pragma mark 显示进度条
+#pragma mark 显示进度条信息
 
 - (void)showProgressHUDWithMessage:(NSString *)message {
     self.progressHUD.label.text = message;
@@ -1221,7 +1221,7 @@ void (^optionButtonClickBlock)(MWPhotoBrowser *) = ^(MWPhotoBrowser *photoBrowse
  * 文件解密Block
  * @return 解密后的图片
  */
-UIImage *(^decryptBlock)(NSString *) =^UIImage *(NSString *path) {
+UIImage *(^decryptBlock)(NSString *) = ^UIImage *(NSString *path) {
     UIImage *image;
     NSError *error = nil;
     NSData *inData = [NSData dataWithContentsOfFile:path];
@@ -1237,5 +1237,5 @@ UIImage *(^decryptBlock)(NSString *) =^UIImage *(NSString *path) {
     return image;
 };
 
-#pragma mark - -
+#pragma mark - ------
 @end

@@ -106,7 +106,7 @@ PODS:
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
-  - TOCropViewController (2.2)
+  - TOCropViewController (2.3.4)
 
 DEPENDENCIES:
   - GPUImage (= 0.1.7)
@@ -139,7 +139,7 @@ SPEC CHECKSUMS:
   RBVolumeButtons@PTEz: e1fcc6cf368f908437a2ba91cfec9cb27b723894
   RNCryptor: 761fc3ed94d1a0e409ba5b8e5dbef6a8f69352a7
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
-  TOCropViewController: 3f538c70c5c3b0d59e5225339aba523d15891459
+  TOCropViewController: 808c9724904be931dd2de5f97fcccf4cc8f8b03f
 
 PODFILE CHECKSUM: 494fc75d293b158cfe58a583342cdb899f758030
 

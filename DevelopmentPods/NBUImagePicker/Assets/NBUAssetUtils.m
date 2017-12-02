@@ -238,14 +238,14 @@ static NSString *_documentsDirectory;
     //预览图
     NSString *fullScreenDir = [albumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];//预览图文件夹 相册名+预览图文件夹名称
     fullName = [fullScreenDir stringByAppendingPathComponent:fileName];//预览图全路径文件名
-    [self decryImage:image.fullScreenImagePath toPath:fullName withPwd:pwd];
+    if (![self decryImage:image.fullScreenImagePath toPath:fullName withPwd:pwd]) {
+        return NO;
+    }
 
     //缩略图
     NSString *thumbPath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
     fullName = [thumbPath stringByAppendingPathComponent:fileName];
-    [self decryImage:image.thumbnailImagePath toPath:fullName withPwd:pwd];
-
-    return YES;
+    return [self decryImage:image.thumbnailImagePath toPath:fullName withPwd:pwd];
 }
 
 #pragma mark 解密数据

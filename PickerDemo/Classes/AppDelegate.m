@@ -83,7 +83,11 @@ static CGFloat _preBrightness;//保存之前的屏幕亮度
         if ([controller isKindOfClass:[CameraViewController class]] ||
                 [controller isKindOfClass:[PPViewController class]] ||
                 [controller isKindOfClass:[VideoViewController class]]) {
-            return;
+            return;//这些页面退到后台不关闭
+        }
+        // 如果有弹出窗体关闭掉
+        if ([controller presentedViewController] != nil) {
+            [controller dismissViewControllerAnimated:NO completion:nil];
         }
         // 如果不是密码页面,或者是拍摄页面,清空堆栈
         [self.navController popToRootViewControllerAnimated:NO];

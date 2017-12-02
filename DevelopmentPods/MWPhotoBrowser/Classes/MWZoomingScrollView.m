@@ -94,18 +94,44 @@
     return self;
 }
 
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event {
+    [super touchesBegan:touches withEvent:event];
+    UITouch *touch = [touches anyObject];
+    CGPoint point = [touch locationInView:_photoImageView];
+    //_beginPoint = point;
+}
+
 - (void)scrollViewPanMethod:(UIPanGestureRecognizer *)panGestureRecognizer {
     if (self.zoomScale != self.minimumZoomScale) {//如果手动进行了缩放
-        // NSLog(@"跳过了");
+        //NSLog(@"跳过了 %d", panGestureRecognizer.state);
+        //如果触发了拖动操作,但是由于某种原因(缩放改变,翻页)不能继续完成拖放操作,将状态还原
+        if (_parentView.isHidden /*&& (panGestureRecognizer.state == UIGestureRecognizerStateEnded || panGestureRecognizer.state == UIGestureRecognizerStateCancelled)*/) {
+            //NSLog(@"滑动取消还原 %d", panGestureRecognizer.state);
+            _parentView.scrollEnabled = YES;
+            _parentView.hidden = NO;
+            _photoBrowser.coverImage.hidden = YES;
+            _photoBrowser.backGroundView.hidden = YES;
+        }
         return;
     }
+    static CGFloat sx;
+    static CGFloat sy;
+    static CGSize imageSize;
     static CGPoint imageOrigin;
     static CGFloat minPanLength = 150.0f;//最小拖拽返回相应距离
+    static CGFloat minPanLengthScale = 350.0f;//最小拖拽返回相应距离
     switch (panGestureRecognizer.state) {
         case UIGestureRecognizerStateBegan: {
-            // NSLog(@"拖拽-----开始");
+            //NSLog(@"拖拽-----开始 %f %f", self.zoomScale, self.minimumZoomScale);
 
+            // 这里取值为图片的大小
+            imageSize = _photoImageView.frame.size;
             imageOrigin = _photoImageView.frame.origin;
+
+            // 计算偏移比例,locationInView得到的是像素值,因此需要根据缩放换算
+            CGPoint beginningLocation = [panGestureRecognizer locationInView:_photoImageView];
+            sx = beginningLocation.x / imageSize.width / [UIScreen mainScreen].scale;
+            sy = beginningLocation.y / imageSize.height / [UIScreen mainScreen].scale;
 
             _parentView.hidden = YES;
             _photoBrowser.coverImage.hidden = NO;
@@ -127,17 +153,24 @@
         }
         case UIGestureRecognizerStateChanged: {
             CGPoint translation = [panGestureRecognizer translationInView:self];
-            // NSLog(@"拖拽-----改变 x: %f / y: %f", translation.x, translation.y);
+            //NSLog(@"拖拽-----改变 x: %f / y: %f", translation.x, translation.y);
 
             // 背景透明度
-            CGFloat alpha = 1.0f - MAX(ABS(translation.x), ABS(translation.y)) / minPanLength;
+            CGFloat alpha = 1.0f - ABS(translation.y) / minPanLength;
+            // CGFloat alpha = 1.0f - MAX(ABS(translation.x), ABS(translation.y)) / minPanLengthScale;
+            CGFloat scale = 1.0f - ABS(translation.y) / minPanLengthScale;
+            if (scale < 0.7) scale = 0.7;
             if (alpha < 0) alpha = 0;
             _photoBrowser.backGroundView.alpha = alpha;
 
-            // 改变图片的位置
-            CGRect coverFrame = _photoBrowser.coverImage.frame;
-            coverFrame.origin.x = translation.x + imageOrigin.x;
-            coverFrame.origin.y = translation.y + imageOrigin.y;
+            // 改变图片的布局
+            CGRect coverFrame;
+            // 图片的尺寸
+            coverFrame.size.width = imageSize.width * scale;
+            coverFrame.size.height = imageSize.height * scale;
+            // 图片的位置, 原来位置 + 偏移值 + 缩放导致的偏移值 + (宽度|高度变化*比例系数)
+            coverFrame.origin.x = imageOrigin.x + translation.x + (imageSize.width - coverFrame.size.width) * sx;
+            coverFrame.origin.y = imageOrigin.y + translation.y + (imageSize.height - coverFrame.size.height) * sy;
             _photoBrowser.coverImage.frame = coverFrame;
 
             break;
@@ -145,7 +178,7 @@
         case UIGestureRecognizerStateEnded: {
             CGPoint translation = [panGestureRecognizer translationInView:self];
             CGPoint velocity = [panGestureRecognizer velocityInView:self];
-            // NSLog(@"拖拽-----结束%f", velocity.y);
+            //NSLog(@"拖拽-----结束%f", velocity.y);
             if (ABS(translation.y) < minPanLength && ABS(velocity.y) < 50) {//还原
                 [UIView animateWithDuration:0.3
                                  animations:^{
@@ -188,7 +221,7 @@
         case UIGestureRecognizerStatePossible:
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateFailed: {
-            // NSLog(@"拖拽-----失败,取消");
+            //NSLog(@"拖拽-----失败,取消");
             // 拖拽未知情况,还原所有设置
             _parentView.scrollEnabled = YES;
             _parentView.hidden = NO;

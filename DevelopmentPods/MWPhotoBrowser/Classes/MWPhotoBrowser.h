@@ -40,8 +40,6 @@
 #pragma mark 是否可以退出图片浏览器,如果有选择项,(NO)不可以
 - (BOOL)isReturn:(MWPhotoBrowser *)photoBrowser;
 
-- (UIImage *)photoBrowser:(MWPhotoBrowser *)photoBrowser decodeImage:(id<MWPhoto>)photo;
-
 /**
  *  切换可选|不可选
  *
