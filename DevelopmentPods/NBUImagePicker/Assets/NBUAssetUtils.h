@@ -71,6 +71,13 @@
 + (UIImage *)decryImage:(NBUFileAsset *)image;
 
 /**
+ * 解密成图片
+ * @param path 图片路径
+ * @return
+ */
++ (UIImage *)decryImageWithPath:(NSString *)path;
+
+/**
  *  解密数据
  *  @param image     图片数据
  *  @param albumName 目标相册 eg:album
