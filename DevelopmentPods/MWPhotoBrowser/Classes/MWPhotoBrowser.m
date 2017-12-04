@@ -1880,7 +1880,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         if (self.progressHUD.isHidden) [self.progressHUD showAnimated:YES];
         self.progressHUD.label.text = message;
         self.progressHUD.mode = MBProgressHUDModeCustomView;
-        [self.progressHUD hideAnimated:YES afterDelay:0.6];
+        [self.progressHUD hideAnimated:YES afterDelay:0.4];
     } else {
         [self.progressHUD hideAnimated:YES];
     }
@@ -1890,7 +1890,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     //弹出的时候禁用,0.6秒之后启用
     self.fd_interactivePopDisabled = YES;
     self.navigationController.navigationBar.userInteractionEnabled = NO;
-    double delayInSeconds = 1.6;
+    double delayInSeconds = 1.0;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t) (delayInSeconds * NSEC_PER_SEC));
     dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
         self.fd_interactivePopDisabled = NO;
