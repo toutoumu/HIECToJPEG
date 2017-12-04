@@ -1,4 +1,5 @@
 // 相册列表,图片列表,图片浏览
+#import <NBUKit/NBUAdditions.h>
 #import "AlbumViewController.h"
 #import "SelectAlbumViewController.h"
 #import "UINavigationController+FDFullscreenPopGesture.h"
@@ -951,30 +952,12 @@
             return;
         }
         // 开始剪切
-        [self photoBrowser:photoBrowser showCrop:[NBUAssetUtils decryImage:_asses[index]]];
-        /*CropViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CropViewController"];
-        controller.image = [NBUAssetUtils decryImage:_asses[index]];//需要剪切的图片
-        controller.resultBlock = ^(UIImage *image) {// 剪切后的回调方法
-            [photoBrowser showProgressHUDWithMessage:@"保存中..."];
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                NSString *fileName = ((NBUFileAsset *) _asses[index]).fullResolutionImagePath.lastPathComponent;
-                BOOL success = [NBUAssetUtils saveImage:image toAlubm:_group.name withFileName:fileName];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    if (success) {
-                        [photoBrowser reloadData];// 刷新数据
-                        [photoBrowser hideProgressHUD:YES];
-                    } else {
-                        [photoBrowser showProgressHUDCompleteMessage:@"保存失败"];
-                    }
-                });
-            });
-        };
-
-        photoBrowser.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
-                                                                                         style:UIBarButtonItemStylePlain
-                                                                                        target:self
-                                                                                        action:nil];
-        [self.navigationController pushViewController:controller animated:YES];*/
+        // todo 这里已经旋转了 为了,兼容 HEIF 转 JPEG 图片旋转不正确问题
+        if (@available(iOS 11.0, *)) {
+            [self photoBrowser:photoBrowser showCrop:[NBUAssetUtils decryImage:_asses[index]].imageWithOrientationUp];
+        } else {
+            [self photoBrowser:photoBrowser showCrop:[NBUAssetUtils decryImage:_asses[index]]];
+        }
     };
 
     NSString *message = @"解密";
@@ -1222,19 +1205,7 @@ void (^optionButtonClickBlock)(MWPhotoBrowser *) = ^(MWPhotoBrowser *photoBrowse
  * @return 解密后的图片
  */
 UIImage *(^decryptBlock)(NSString *) = ^UIImage *(NSString *path) {
-    UIImage *image;
-    NSError *error = nil;
-    NSData *inData = [NSData dataWithContentsOfFile:path];
-    if (inData != nil) {
-        NSString *pwd = path.lastPathComponent;
-        NSData *outData = [RNDecryptor decryptData:inData withSettings:kRNCryptorAES256Settings password:pwd error:&error];
-        if (error) {
-            NBULogError(@"Error: %@", error);
-            return image;
-        }
-        return [UIImage imageWithData:outData];
-    }
-    return image;
+    return [NBUAssetUtils decryImageWithPath:path];
 };
 
 #pragma mark - ------
