@@ -424,14 +424,7 @@
             posterFileURL = [[NSURL alloc] initFileURLWithPath:[[directoryURL.path stringByAppendingPathComponent:NBUFileAsset.thumbnailDir] stringByAppendingPathComponent:posterFileURL.path.lastPathComponent]];
             //}
             if (![@"Decrypted" isEqualToString:name]) {//如果是需要解密的数据
-                // 解密数据
-                NSError *error = nil;
-                NSData *inData = [NSData dataWithContentsOfURL:posterFileURL];
-                NSString *pwd = posterFileURL.lastPathComponent;
-                NSData *outData = [RNDecryptor decryptData:inData withSettings:kRNCryptorAES256Settings password:pwd error:&error];
-                if (error == nil) {
-                    _posterImage = [UIImage imageWithData:outData];
-                }
+                _posterImage = [NBUAssetUtils decryImageWithPath:posterFileURL.path];
             } else {
                 _posterImage = [[UIImage imageWithContentsOfFile:posterFileURL.path] thumbnailWithSize:[NBUAsset thumbnailSize]];
             }
@@ -444,7 +437,7 @@
  * 刷新数据 是否反序(新数据在第一位)
  */
 - (void)refreshDirectoryContents {
-    if (_directoryContents != nil && _directoryContents.count > 0){
+    if (_directoryContents != nil && _directoryContents.count > 0) {
         return;
     }
     NSArray *dirs = [[NSFileManager defaultManager] URLsForFilesWithExtensions:kNBUImageFileExtensions
