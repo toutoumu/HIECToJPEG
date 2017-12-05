@@ -492,7 +492,7 @@
     NSError *error;
     _captureDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:_captureDevice error:&error];
     if (error) {
-        NBULogError(@"Error creating an AVCaptureDeviceInput: %@", error);
+        NBULogError(@"Error creating an AVCaptureDeviceInput: %@ %@", THIS_METHOD, error);
     }
 
     // 设置最佳分辨率 Choose the best suited session presset
@@ -591,7 +591,7 @@
 
 - (void)takePicture:(id)sender {
     NBULogTrace();
-    NSDate *tmpStartData = [NSDate date];
+
     // 如果不允许访问相机返回
     if (self.userDeniedAccess || self.restrictedAccess) {
         NBULogWarn(@"%@ Aborted, camera access denied.", THIS_METHOD);
@@ -671,7 +671,7 @@
         }];
     }
 
-    // 异步捕获图片 Get the image
+    // 异步捕获图片,从调用到回调函数耗时比较长(0.3-0.5s) Get the image
     [_captureImageOutput captureStillImageAsynchronouslyFromConnection:_captureConnection completionHandler:^(CMSampleBufferRef imageDataSampleBuffer, NSError *error) {
         _captureInProgress = NO;// 设置为拍摄完成
 
@@ -682,7 +682,8 @@
         }
 
         if (error) {// 拍摄出错了
-            NBULogError(@"Error: %@", error);
+            NBULogError(@"Error: %@ %@", THIS_METHOD, error);
+
             _shootButton.enabled = YES;
 
             // 回调 Execute result blocks
@@ -748,7 +749,6 @@
             if (_captureSuccess) {//震动
                 _captureSuccess();
             }
-            NBULogInfo(@"执行时间 = %f",  [[NSDate date] timeIntervalSinceDate:tmpStartData]);
 
             // 如果不保存到相册 返回 No need to save image?
             if (!_savePicturesToLibrary)
