@@ -1,39 +1,19 @@
- {
-    ColorModel = RGB;
+{
     DPIHeight = 72;
     DPIWidth = 72;
-    Depth = 8;
     Orientation = 6;
-    PixelHeight = 3024;
-    PixelWidth = 4032;
-    ProfileName = "sRGB IEC61966-2.1";
     "{Exif}" =     {
-        ApertureValue = "1.695993715632365";
-        BrightnessValue = "3.745762077611047";
+        ApertureValue = "1.6959938131099";
+        BrightnessValue = "3.745762078270054";
         ColorSpace = 1;
-        ComponentsConfiguration =         (
-            1,
-            2,
-            3,
-            0
-        );
         DateTimeDigitized = "2017:12:04 16:24:51";
         DateTimeOriginal = "2017:12:04 16:24:51";
-        ExifVersion =         (
-            2,
-            2,
-            1
-        );
         ExposureBiasValue = 0;
         ExposureMode = 0;
         ExposureProgram = 2;
         ExposureTime = "0.05882352941176471";
         FNumber = "1.8";
         Flash = 16;
-        FlashPixVersion =         (
-            1,
-            0
-        );
         FocalLenIn35mmFilm = 28;
         FocalLength = "3.99";
         ISOSpeedRatings =         (
@@ -50,10 +30,9 @@
         MeteringMode = 3;
         PixelXDimension = 4032;
         PixelYDimension = 3024;
-        SceneCaptureType = 0;
         SceneType = 1;
         SensingMethod = 2;
-        ShutterSpeedValue = "4.060866688719814";
+        ShutterSpeedValue = "4.0608667208218";
         SubjectArea =         (
             2922,
             1511,
@@ -99,7 +78,6 @@
         DateTime = "2017:12:04 16:24:51";
         Make = Apple;
         Model = "iPhone 8";
-        Orientation = 6;
         ResolutionUnit = 2;
         Software = "11.2";
         XResolution = 72;

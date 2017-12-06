@@ -45,7 +45,7 @@
     self.cameraView.shootButton = _shootButton;
     [_shootButton addTarget:self.cameraView action:@selector(takePicture:) forControlEvents:UIControlEventTouchUpInside];
     // 拍照(只处理了序列)后的回调
-    self.cameraView.captureResultBlock = ^(UIImage *image, NSError *error) {
+    self.cameraView.captureResultBlock = ^(NSData *data, UIImage *image, NSError *error) {
         if (!error && self.cameraView.currentOutPutType == NBUCameraOutPutModeTypeVideoData) {
             self.cameraView.lastPictureImageView.image = image;
         }

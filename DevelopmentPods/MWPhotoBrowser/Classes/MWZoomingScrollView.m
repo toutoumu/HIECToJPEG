@@ -128,10 +128,10 @@
             imageSize = _photoImageView.frame.size;
             imageOrigin = _photoImageView.frame.origin;
 
-            // 计算偏移比例,locationInView得到的是像素值,因此需要根据缩放换算
+            // 计算偏移比例,locationInView 根据缩放得到正确的值
             CGPoint beginningLocation = [panGestureRecognizer locationInView:_photoImageView];
-            sx = beginningLocation.x / imageSize.width / [UIScreen mainScreen].scale;
-            sy = beginningLocation.y / imageSize.height / [UIScreen mainScreen].scale;
+            sx = beginningLocation.x * self.zoomScale / imageSize.width;
+            sy = beginningLocation.y * self.zoomScale / imageSize.height;
 
             _parentView.hidden = YES;
             _photoBrowser.coverImage.hidden = NO;

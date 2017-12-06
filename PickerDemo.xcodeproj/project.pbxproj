@@ -38,6 +38,7 @@
 		58B8354DAE6B11690B7B4A66 /* VideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B834CC72DFFD6D1D64D321 /* VideoViewController.m */; };
 		58B835EB00FB57F1EC026043 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B83CE879D7DFD826A5DCDF /* AppDelegate.m */; };
 		58B83600EDA7C0571B04673D /* RIButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B83E14C8FA4BFC904CA5F5 /* RIButtonItem.m */; };
+		58B836084CDD24599600048B /* xxx.java in Sources */ = {isa = PBXBuildFile; fileRef = 58B8316238167AC83DE34F43 /* xxx.java */; };
 		58B836F41C589C2BA41A1284 /* PPCircleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B8390FD367F808CCAA5D58 /* PPCircleButton.m */; };
 		58B837B0A6B0710F423DEC4D /* frame.png in Resources */ = {isa = PBXBuildFile; fileRef = 58B83762E1EF9A20FBC0EB0C /* frame.png */; };
 		58B83812A5FB0B16947D7283 /* UIActionSheet+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B8301EF3BD3EA3EA22F1BE /* UIActionSheet+Blocks.m */; };
@@ -62,6 +63,7 @@
 
 /* Begin PBXFileReference section */
 		033994116E7C15DDD5FE5DCD /* libPods-PickerDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PickerDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		186E98341FD798A500688638 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
 		1886635D1F3869EE002D38DC /* videoStart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = videoStart.png; sourceTree = "<group>"; };
 		1886635E1F3869EE002D38DC /* videoStart@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "videoStart@2x.png"; sourceTree = "<group>"; };
 		1886635F1F3869EE002D38DC /* videoStart@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "videoStart@3x.png"; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 		58B8301EF3BD3EA3EA22F1BE /* UIActionSheet+Blocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIActionSheet+Blocks.m"; path = "Classes/Extend/UIActionSheet+Blocks.m"; sourceTree = "<group>"; };
 		58B83026D2B67973C13078E0 /* PPCircleButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PPCircleButton.h; path = Classes/PinPad/PPCircleButton.h; sourceTree = "<group>"; };
 		58B8308F3D86BC63CCC0E0D6 /* pinViewImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pinViewImage.png; path = Classes/PinPad/pinViewImage.png; sourceTree = "<group>"; };
+		58B8316238167AC83DE34F43 /* xxx.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = xxx.java; sourceTree = "<group>"; };
 		58B831B3E06E30F610E299C0 /* SelectAlbumViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectAlbumViewController.h; path = Classes/App/SelectAlbumViewController.h; sourceTree = "<group>"; };
 		58B831F5DD2E69378007A2A5 /* PPPinCircleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PPPinCircleView.m; path = Classes/PinPad/PPPinCircleView.m; sourceTree = "<group>"; };
 		58B832B77EFD13B0D1C8154A /* PPPinCircleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PPPinCircleView.h; path = Classes/PinPad/PPPinCircleView.h; sourceTree = "<group>"; };
@@ -215,6 +218,7 @@
 				58B832FC34BA961F3D59AA72 /* Extend */,
 				58B83618406464FDDE6A5C60 /* AppDelegate.h */,
 				58B83CE879D7DFD826A5DCDF /* AppDelegate.m */,
+				58B8316238167AC83DE34F43 /* xxx.java */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -305,6 +309,7 @@
 		E58DA583184339C100D60BBC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				186E98341FD798A500688638 /* VideoToolbox.framework */,
 				18EA432F1F5CFE74005A0EDC /* AssetsLibrary.framework */,
 				40037FD11C562C2B008A6366 /* Photos.framework */,
 				E58DA584184339C100D60BBC /* Foundation.framework */,
@@ -549,6 +554,7 @@
 				58B830408FABBE500C37E064 /* PhotosViewController.m in Sources */,
 				58B8347F633808CBE061823E /* SelectAlbumViewController.m in Sources */,
 				58B8354DAE6B11690B7B4A66 /* VideoViewController.m in Sources */,
+				58B836084CDD24599600048B /* xxx.java in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
