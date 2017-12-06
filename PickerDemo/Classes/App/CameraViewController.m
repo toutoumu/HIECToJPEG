@@ -67,10 +67,10 @@
         AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, _vibeDictionary);
     };
     // 拍摄完成后的回调,注意这里是非ui线程
-    self.cameraView.captureResultBlock = ^(UIImage *image, NSError *error) {
+    self.cameraView.captureResultBlock = ^(NSData *data, UIImage *image, NSError *error) {
         if (!error) {
             _clickCount = 0;
-            [NBUAssetUtils saveImage:image toAlubm:_albumName withFileName:[NBUAssetUtils createFileName]];
+            [NBUAssetUtils saveImage:image imageData:data toAlubm:_albumName withFileName:[NBUAssetUtils createFileName]];
         }
     };
     //为拍摄按钮添加触摸手势 , 第一次点击设置好相机参数,然后移除掉手势, 让其调用 takePicture
@@ -149,7 +149,7 @@
         [self.cameraView tapped:gesture];
     } else {
         [self.cameraView takePicture:_shootButton];
-     }
+    }
 }
 
 #pragma mark 双击打开相册, 打开相册之前需要输入密码
