@@ -12,9 +12,74 @@
 #import "RNCryptor.h"
 #import "RNDecryptor.h"
 #import "RNEncryptor.h"
+#import <VideoToolbox/VideoToolbox.h>
 
 // Document目录路径
 static NSString *_documentsDirectory;
+
+/**
+ *
+ * HEIF(HEIC) 格式转 JPEG 格式
+ * @param imageData
+ * @return
+ */
+NSData *HEIFtoJPEG(NSData *imageData) {
+    /*
+     // 这种方式是否可行未测试
+     if (@available(iOS 11.0, *)) {
+        UIImage *image = [UIImage imageWithData:imageData];
+        return UIImageJPEGRepresentation(image, 1.0f);
+     }
+     */
+    if (@available(iOS 11.0, *)) {
+        CIImage *ciImage = [CIImage imageWithData:imageData];
+        CIContext *context = [CIContext context];
+        return [context JPEGRepresentationOfImage:ciImage colorSpace:ciImage.colorSpace options:@{}];
+    }
+    return nil;
+}
+
+/**
+ * 获取图片数据中的缩略图
+ * @param data
+ * @return
+ */
+UIImage *thumbImage(NSData *data) {
+    //BOOL hardwareDecodeSupported = VTIsHardwareDecodeSupported(kCMVideoCodecType_HEVC);
+    CGImageSourceRef source = CGImageSourceCreateWithData((__bridge CFDataRef) data, NULL);
+    //CGImageRef image = CGImageSourceCreateImageAtIndex(source, 0, NULL);//原图
+
+    // 缩略图选项(如果有则获取)
+    NSDictionary *options = @{(NSString *) kCGImageSourceCreateThumbnailFromImageIfAbsent: @NO,
+            (NSString *) kCGImageSourceThumbnailMaxPixelSize: @320};
+
+    CGImageRef thumb = CGImageSourceCreateThumbnailAtIndex(source, 0, (__bridge CFDictionaryRef) options);
+    UIImage *shotImage = [[UIImage alloc] initWithCGImage:thumb];
+    return shotImage;
+}
+
+/**
+ * JPEG 格式转 HEIF(HEIC) 格式
+ * @param image
+ * @param quality 0.8
+ * @return nil 创建失败，说明设备不支持 HEIF 写入
+ * @discussion 关于哪些设备支持HEIF(HEIC)格式请参考 https://juejin.im/post/59ddc13ff265da432319f438#heading-3
+ */
+NSData *UIImageHEICRepresentation(UIImage *const image, const CGFloat quality) {
+    NSData *imageData = nil;
+    if (@available(iOS 11.0, *) && image) {
+        NSMutableData *destinationData = [NSMutableData new];
+        CGImageDestinationRef destination = CGImageDestinationCreateWithData((__bridge CFMutableDataRef) destinationData, (__bridge CFStringRef) AVFileTypeHEIC, 1, NULL);
+        if (destination) {
+            NSDictionary *options = @{(__bridge NSString *) kCGImageDestinationLossyCompressionQuality: @(quality)};
+            CGImageDestinationAddImage(destination, image.CGImage, (__bridge CFDictionaryRef) options);
+            CGImageDestinationFinalize(destination);
+            imageData = destinationData;
+            CFRelease(destination);
+        }
+    }
+    return imageData;
+}
 
 @implementation NBUAssetUtils
 
@@ -36,7 +101,11 @@ static NSString *_documentsDirectory;
 
 + (NSString *)createFileName {
     UInt64 recordTime = (UInt64) ([[NSDate date] timeIntervalSince1970] * 1000);
-    return [NSString stringWithFormat:@"%llu%@", recordTime, @".jpg"];
+    if (@available(iOS 11.0, *)) {
+        return [NSString stringWithFormat:@"%llu%@", recordTime, @".HEIC"];
+    } else {
+        return [NSString stringWithFormat:@"%llu%@", recordTime, @".jpg"];
+    }
 }
 
 #pragma mark 创建相册
@@ -76,7 +145,7 @@ static NSString *_documentsDirectory;
     NSError *error;
     NSArray *fileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:_documentsDirectory error:&error];
     if (error) {
-        NBULogInfo(@"Error: %@", error);
+        NBULogError(@"Error: %@ %@", THIS_METHOD, error);
         return nil;
     }
 
@@ -94,26 +163,29 @@ static NSString *_documentsDirectory;
 
 #pragma mark 保存相片到指定相册
 
-+ (BOOL)saveImage:(UIImage *)image toAlubm:(NSString *)albumName withFileName:(NSString *)fileName {
++ (BOOL)saveImage:(UIImage *)image imageData:(NSData *)data toAlubm:(NSString *)albumName withFileName:(NSString *)fileName {
     NSString *albumPath = [_documentsDirectory stringByAppendingPathComponent:albumName];//相册路径
     NSString *fullName; //临时存储保存的文件全路径名称
+    BOOL success;//是否成功
 
     //原图
     fullName = [albumPath stringByAppendingPathComponent:fileName];// 相册名+文件名
-    [self encryptImage:image imageType:0 toPath:fullName withPwd:fileName];
+    success = [self encryptImage:image imageData:data imageType:0 toPath:fullName withPwd:fileName];
+    if (!success) {return success;}
 
     //预览图
     UIImage *fullScreenImage = [image imageDonwsizedToFit:[NBUFileAsset fullScreenSize]];//预览图图片对象
     NSString *fullScreenDir = [albumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];//预览图文件夹 相册名+预览图文件夹名称
     fullName = [fullScreenDir stringByAppendingPathComponent:fileName];//预览图全路径文件名
-    [self encryptImage:fullScreenImage imageType:1 toPath:fullName withPwd:fileName];
+    success = [self encryptImage:fullScreenImage imageData:nil imageType:1 toPath:fullName withPwd:fileName];
+    if (!success) {return success;}
 
     //缩略图,由于thumbnailWithSize需要的尺寸是point值所以传thumbnailSizeNoScale
     UIImage *thumbImage = [fullScreenImage thumbnailWithSize:[NBUFileAsset thumbnailSizeNoScale]];
     NSString *thumbPath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
     fullName = [thumbPath stringByAppendingPathComponent:fileName];
-    [self encryptImage:thumbImage imageType:2 toPath:fullName withPwd:fileName];
-
+    success = [self encryptImage:thumbImage imageData:nil imageType:2 toPath:fullName withPwd:fileName];
+    if (!success) {return success;}
     return YES;
 }
 
@@ -122,18 +194,20 @@ static NSString *_documentsDirectory;
 + (BOOL)saveVideo:(UIImage *)image toAlubm:(NSString *)albumName fileName:(NSString *)fileName; {
     NSString *albumPath = [_documentsDirectory stringByAppendingPathComponent:albumName];//相册路径
     NSString *fullName; //临时存储保存的文件全路径名称
-
+    BOOL success;
     //预览图
     UIImage *fullScreenImage = [image imageDonwsizedToFit:[NBUFileAsset fullScreenSize]];//预览图图片对象
     NSString *fullScreenDir = [albumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];//预览图文件夹 相册名+预览图文件夹名称
     fullName = [fullScreenDir stringByAppendingPathComponent:fileName];//预览图全路径文件名
-    [self encryptImage:fullScreenImage imageType:1 toPath:fullName withPwd:fileName];
+    success = [self encryptImage:fullScreenImage imageData:nil imageType:1 toPath:fullName withPwd:fileName];
+    if (!success) {return success;}
 
     //缩略图,由于thumbnailWithSize需要的尺寸是point值所以传thumbnailSizeNoScale
     UIImage *thumbImage = [fullScreenImage thumbnailWithSize:[NBUFileAsset thumbnailSizeNoScale]];
     NSString *thumbPath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
     fullName = [thumbPath stringByAppendingPathComponent:fileName];
-    [self encryptImage:thumbImage imageType:2 toPath:fullName withPwd:fileName];
+    success = [self encryptImage:thumbImage imageData:nil imageType:2 toPath:fullName withPwd:fileName];
+    if (!success) {return success;}
 
     return YES;
 }
@@ -151,7 +225,7 @@ static NSString *_documentsDirectory;
     NSString *destPath = [assert.fullResolutionImagePath stringByReplacingOccurrencesOfString:srcAlbumName withString:destAlbumName];
     [manager moveItemAtPath:assert.fullResolutionImagePath toPath:destPath error:&error];
     if (error) {
-        NBULogInfo(@"Error: %@", error);
+        NBULogError(@"Error: %@ %@", THIS_METHOD, error);
         return NO;
     }
 
@@ -159,7 +233,7 @@ static NSString *_documentsDirectory;
     destPath = [assert.fullScreenImagePath stringByReplacingOccurrencesOfString:srcAlbumName withString:destAlbumName];
     [manager moveItemAtPath:assert.fullScreenImagePath toPath:destPath error:&error];
     if (error) {
-        NBULogInfo(@"Error: %@", error);
+        NBULogError(@"Error: %@ %@", THIS_METHOD, error);
         return NO;
     }
 
@@ -167,7 +241,7 @@ static NSString *_documentsDirectory;
     destPath = [assert.thumbnailImagePath stringByReplacingOccurrencesOfString:srcAlbumName withString:destAlbumName];
     [manager moveItemAtPath:assert.thumbnailImagePath toPath:destPath error:&error];
     if (error) {
-        NBULogInfo(@"Error: %@", error);
+        NBULogError(@"Error: %@ %@", THIS_METHOD, error);
         return NO;
     }
 
@@ -179,24 +253,28 @@ static NSString *_documentsDirectory;
     if (image == nil || image.URL == nil) {
         return nil;
     }
+    return [self decryImageWithPath:image.fullResolutionImagePath];
+}
+
++ (UIImage *)decryImageWithPath:(NSString *)path {
     BOOL isDir = NO;
     BOOL existed;
 
     //检查文件是否已经存在
     NSFileManager *manager = [NSFileManager defaultManager];
-    existed = [manager fileExistsAtPath:image.fullResolutionImagePath isDirectory:&isDir];
+    existed = [manager fileExistsAtPath:path isDirectory:&isDir];
     if (!existed || isDir) {
-        NBULogError(@"Error: %@", @"文件不存在");
+        NBULogError(@"Error: %@ %@", THIS_METHOD, @"文件不存在");
         return nil;
     }
 
     NSError *error;
-    NSString *pwd = image.fullResolutionImagePath.lastPathComponent;
-    NSData *inData = [NSData dataWithContentsOfFile:image.fullResolutionImagePath];
+    NSString *pwd = path.lastPathComponent;
+    NSData *inData = [NSData dataWithContentsOfFile:path];
     NSData *outData = [RNDecryptor decryptData:inData withSettings:kRNCryptorAES256Settings password:pwd error:&error];
 
     if (error != nil) {
-        NBULogInfo(@"Error: %@", error);
+        NBULogError(@"Error: %@ %@", THIS_METHOD, error);
         return nil;
     }
     return [UIImage imageWithData:outData];
@@ -205,6 +283,14 @@ static NSString *_documentsDirectory;
 
 #pragma mark 解密数据到指定相册
 
+/**
+ * 解密数据到指定相册
+ *
+ * @param image
+ * @param albumName 相册名称 eg:picture
+ * @param pwd
+ * @return
+ */
 + (BOOL)decryImage:(NBUFileAsset *)image toAlubm:(NSString *)albumName withPwd:(NSString *)pwd {
     NSString *fileName = [image.fullResolutionImagePath lastPathComponent];//文件名
     NSString *albumPath = [_documentsDirectory stringByAppendingPathComponent:albumName];//保存到的相册路径
@@ -226,9 +312,8 @@ static NSString *_documentsDirectory;
     if (image.type == NBUAssetTypeVideo) {
         NSError *error;
         [manager copyItemAtPath:image.fullResolutionImagePath toPath:fullName error:&error];
-        //[manager moveItemAtPath:image.fullResolutionImagePath toPath:fullName error:&error];
         if (error) {
-            NBULogInfo(@"Error: %@", error);
+            NBULogError(@"Error: %@ %@", THIS_METHOD, error);
             return NO;
         }
     } else {
@@ -253,8 +338,8 @@ static NSString *_documentsDirectory;
 /**
  *  解密数据
  *
- *  @param filePath 需要解密的文件
- *  @param path     保存路径
+ *  @param filePath 需要解密的文件路径 /data/images/xxx.jpg
+ *  @param path     保存路径 /data/images/xxx.jpg
  *  @pwd            密码
  *
  *  @return 是否成功
@@ -265,39 +350,50 @@ static NSString *_documentsDirectory;
     NSData *outData = [RNDecryptor decryptData:inData withSettings:kRNCryptorAES256Settings password:pwd error:&error];
 
     if (error != nil) {
-        NBULogInfo(@"Error: %@", error);
+        NBULogError(@"Error: %@ %@", THIS_METHOD, error);
         return NO;
     }
     [outData writeToFile:path atomically:true];
-
     return YES;
 }
 
-#pragma mark 加密数据
+#pragma mark 加密图片数据
 
 /**
- *  加密数据
+ *  加密图片数据(如果兼容 HEIF(HEIC) 格式,则使用 HEIF(HEIC) 格式)
  *
  *  @param image 需要加密的图片
+ *  @param data 图片数据 HEIF(HEIC)格式
  *  @param type 0:原图 1:全屏图片 2:缩略图
- *  @param path  保存路径
+ *  @param path  保存路径 /data/images/xxx.jpg
  *  @param pwd   密码
  *
  *  @return 是否成功
  */
-+ (BOOL)encryptImage:(UIImage *)image imageType:(NSInteger)type toPath:(NSString *)path withPwd:(NSString *)pwd {
++ (BOOL)encryptImage:(UIImage *)image imageData:(NSData *)data imageType:(NSInteger)type toPath:(NSString *)path withPwd:(NSString *)pwd {
     //    NSDate* tmpStartData = [NSDate date];
     //    NBULogInfo(@"执行时间 = %f",  [[NSDate date] timeIntervalSinceDate:tmpStartData]);
-    NSData *data = UIImageJPEGRepresentation(image, (CGFloat) (0.8 - type * 0.3));
+
+    if (@available(iOS 11.0, *)) {
+        if (data == nil || data.length == 0) {
+            data = UIImageHEICRepresentation(image, (CGFloat) (0.8 - type * 0.3));
+            if (data == nil || data.length == 0) {// 如果设备不支持 HEIF(HEIC) 格式
+                data = UIImageJPEGRepresentation(image, (CGFloat) (0.8 - type * 0.3));
+            }
+        }
+    } else {//不支持HEIF(HEIC),编码为JPEG
+        data = UIImageJPEGRepresentation(image, (CGFloat) (0.8 - type * 0.3));
+    }
+
     NSError *error;
     NSData *encryptedData = [RNEncryptor encryptData:data withSettings:kRNCryptorAES256Settings password:pwd error:&error];
 
     if (error != nil) {
-        NBULogInfo(@"Error: %@", error);
+        NBULogError(@"Error: %@ %@", THIS_METHOD, error);
         return NO;
     }
-    [encryptedData writeToFile:path atomically:true];
-    return YES;
+
+    return [encryptedData writeToFile:path atomically:true];
 }
 
 

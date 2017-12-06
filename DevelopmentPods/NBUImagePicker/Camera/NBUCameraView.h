@@ -25,7 +25,8 @@
 
 /// block宏定义 NBUCameraView blocks.
 typedef void (^NBUCaptureSuccess)();
-typedef void (^NBUCapturePictureResultBlock)(UIImage * image,
+typedef void (^NBUCapturePictureResultBlock)(NSData * data,
+                                             UIImage * image,
                                              NSError * error);
 typedef void (^NBUSavePictureResultBlock)(UIImage * image,
                                           NSDictionary * metadata,

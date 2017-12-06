@@ -46,12 +46,13 @@
 
 /**
  *  保存图片
- *  @param image     图片
+ *  @param image 图片
+ *  @param data 图片数据 只有HEIF(HEIC)格式,这个值才会不为nil
  *  @param albumName 相册名称 eg:album
  *  @param fileName  文件名称 eg:abc.jpg
  *  @return 保存是否成功
  */
-+ (BOOL)saveImage:(UIImage *)image toAlubm:(NSString *)albumName withFileName:(NSString *)fileName;
++ (BOOL)saveImage:(UIImage *)image imageData:(NSData *)data toAlubm:(NSString *)albumName withFileName:(NSString *)fileName;
 
 /**
  * 保存视频
