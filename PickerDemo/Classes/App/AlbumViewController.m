@@ -731,7 +731,7 @@
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NBUAsset *asset = _asses[index];
             if ([_group.name isEqualToString:@"Decrypted"]) {//导出---解密相册导出到系统相册
-                [[NBUAssetsLibrary sharedLibrary] saveImageToCameraRoll:[asset.fullResolutionImage imageWithOrientationUp]
+                [[NBUAssetsLibrary sharedLibrary] saveImageToCameraRoll:asset.fullResolutionImage
                                                                metadata:nil
                                                addToAssetsGroupWithName:@"test"
                                                             resultBlock:^(NSURL *assetURL, NSError *error) {
@@ -952,12 +952,7 @@
             return;
         }
         // 开始剪切
-        // todo 这里已经旋转了 为了,兼容 HEIF 转 JPEG 图片旋转不正确问题
-        if (@available(iOS 11.0, *)) {
-            [self photoBrowser:photoBrowser showCrop:[NBUAssetUtils decryImage:_asses[index]].imageWithOrientationUp];
-        } else {
-            [self photoBrowser:photoBrowser showCrop:[NBUAssetUtils decryImage:_asses[index]]];
-        }
+        [self photoBrowser:photoBrowser showCrop:[NBUAssetUtils decryImage:_asses[index]]];
     };
 
     NSString *message = @"解密";
@@ -1132,7 +1127,7 @@
             [browser showProgressHUDWithMessage:@"保存中..."];
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 NSString *fileName = ((NBUFileAsset *) _asses[browser.currentIndex]).fullResolutionImagePath.lastPathComponent;
-                BOOL success = [NBUAssetUtils saveImage:image toAlubm:_group.name withFileName:fileName];
+                BOOL success = [NBUAssetUtils saveImage:image imageData:nil toAlubm:_group.name withFileName:fileName];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (success) {
                         [browser reloadData];// 刷新数据
