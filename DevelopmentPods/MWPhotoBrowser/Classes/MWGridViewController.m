@@ -20,7 +20,9 @@
 
 @end
 
-@implementation MWGridViewController
+@implementation MWGridViewController {
+    CGFloat _statusBarHeight;
+}
 
 - (id)init {
     if ((self = [super initWithCollectionViewLayout:[UICollectionViewFlowLayout new]])) {
@@ -61,6 +63,11 @@
     [self.collectionView registerClass:[MWGridCell class] forCellWithReuseIdentifier:@"GridCell"];
     self.collectionView.alwaysBounceVertical = YES;
     self.collectionView.backgroundColor = [UIColor blackColor];
+
+    // 状态栏(statusbar)
+    CGRect rectStatus = [[UIApplication sharedApplication] statusBarFrame];
+    _statusBarHeight = rectStatus.size.height;
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -112,11 +119,11 @@
 
 - (void)performLayout {
     UINavigationBar *navBar = self.navigationController.navigationBar;
-    self.collectionView.contentInset = UIEdgeInsetsMake(navBar.frame.origin.y + navBar.frame.size.height + [self getGutter], 0, 0, 0);
+    //self.collectionView.contentInset = UIEdgeInsetsMake(navBar.frame.origin.y + navBar.frame.size.height + [self getGutter], 0, 0, 0);
+    self.collectionView.contentInset = UIEdgeInsetsMake(_statusBarHeight + navBar.frame.size.height + [self getGutter], 0, 0, 0);
     // 兼容IOS11
     if (@available(iOS 11.0, *)) {
         self.collectionView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-        //self.collectionView.contentInset = UIEdgeInsetsMake(navBar.frame.origin.y + navBar.frame.size.height + [self getGutter], 0, 0, 0);
         self.collectionView.scrollIndicatorInsets = self.collectionView.contentInset;
     }
 }
