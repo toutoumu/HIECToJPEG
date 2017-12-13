@@ -138,11 +138,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
-            timestampString = "534153546.875312"
+            timestampString = "534250288.923"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1008"
-            endingLineNumber = "1008"
+            startingLineNumber = "1013"
+            endingLineNumber = "1013"
             landmarkName = "NBUCameraView"
             landmarkType = "3">
          </BreakpointContent>
@@ -186,11 +186,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
-            timestampString = "534153546.876939"
+            timestampString = "534250288.923108"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "996"
-            endingLineNumber = "996"
+            startingLineNumber = "1001"
+            endingLineNumber = "1001"
             landmarkName = "NBUCameraView"
             landmarkType = "3">
          </BreakpointContent>
@@ -202,11 +202,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
-            timestampString = "534153546.877209"
+            timestampString = "534250288.923169"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "995"
-            endingLineNumber = "995"
+            startingLineNumber = "1000"
+            endingLineNumber = "1000"
             landmarkName = "NBUCameraView"
             landmarkType = "3">
          </BreakpointContent>
@@ -234,12 +234,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DevelopmentPods/NBUImagePicker/Assets/NBUAssetUtils.m"
-            timestampString = "534127352.394771"
+            timestampString = "534250288.923246"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "333"
-            endingLineNumber = "333"
-            landmarkName = "+decryImage:toPath:withPwd:"
+            startingLineNumber = "335"
+            endingLineNumber = "335"
+            landmarkName = "+decryImage:toAlubm:withPwd:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -250,13 +250,60 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
-            timestampString = "534153546.877471"
+            timestampString = "534250288.923302"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "917"
-            endingLineNumber = "917"
+            startingLineNumber = "922"
+            endingLineNumber = "922"
             landmarkName = "-captureOutput:didFinishProcessingPhotoSampleBuffer:previewPhotoSampleBuffer:resolvedSettings:bracketSettings:error:"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__62-[NBUCameraView captureOutput:didFinishProcessingPhoto:error:]_block_invoke_2"
+                  moduleName = "PickerDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/apple/WorkSpace/XCode/NBUImagePicker/NBUImagePicker/DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
+                  timestampString = "534673997.624642"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "922"
+                  endingLineNumber = "922"
+                  offsetFromSymbolStart = "328">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__copy_helper_block_.431"
+                  moduleName = "PickerDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/apple/WorkSpace/XCode/NBUImagePicker/NBUImagePicker/DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
+                  timestampString = "534673997.62611"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "922"
+                  endingLineNumber = "922"
+                  offsetFromSymbolStart = "160">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__destroy_helper_block_.432"
+                  moduleName = "PickerDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/apple/WorkSpace/XCode/NBUImagePicker/NBUImagePicker/DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
+                  timestampString = "534673997.627454"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "922"
+                  endingLineNumber = "922"
+                  offsetFromSymbolStart = "84">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -266,13 +313,45 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
-            timestampString = "534153546.877727"
+            timestampString = "534250288.923357"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "914"
-            endingLineNumber = "914"
+            startingLineNumber = "919"
+            endingLineNumber = "919"
             landmarkName = "-captureOutput:didFinishProcessingPhotoSampleBuffer:previewPhotoSampleBuffer:resolvedSettings:bracketSettings:error:"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__62-[NBUCameraView captureOutput:didFinishProcessingPhoto:error:]_block_invoke_2"
+                  moduleName = "PickerDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/apple/WorkSpace/XCode/NBUImagePicker/NBUImagePicker/DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
+                  timestampString = "534673997.631168"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "919"
+                  endingLineNumber = "919"
+                  offsetFromSymbolStart = "100">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__62-[NBUCameraView captureOutput:didFinishProcessingPhoto:error:]_block_invoke_3"
+                  moduleName = "PickerDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/apple/WorkSpace/XCode/NBUImagePicker/NBUImagePicker/DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
+                  timestampString = "534673997.632869"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "919"
+                  endingLineNumber = "919"
+                  offsetFromSymbolStart = "24">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -282,12 +361,92 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
-            timestampString = "534153546.877961"
+            timestampString = "534250288.92341"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "804"
-            endingLineNumber = "804"
+            startingLineNumber = "805"
+            endingLineNumber = "805"
             landmarkName = "-takePicture:"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[NBUCameraView captureOutput:didFinishProcessingPhotoSampleBuffer:previewPhotoSampleBuffer:resolvedSettings:bracketSettings:error:]"
+                  moduleName = "PickerDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/apple/WorkSpace/XCode/NBUImagePicker/NBUImagePicker/DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
+                  timestampString = "534673997.636114"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "807"
+                  endingLineNumber = "807"
+                  offsetFromSymbolStart = "3100">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__132-[NBUCameraView captureOutput:didFinishProcessingPhotoSampleBuffer:previewPhotoSampleBuffer:resolvedSettings:bracketSettings:error:]_block_invoke.394"
+                  moduleName = "PickerDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/apple/WorkSpace/XCode/NBUImagePicker/NBUImagePicker/DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
+                  timestampString = "534673997.637467"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "807"
+                  endingLineNumber = "807"
+                  offsetFromSymbolStart = "24">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
+            timestampString = "534250288.92346"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1244"
+            endingLineNumber = "1244"
+            landmarkName = "-toggleCameraType:targetResolution:targetFrame:resultBlock:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "DevelopmentPods/NBUImagePicker/Assets/NBUAssetUtils.m"
+            timestampString = "534250288.923512"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "379"
+            endingLineNumber = "379"
+            landmarkName = "+encryptImage:imageData:imageType:toPath:withPwd:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "DevelopmentPods/NBUImagePicker/Assets/NBUAssetUtils.m"
+            timestampString = "534250288.92356"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "398"
+            endingLineNumber = "398"
+            landmarkName = "+encryptImage:imageData:imageType:toPath:withPwd:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

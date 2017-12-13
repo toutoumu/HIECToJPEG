@@ -3,7 +3,6 @@
 #import "AlbumViewController.h"
 #import "SelectAlbumViewController.h"
 #import "UINavigationController+FDFullscreenPopGesture.h"
-#import "CropViewController.h"
 #import "NBUAssetUtils.h"
 #import "RNDecryptor.h"
 #import "TOCropViewController.h"

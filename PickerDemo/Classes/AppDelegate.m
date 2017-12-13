@@ -42,7 +42,19 @@ static CGFloat _preBrightness;//保存之前的屏幕亮度
     //[NBULog addDashboardLogger];
 #endif
     // pods 项目 >> build settings >> 搜索 Preprocessor Macros 设置 debug 中 debug1 = 1 改为 debug = 1 这样就有日志了
-    NBULogTrace();
+    // NBULogTrace();
+
+    // 初始化配置信息
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    if (![userDefaults objectForKey:@"voice_to_shoot"]) {
+        [self registerDefaultsFromSettingsBundle];
+    }
+
+    // 在沙盒中创建相册
+    [NBUAssetUtils createAlbum:@"Video"];
+    [NBUAssetUtils createAlbum:@"Deleted"];
+    [NBUAssetUtils createAlbum:@"Beauty"];
+    [NBUAssetUtils createAlbum:@"Decrypted"];
 
     UIColor *tintColor = [UIColor colorWithRed:(CGFloat) (0 / 255.0) green:(CGFloat) (0 / 255.0) blue:(CGFloat) (0 / 255.0) alpha:1.0];
     self.window.tintColor = tintColor;
@@ -51,12 +63,6 @@ static CGFloat _preBrightness;//保存之前的屏幕亮度
 
     [[UINavigationBar appearance] setTintColor:[UIColor blackColor]];//返回按钮默认颜色
     [[UINavigationBar appearance] setBarTintColor:[UIColor whiteColor]];//标题栏背景色
-
-    // 在沙盒中创建相册
-    [NBUAssetUtils createAlbum:@"Video"];
-    [NBUAssetUtils createAlbum:@"Deleted"];
-    [NBUAssetUtils createAlbum:@"Beauty"];
-    [NBUAssetUtils createAlbum:@"Decrypted"];
 
     //[self initRoot];
     // 因为Storyboard.storyboard中的rootViewController就是UINavigationController类型
@@ -78,20 +84,19 @@ static CGFloat _preBrightness;//保存之前的屏幕亮度
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     // 应用程序退到后台, 如果当前还是启动应用程序时候的密码输入界面,或者是已经输入密码进入了相机页面,那么堆栈不需要清空.
-    UIViewController *controller = self.navController.viewControllers[self.navController.viewControllers.count - 1];
-    if (controller != nil) {
-        if ([controller isKindOfClass:[CameraViewController class]] ||
-                [controller isKindOfClass:[PPViewController class]] ||
-                [controller isKindOfClass:[VideoViewController class]]) {
-            return;//这些页面退到后台不关闭
-        }
-        // 如果有弹出窗体关闭掉
-        if ([controller presentedViewController] != nil) {
-            [controller dismissViewControllerAnimated:NO completion:nil];
-        }
-        // 如果不是密码页面,或者是拍摄页面,清空堆栈
-        [self.navController popToRootViewControllerAnimated:NO];
+    UIViewController *controller = self.navController.viewControllers.lastObject;
+    if (controller == nil) return;
+    if ([controller isMemberOfClass:[CameraViewController class]] ||
+            [controller isMemberOfClass:[PPViewController class]] ||
+            [controller isMemberOfClass:[VideoViewController class]]) {
+        return;//这些页面退到后台不关闭
     }
+    // 如果有弹出窗体关闭掉
+    if ([controller presentedViewController] != nil) {
+        [controller dismissViewControllerAnimated:NO completion:nil];
+    }
+    // 如果不是密码页面,或者是拍摄页面,清空堆栈
+    [self.navController popToRootViewControllerAnimated:NO];
 }
 
 #pragma mark 程序从后台回到前台进入前台 打开应用, 从其他应用切换到该应用
@@ -107,15 +112,38 @@ static CGFloat _preBrightness;//保存之前的屏幕亮度
 
     // 阻止锁屏
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
-    // 设置屏幕亮度,如果是管理员用户,且当前是拍摄页面,进入时设置屏幕亮度为0
-    UIViewController *controller = self.navController.viewControllers[self.navController.viewControllers.count - 1];
-    if (controller != nil && [controller isKindOfClass:[CameraViewController class]]) {
-        CameraViewController *cameraViewController = (CameraViewController *) controller;
+    // 如果当前是拍摄页面,进入时设置屏幕亮度为0
+    UIViewController *controller = self.navController.viewControllers.lastObject;
+    if (controller != nil && [controller isMemberOfClass:[CameraViewController class]]) {
         // 如果没有弹出密码输入页面
-        if ([cameraViewController presentedViewController] == nil) {
+        if ([controller presentedViewController] == nil) {
             [[UIScreen mainScreen] setBrightness:0];
         }
     }
+}
+
+/**
+ * 注册所有(Settings.bundle)默认配置,需要检查是否已经注册过
+ */
+- (void)registerDefaultsFromSettingsBundle {
+    NSString *settingsBundle = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"bundle"];
+    if (!settingsBundle) {
+        NSLog(@"Could not find Settings.bundle");
+        return;
+    }
+
+    NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:[settingsBundle stringByAppendingPathComponent:@"Root.plist"]];
+    NSArray *preferences = [settings objectForKey:@"PreferenceSpecifiers"];
+
+    NSMutableDictionary *defaultsToRegister = [[NSMutableDictionary alloc] initWithCapacity:[preferences count]];
+    for (NSDictionary *prefSpecification in preferences) {
+        NSString *key = [prefSpecification objectForKey:@"Key"];
+        if (key && [[prefSpecification allKeys] containsObject:@"DefaultValue"]) {
+            [defaultsToRegister setObject:[prefSpecification objectForKey:@"DefaultValue"] forKey:key];
+        }
+    }
+
+    [[NSUserDefaults standardUserDefaults] registerDefaults:defaultsToRegister];
 }
 
 #pragma mark 初始化页面

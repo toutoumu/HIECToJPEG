@@ -67,15 +67,17 @@ UIImage *thumbImage(NSData *data) {
  */
 NSData *UIImageHEICRepresentation(UIImage *const image, const CGFloat quality) {
     NSData *imageData = nil;
-    if (@available(iOS 11.0, *) && image) {
-        NSMutableData *destinationData = [NSMutableData new];
-        CGImageDestinationRef destination = CGImageDestinationCreateWithData((__bridge CFMutableDataRef) destinationData, (__bridge CFStringRef) AVFileTypeHEIC, 1, NULL);
-        if (destination) {
-            NSDictionary *options = @{(__bridge NSString *) kCGImageDestinationLossyCompressionQuality: @(quality)};
-            CGImageDestinationAddImage(destination, image.CGImage, (__bridge CFDictionaryRef) options);
-            CGImageDestinationFinalize(destination);
-            imageData = destinationData;
-            CFRelease(destination);
+    if (@available(iOS 11.0, *)) {
+        if (image) {
+            NSMutableData *destinationData = [NSMutableData new];
+            CGImageDestinationRef destination = CGImageDestinationCreateWithData((__bridge CFMutableDataRef) destinationData, (__bridge CFStringRef) AVFileTypeHEIC, 1, NULL);
+            if (destination) {
+                NSDictionary *options = @{(__bridge NSString *) kCGImageDestinationLossyCompressionQuality: @(quality)};
+                CGImageDestinationAddImage(destination, image.CGImage, (__bridge CFDictionaryRef) options);
+                CGImageDestinationFinalize(destination);
+                imageData = destinationData;
+                CFRelease(destination);
+            }
         }
     }
     return imageData;
@@ -248,6 +250,7 @@ NSData *UIImageHEICRepresentation(UIImage *const image, const CGFloat quality) {
     return YES;
 }
 
+#pragma mark 解密成图片
 
 + (UIImage *)decryImage:(NBUFileAsset *)image {
     if (image == nil || image.URL == nil) {
@@ -255,6 +258,8 @@ NSData *UIImageHEICRepresentation(UIImage *const image, const CGFloat quality) {
     }
     return [self decryImageWithPath:image.fullResolutionImagePath];
 }
+
+#pragma mark 解密成图片
 
 + (UIImage *)decryImageWithPath:(NSString *)path {
     BOOL isDir = NO;

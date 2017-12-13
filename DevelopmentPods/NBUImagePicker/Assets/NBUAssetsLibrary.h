@@ -23,7 +23,7 @@
 @import Photos;
 
 /// Supported image asset extensions.
-#define kNBUImageFileExtensions @[@"jpg", @"HEIC", @"heic", @"mov", @"png", @"jpeg", @"tiff", @"tif", @"gif", @"bmp", @"bmpf", @"ico", @"cur", @"xbm" ]
+#define kNBUImageFileExtensions @[@"jpg", @"HEIC", @"mov", @"png", @"jpeg", @"tiff", @"tif", @"gif", @"bmp", @"bmpf", @"ico", @"cur", @"xbm" ]
 
 /// NBUAsset return block types.
 typedef void (^NBUAssetsGroupsResultBlock)(NSArray *groups, NSError *error);

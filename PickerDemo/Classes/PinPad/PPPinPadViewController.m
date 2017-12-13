@@ -63,10 +63,12 @@ static CGFloat kVTPinPadViewControllerCircleRadius = 6.0f;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     // 恢复屏幕亮度
-    if ([AppDelegate getScreenBrightness] < 0.05) {
-        [[UIScreen mainScreen] setBrightness:0.2];
-    } else {
-        [[UIScreen mainScreen] setBrightness:[AppDelegate getScreenBrightness]];
+    if ([UIScreen mainScreen].brightness < 0.01) {
+        if ([AppDelegate getScreenBrightness] < 0.01) {
+            [[UIScreen mainScreen] setBrightness:0.1];
+        } else {
+            [[UIScreen mainScreen] setBrightness:[AppDelegate getScreenBrightness]];
+        }
     }
 }
 

@@ -59,10 +59,20 @@
         self.albumName = @"Album";
     }
 
-    self.cameraView.fixedFocusPoint = YES;// 是否固定对焦位置
-    self.cameraView.shootAfterFocus = NO;// 是否对焦后拍摄
-    self.cameraView.showPreviewLayer = NO;// 是否显示预览图层
-    self.cameraView.animateLastPictureImageView = NO;//最后一张图片不需要动画
+    //获取SettingsBundle信息
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+
+    self.cameraView.fixedFocusPoint = [userDefaults boolForKey:@"fixed_focus"];// 是否固定对焦位置,默认YES
+    self.cameraView.fixedExposurePoint = [userDefaults boolForKey:@"fixed_exposure"];// 是否固定曝光位置,默认YES
+    self.cameraView.shootAfterFocus = [userDefaults boolForKey:@"shoot_after_focus"];// 是否对焦后拍摄,默认NO
+    self.cameraView.showPreviewLayer = [userDefaults boolForKey:@"show_preview"];// 是否显示预览图层,默认YES
+    self.cameraView.targetResolution = CGSizeMake(40000, 30000);// 图像尺寸
+    self.cameraView.savePicturesToLibrary = NO;// 保存到系统相册
+    self.cameraView.targetLibraryAlbumName = @"test";// 系统相册名称
+    self.cameraView.animateLastPictureImageView = NO;// 拍照完成后图片有放入相册的动画效果
+    self.cameraView.keepFrontCameraPicturesMirrored = YES;// 前置摄像头预览是否为镜像
+    self.takesPicturesWithVolumeButtons = [userDefaults boolForKey:@"voice_to_shoot"];// 音量键拍摄,默认NO
+
     self.cameraView.captureSuccess = ^{// 震动
         AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, _vibeDictionary);
     };
@@ -70,7 +80,9 @@
     self.cameraView.captureResultBlock = ^(NSData *data, UIImage *image, NSError *error) {
         if (!error) {
             _clickCount = 0;
+             NSDate* tmpStartData = [NSDate date];
             [NBUAssetUtils saveImage:image imageData:data toAlubm:_albumName withFileName:[NBUAssetUtils createFileName]];
+            NBULogInfo(@"执行时间 = %f",  [[NSDate date] timeIntervalSinceDate:tmpStartData]);
         }
     };
     //为拍摄按钮添加触摸手势 , 第一次点击设置好相机参数,然后移除掉手势, 让其调用 takePicture

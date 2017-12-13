@@ -13,7 +13,7 @@
 		188663661F3869EE002D38DC /* videoStop.png in Resources */ = {isa = PBXBuildFile; fileRef = 188663601F3869EE002D38DC /* videoStop.png */; };
 		188663671F3869EE002D38DC /* videoStop@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 188663611F3869EE002D38DC /* videoStop@2x.png */; };
 		188663681F3869EE002D38DC /* videoStop@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 188663621F3869EE002D38DC /* videoStop@3x.png */; };
-		18AFA71D1FA85ADF00519BBE /* CropViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18AFA71C1FA85ADF00519BBE /* CropViewController.m */; };
+		18D1DD9F1FDE723E00D786FE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 18D1DD9E1FDE723E00D786FE /* Settings.bundle */; };
 		18EA43301F5CFE74005A0EDC /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18EA432F1F5CFE74005A0EDC /* AssetsLibrary.framework */; };
 		18FD37221F1E167E001FE220 /* image_notloaded.png in Resources */ = {isa = PBXBuildFile; fileRef = 18FD37201F1E167E001FE220 /* image_notloaded.png */; };
 		18FD37231F1E167E001FE220 /* image_notloaded@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18FD37211F1E167E001FE220 /* image_notloaded@2x.png */; };
@@ -29,8 +29,6 @@
 		403CDE5D1C48E04D00806269 /* nocontent@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 403CDE5B1C48E04D00806269 /* nocontent@2x.png */; };
 		560016CB1D2A4ADECD05ACDE /* libPods-PickerDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 033994116E7C15DDD5FE5DCD /* libPods-PickerDemo.a */; };
 		58B830089F23CD882BC3359A /* PPViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B83CEA86EECCBB0612556B /* PPViewController.m */; };
-		58B83038AA4E0E343371D448 /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B839747E8F651B3DDD2C8A /* BaseViewController.m */; };
-		58B830408FABBE500C37E064 /* PhotosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B8338E7F800845BDD8E538 /* PhotosViewController.m */; };
 		58B8329821E8D0662C5D15F4 /* AlbumViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B838F5708D6280E9F9159D /* AlbumViewController.m */; };
 		58B833AA7C668FEEC402A051 /* CustomAssetThumbnailView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 58B839496E0BDBC2C3C0BED8 /* CustomAssetThumbnailView.xib */; };
 		58B833DF640694C11F561BDC /* CameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B838D59C17AE84946536C7 /* CameraViewController.m */; };
@@ -53,7 +51,6 @@
 		58B83B2F53560DCE64B3C6C1 /* UIViewController+BackButtonHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B836D8D0C9D4A3EF5AF4D3 /* UIViewController+BackButtonHandler.m */; };
 		58B83BECC5DDA627909D0EA2 /* UIAlertView+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B837C60C75B33C820CECC0 /* UIAlertView+Blocks.m */; };
 		58B83C0092700DD5710E8CF1 /* UINavigationController+FDFullscreenPopGesture.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B8337405D458BC7C2F56C3 /* UINavigationController+FDFullscreenPopGesture.m */; };
-		58B83D5116AD27E03EAF6924 /* GalleryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B83CDE01D2E51A15817550 /* GalleryViewController.m */; };
 		E58DA585184339C100D60BBC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E58DA584184339C100D60BBC /* Foundation.framework */; };
 		E58DA587184339C100D60BBC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E58DA586184339C100D60BBC /* CoreGraphics.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		E58DA589184339C100D60BBC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E58DA588184339C100D60BBC /* UIKit.framework */; };
@@ -70,8 +67,7 @@
 		188663601F3869EE002D38DC /* videoStop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = videoStop.png; sourceTree = "<group>"; };
 		188663611F3869EE002D38DC /* videoStop@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "videoStop@2x.png"; sourceTree = "<group>"; };
 		188663621F3869EE002D38DC /* videoStop@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "videoStop@3x.png"; sourceTree = "<group>"; };
-		18AFA71B1FA85ADF00519BBE /* CropViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CropViewController.h; path = Classes/App/CropViewController.h; sourceTree = "<group>"; };
-		18AFA71C1FA85ADF00519BBE /* CropViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CropViewController.m; path = Classes/App/CropViewController.m; sourceTree = "<group>"; };
+		18D1DD9E1FDE723E00D786FE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		18EA432F1F5CFE74005A0EDC /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		18FD37201F1E167E001FE220 /* image_notloaded.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image_notloaded.png; sourceTree = "<group>"; };
 		18FD37211F1E167E001FE220 /* image_notloaded@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "image_notloaded@2x.png"; sourceTree = "<group>"; };
@@ -94,7 +90,6 @@
 		58B831F5DD2E69378007A2A5 /* PPPinCircleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PPPinCircleView.m; path = Classes/PinPad/PPPinCircleView.m; sourceTree = "<group>"; };
 		58B832B77EFD13B0D1C8154A /* PPPinCircleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PPPinCircleView.h; path = Classes/PinPad/PPPinCircleView.h; sourceTree = "<group>"; };
 		58B8337405D458BC7C2F56C3 /* UINavigationController+FDFullscreenPopGesture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UINavigationController+FDFullscreenPopGesture.m"; path = "Classes/Extend/UINavigationController+FDFullscreenPopGesture.m"; sourceTree = "<group>"; };
-		58B8338E7F800845BDD8E538 /* PhotosViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhotosViewController.m; path = Classes/App/PhotosViewController.m; sourceTree = "<group>"; };
 		58B8345374EC836A6BFBE3E5 /* UIViewController+BackButtonHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIViewController+BackButtonHandler.h"; path = "Classes/Extend/UIViewController+BackButtonHandler.h"; sourceTree = "<group>"; };
 		58B83465901980E07A05A61D /* SelectAlbumViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SelectAlbumViewController.m; path = Classes/App/SelectAlbumViewController.m; sourceTree = "<group>"; };
 		58B834CC72DFFD6D1D64D321 /* VideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VideoViewController.m; path = Classes/App/VideoViewController.m; sourceTree = "<group>"; };
@@ -106,7 +101,6 @@
 		58B8375E2BB56B251C41D208 /* Storyboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Storyboard.storyboard; path = Classes/App/Storyboard.storyboard; sourceTree = "<group>"; };
 		58B83762E1EF9A20FBC0EB0C /* frame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = frame.png; sourceTree = "<group>"; };
 		58B83771FC1EE8E40F76186F /* NavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NavigationController.h; path = Classes/App/NavigationController.h; sourceTree = "<group>"; };
-		58B837C348FDA69F1CC7DDA9 /* GalleryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GalleryViewController.h; path = Classes/App/GalleryViewController.h; sourceTree = "<group>"; };
 		58B837C60C75B33C820CECC0 /* UIAlertView+Blocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIAlertView+Blocks.m"; path = "Classes/Extend/UIAlertView+Blocks.m"; sourceTree = "<group>"; };
 		58B838D59C17AE84946536C7 /* CameraViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CameraViewController.m; path = Classes/App/CameraViewController.m; sourceTree = "<group>"; };
 		58B838F5708D6280E9F9159D /* AlbumViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AlbumViewController.m; path = Classes/App/AlbumViewController.m; sourceTree = "<group>"; };
@@ -114,16 +108,12 @@
 		58B839496E0BDBC2C3C0BED8 /* CustomAssetThumbnailView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = CustomAssetThumbnailView.xib; path = Classes/App/CustomAssetThumbnailView.xib; sourceTree = "<group>"; };
 		58B83954C8832CE294A25AAD /* PPPinPadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PPPinPadViewController.h; path = Classes/PinPad/PPPinPadViewController.h; sourceTree = "<group>"; };
 		58B8395B5511C49EAAC08C8E /* PPPinPadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PPPinPadViewController.m; path = Classes/PinPad/PPPinPadViewController.m; sourceTree = "<group>"; };
-		58B839747E8F651B3DDD2C8A /* BaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BaseViewController.m; path = Classes/App/BaseViewController.m; sourceTree = "<group>"; };
 		58B839E75FDF198CEB355ABC /* CustomAssetsGroupView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = CustomAssetsGroupView.xib; path = Classes/App/CustomAssetsGroupView.xib; sourceTree = "<group>"; };
 		58B83A9418945E6EA148E8DE /* NavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NavigationController.m; path = Classes/App/NavigationController.m; sourceTree = "<group>"; };
 		58B83AF489358073351B1413 /* RIButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RIButtonItem.h; path = Classes/Extend/RIButtonItem.h; sourceTree = "<group>"; };
 		58B83B584B19CD6C12B722A4 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = InfoPlist.strings; sourceTree = "<group>"; };
 		58B83B8F92EAC43299892DC6 /* zh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = zh; path = InfoPlist.strings; sourceTree = "<group>"; };
-		58B83C047F9EE4248DE0DD5A /* PhotosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhotosViewController.h; path = Classes/App/PhotosViewController.h; sourceTree = "<group>"; };
-		58B83C174E16414A7DC1C919 /* BaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseViewController.h; path = Classes/App/BaseViewController.h; sourceTree = "<group>"; };
 		58B83C8DE6269BF310D36A93 /* CameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CameraViewController.h; path = Classes/App/CameraViewController.h; sourceTree = "<group>"; };
-		58B83CDE01D2E51A15817550 /* GalleryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GalleryViewController.m; path = Classes/App/GalleryViewController.m; sourceTree = "<group>"; };
 		58B83CE879D7DFD826A5DCDF /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		58B83CEA86EECCBB0612556B /* PPViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PPViewController.m; path = Classes/PinPad/PPViewController.m; sourceTree = "<group>"; };
 		58B83CF4C681DAD06C10C938 /* PPViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PPViewController.h; path = Classes/PinPad/PPViewController.h; sourceTree = "<group>"; };
@@ -216,6 +206,7 @@
 				58B83E002344E23F2DBE9967 /* App */,
 				58B8327F9F59601217765ACB /* PinPad */,
 				58B832FC34BA961F3D59AA72 /* Extend */,
+				18D1DD9E1FDE723E00D786FE /* Settings.bundle */,
 				58B83618406464FDDE6A5C60 /* AppDelegate.h */,
 				58B83CE879D7DFD826A5DCDF /* AppDelegate.m */,
 				58B8316238167AC83DE34F43 /* xxx.java */,
@@ -226,22 +217,14 @@
 		58B83E002344E23F2DBE9967 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				18AFA71B1FA85ADF00519BBE /* CropViewController.h */,
-				18AFA71C1FA85ADF00519BBE /* CropViewController.m */,
 				58B8375A816B67A304B1F28B /* AlbumViewController.h */,
 				58B838F5708D6280E9F9159D /* AlbumViewController.m */,
-				58B83C174E16414A7DC1C919 /* BaseViewController.h */,
-				58B839747E8F651B3DDD2C8A /* BaseViewController.m */,
 				58B83C8DE6269BF310D36A93 /* CameraViewController.h */,
 				58B838D59C17AE84946536C7 /* CameraViewController.m */,
 				58B839E75FDF198CEB355ABC /* CustomAssetsGroupView.xib */,
 				58B839496E0BDBC2C3C0BED8 /* CustomAssetThumbnailView.xib */,
-				58B837C348FDA69F1CC7DDA9 /* GalleryViewController.h */,
-				58B83CDE01D2E51A15817550 /* GalleryViewController.m */,
 				58B83771FC1EE8E40F76186F /* NavigationController.h */,
 				58B83A9418945E6EA148E8DE /* NavigationController.m */,
-				58B83C047F9EE4248DE0DD5A /* PhotosViewController.h */,
-				58B8338E7F800845BDD8E538 /* PhotosViewController.m */,
 				58B831B3E06E30F610E299C0 /* SelectAlbumViewController.h */,
 				58B83465901980E07A05A61D /* SelectAlbumViewController.m */,
 				58B8375E2BB56B251C41D208 /* Storyboard.storyboard */,
@@ -407,6 +390,7 @@
 			files = (
 				4039F3201CE33FE90073F9E9 /* camera_flash.png in Resources */,
 				4039F3091CE3386A0073F9E9 /* cameraButton@2x.png in Resources */,
+				18D1DD9F1FDE723E00D786FE /* Settings.bundle in Resources */,
 				188663651F3869EE002D38DC /* videoStart@3x.png in Resources */,
 				4039F3081CE3386A0073F9E9 /* cameraButton.png in Resources */,
 				4039F31C1CE33FB90073F9E9 /* camera_switch.png in Resources */,
@@ -536,7 +520,6 @@
 			files = (
 				E58DA591184339C100D60BBC /* main.m in Sources */,
 				58B835EB00FB57F1EC026043 /* AppDelegate.m in Sources */,
-				18AFA71D1FA85ADF00519BBE /* CropViewController.m in Sources */,
 				58B83600EDA7C0571B04673D /* RIButtonItem.m in Sources */,
 				58B83812A5FB0B16947D7283 /* UIActionSheet+Blocks.m in Sources */,
 				58B83BECC5DDA627909D0EA2 /* UIAlertView+Blocks.m in Sources */,
@@ -547,11 +530,8 @@
 				58B838BB3E8079798B1A15D4 /* PPPinPadViewController.m in Sources */,
 				58B830089F23CD882BC3359A /* PPViewController.m in Sources */,
 				58B8329821E8D0662C5D15F4 /* AlbumViewController.m in Sources */,
-				58B83038AA4E0E343371D448 /* BaseViewController.m in Sources */,
 				58B833DF640694C11F561BDC /* CameraViewController.m in Sources */,
-				58B83D5116AD27E03EAF6924 /* GalleryViewController.m in Sources */,
 				58B8393BE879FEF8D93B877C /* NavigationController.m in Sources */,
-				58B830408FABBE500C37E064 /* PhotosViewController.m in Sources */,
 				58B8347F633808CBE061823E /* SelectAlbumViewController.m in Sources */,
 				58B8354DAE6B11690B7B4A66 /* VideoViewController.m in Sources */,
 				58B836084CDD24599600048B /* xxx.java in Sources */,

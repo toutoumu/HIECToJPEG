@@ -17,14 +17,19 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.cameraView.fixedFocusPoint = NO;// 是否固定对焦位置
-    self.cameraView.shootAfterFocus = YES;// 是否对焦后拍摄
+    //获取SettingsBundle信息
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+
+    self.cameraView.fixedFocusPoint = [userDefaults boolForKey:@"fixed_focus"];// 是否固定对焦位置,默认YES
+    self.cameraView.fixedExposurePoint = [userDefaults boolForKey:@"fixed_exposure"];// 是否固定曝光位置,默认YES
+    self.cameraView.shootAfterFocus = [userDefaults boolForKey:@"shoot_after_focus"];// 是否对焦后拍摄,默认NO
+    self.cameraView.showPreviewLayer = [userDefaults boolForKey:@"show_preview"];// 是否显示预览图层,默认默认YES
     self.cameraView.targetResolution = CGSizeMake(40000, 30000);// 图像尺寸
     self.cameraView.savePicturesToLibrary = YES;// 保存到系统相册
     self.cameraView.targetLibraryAlbumName = @"test";// 系统相册名称
     self.cameraView.animateLastPictureImageView = YES;// 拍照完成后图片有放入相册的动画效果
     self.cameraView.keepFrontCameraPicturesMirrored = YES;// 前置摄像头预览是否为镜像
-    self.takesPicturesWithVolumeButtons = NO;// 音量键拍摄
+    self.takesPicturesWithVolumeButtons = [userDefaults boolForKey:@"voice_to_shoot"];// 音量键拍摄,默认NO
 
     // 设置视频保存目录
     NSURL *_targetMovieFolder = [NSURL fileURLWithPath:[[NBUAssetUtils documentsDirectory] stringByAppendingPathComponent:@"Video"]];
