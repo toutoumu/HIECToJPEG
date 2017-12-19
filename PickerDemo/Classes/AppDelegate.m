@@ -19,19 +19,9 @@
 //
 
 #import "AppDelegate.h"
-#import "PPViewController.h"
-#import "CameraViewController.h"
 #import "VideoViewController.h"
 
 @implementation AppDelegate
-
-static CGFloat _preBrightness;//保存之前的屏幕亮度
-
-#pragma mark 获取应用打开之前的屏幕亮度
-
-+ (CGFloat)getScreenBrightness {
-    return _preBrightness;
-}
 
 #pragma mark 程序加载完毕
 
@@ -51,10 +41,10 @@ static CGFloat _preBrightness;//保存之前的屏幕亮度
     }
 
     // 在沙盒中创建相册
-    [NBUAssetUtils createAlbum:@"Video"];
-    [NBUAssetUtils createAlbum:@"Deleted"];
-    [NBUAssetUtils createAlbum:@"Beauty"];
-    [NBUAssetUtils createAlbum:@"Decrypted"];
+    [NBUAssetUtils createAlbum:NBUAssetUtils.CropDirectory];
+    [NBUAssetUtils createAlbum:NBUAssetUtils.DeletedDirectory];
+    [NBUAssetUtils createAlbum:NBUAssetUtils.HEICDirectory];
+    [NBUAssetUtils createAlbum:NBUAssetUtils.JPEGDirectory];
 
     UIColor *tintColor = [UIColor colorWithRed:(CGFloat) (0 / 255.0) green:(CGFloat) (0 / 255.0) blue:(CGFloat) (0 / 255.0) alpha:1.0];
     self.window.tintColor = tintColor;
@@ -74,8 +64,6 @@ static CGFloat _preBrightness;//保存之前的屏幕亮度
 #pragma mark  程序失去焦点, 控制中心上拉, 通知中心下拉, 按下home键
 
 - (void)applicationWillResignActive:(UIApplication *)application {
-    // 应用程序被通知栏,底部上拉通知中心覆盖,或者进入后台,恢复屏幕亮度
-    [[UIScreen mainScreen] setBrightness:_preBrightness];
     // 不阻止锁屏
     [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
 }
@@ -86,9 +74,7 @@ static CGFloat _preBrightness;//保存之前的屏幕亮度
     // 应用程序退到后台, 如果当前还是启动应用程序时候的密码输入界面,或者是已经输入密码进入了相机页面,那么堆栈不需要清空.
     UIViewController *controller = self.navController.viewControllers.lastObject;
     if (controller == nil) return;
-    if ([controller isMemberOfClass:[CameraViewController class]] ||
-            [controller isMemberOfClass:[PPViewController class]] ||
-            [controller isMemberOfClass:[VideoViewController class]]) {
+    if ([controller isMemberOfClass:[VideoViewController class]]) {
         return;//这些页面退到后台不关闭
     }
     // 如果有弹出窗体关闭掉
@@ -107,19 +93,8 @@ static CGFloat _preBrightness;//保存之前的屏幕亮度
 #pragma mark 程序获取焦点进入前台 从其他应用切换到该应用, 控制中心收回, 通知中心收回等
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-    // 每次进入该应用的时候记录,进入之前屏幕亮度
-    _preBrightness = [UIScreen mainScreen].brightness;
-
     // 阻止锁屏
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
-    // 如果当前是拍摄页面,进入时设置屏幕亮度为0
-    UIViewController *controller = self.navController.viewControllers.lastObject;
-    if (controller != nil && [controller isMemberOfClass:[CameraViewController class]]) {
-        // 如果没有弹出密码输入页面
-        if ([controller presentedViewController] == nil) {
-            [[UIScreen mainScreen] setBrightness:0];
-        }
-    }
 }
 
 /**
@@ -146,42 +121,5 @@ static CGFloat _preBrightness;//保存之前的屏幕亮度
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaultsToRegister];
 }
 
-#pragma mark 初始化页面
-
-- (void)initRoot {
-    //返回的是包含状态栏的Rect
-    CGRect bound = [[UIScreen mainScreen] bounds];
-    //返回的是不包含状态栏的Rect
-    //CGRect appBound =  [[UIScreen mainScreen] applicationFrame];
-
-    // 三种方式初始化ViewController
-    // 1. 初始化root视图,这里调用的是init方法来初始化,init方法会默认调用
-    // - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle*)nibBundleOrNil; 加载名称为RootViewController的nib文件
-    //RootViewController *rootView = [[RootViewController alloc]initWithNibName:@"RootViewController" bundle:nil ];
-
-    // 2. 相册界面
-    //UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Storyboard" bundle:nil];
-    //UIViewController *rootView =  [mainStoryboard instantiateViewControllerWithIdentifier:@"AlbumViewController"];
-    //[NBUAssetUtils setPassword:@"111111"];// 全局密码缓存密码
-
-    // 相机页面
-    //UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Storyboard" bundle:nil];
-    //VideoViewController *rootView =  [storyboard instantiateViewControllerWithIdentifier:@"VideoViewController"];
-
-    // 3. 初始化界面,密码输入页面
-    PPViewController *rootView = [[PPViewController alloc] init];
-
-    //初始化导航控制器，并指定该导航控制器的根视图控制器为上面建立的rootView
-    //self.navController = [[RTRootNavigationController alloc]initWithRootViewController:rootView];
-    self.navController = [[UINavigationController alloc] initWithRootViewController:rootView];
-    self.navController.navigationBarHidden = YES; // 隐藏导航栏
-
-    // 初始化Window
-    self.window = [[UIWindow alloc] initWithFrame:bound];
-    self.window.backgroundColor = [UIColor whiteColor]; //设置背景色为白色
-    //设置窗体(window)根视图控制器——这个视图控制器负责配置当窗体显示时最先显示的视图。要让你的视图控制器的内容显示在窗体中，需要去设置窗体的根视图控制器为你的视图控制器。
-    [self.window setRootViewController:self.navController];
-    [self.window makeKeyAndVisible];//这行代码会让包含了视图控制器视图的Window窗口显示在屏幕上。
-}
 @end
 

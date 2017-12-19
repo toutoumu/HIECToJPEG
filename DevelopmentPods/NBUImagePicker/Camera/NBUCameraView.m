@@ -86,7 +86,7 @@
     self.highlightColor = [UIColor colorWithWhite:1.0 alpha:0.7];//高亮颜色
     self.animateLastPictureImageView = YES;//拍照时最后一张相片是否显示动画效果
 
-    _availableCameraOutTypes = [NSArray arrayWithArray:@[@(NBUCameraOutPutModeTypeVideoData), @(NBUCameraOutPutModeTypeVideo), @( NBUCameraOutPutModeTypeImage)]];
+    _availableCameraOutTypes = @[@(NBUCameraOutPutModeTypeVideoData), @(NBUCameraOutPutModeTypeVideo), @( NBUCameraOutPutModeTypeImage)];
 
     _poiView = [PointOfInterestView new];// 点击位置(对焦区域)指示器 PoI view
     [self addSubview:_poiView];

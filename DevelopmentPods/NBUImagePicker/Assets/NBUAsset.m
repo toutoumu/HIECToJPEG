@@ -198,6 +198,18 @@ static NSString *_fullScreenDir;
     if (_thumbnailImagePath == nil) {
         // 缩略图路径
         _thumbnailImagePath = [[_albumPath stringByAppendingPathComponent:_thumbnailDir] stringByAppendingPathComponent:_fileName];
+        // 如果图片不存在创建
+        BOOL isDir = NO;
+        BOOL existed;
+
+        //检查文件是否已经存在
+        NSFileManager *manager = [NSFileManager defaultManager];
+        existed = [manager fileExistsAtPath:_thumbnailImagePath isDirectory:&isDir];
+        if (!existed || isDir) {
+            UIImage *thumbImage = [self.fullResolutionImage thumbnailWithSize:_thumbnailSizeNoScale];
+            NSData *data = UIImageJPEGRepresentation(thumbImage, (CGFloat) (0.8));
+            [data writeToFile:_thumbnailImagePath atomically:YES];
+        }
     }
     return _thumbnailImagePath;
 }
@@ -206,6 +218,19 @@ static NSString *_fullScreenDir;
     if (_fullScreenImagePath == nil) {
         // 全屏图片路径
         _fullScreenImagePath = [[_albumPath stringByAppendingPathComponent:_fullScreenDir] stringByAppendingPathComponent:_fileName];
+
+        // 如果图片不存在创建
+        BOOL isDir = NO;
+        BOOL existed;
+
+        //检查文件是否已经存在
+        NSFileManager *manager = [NSFileManager defaultManager];
+        existed = [manager fileExistsAtPath:_fullScreenImagePath isDirectory:&isDir];
+        if (!existed || isDir) {
+            UIImage *fullScreenImage = [self.fullResolutionImage imageDonwsizedToFit:_fullScreenSize];//预览图图片对象
+            NSData *data = UIImageJPEGRepresentation(fullScreenImage, (CGFloat) (0.8));
+            [data writeToFile:_fullScreenImagePath atomically:YES];
+        }
     }
     return _fullScreenImagePath;
 }

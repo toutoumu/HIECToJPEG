@@ -28,25 +28,18 @@
 		403CDE5C1C48E04D00806269 /* nocontent.png in Resources */ = {isa = PBXBuildFile; fileRef = 403CDE5A1C48E04D00806269 /* nocontent.png */; };
 		403CDE5D1C48E04D00806269 /* nocontent@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 403CDE5B1C48E04D00806269 /* nocontent@2x.png */; };
 		560016CB1D2A4ADECD05ACDE /* libPods-PickerDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 033994116E7C15DDD5FE5DCD /* libPods-PickerDemo.a */; };
-		58B830089F23CD882BC3359A /* PPViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B83CEA86EECCBB0612556B /* PPViewController.m */; };
 		58B8329821E8D0662C5D15F4 /* AlbumViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B838F5708D6280E9F9159D /* AlbumViewController.m */; };
 		58B833AA7C668FEEC402A051 /* CustomAssetThumbnailView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 58B839496E0BDBC2C3C0BED8 /* CustomAssetThumbnailView.xib */; };
-		58B833DF640694C11F561BDC /* CameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B838D59C17AE84946536C7 /* CameraViewController.m */; };
 		58B8347F633808CBE061823E /* SelectAlbumViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B83465901980E07A05A61D /* SelectAlbumViewController.m */; };
 		58B8354DAE6B11690B7B4A66 /* VideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B834CC72DFFD6D1D64D321 /* VideoViewController.m */; };
 		58B835EB00FB57F1EC026043 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B83CE879D7DFD826A5DCDF /* AppDelegate.m */; };
 		58B83600EDA7C0571B04673D /* RIButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B83E14C8FA4BFC904CA5F5 /* RIButtonItem.m */; };
-		58B836084CDD24599600048B /* xxx.java in Sources */ = {isa = PBXBuildFile; fileRef = 58B8316238167AC83DE34F43 /* xxx.java */; };
-		58B836F41C589C2BA41A1284 /* PPCircleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B8390FD367F808CCAA5D58 /* PPCircleButton.m */; };
 		58B837B0A6B0710F423DEC4D /* frame.png in Resources */ = {isa = PBXBuildFile; fileRef = 58B83762E1EF9A20FBC0EB0C /* frame.png */; };
 		58B83812A5FB0B16947D7283 /* UIActionSheet+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B8301EF3BD3EA3EA22F1BE /* UIActionSheet+Blocks.m */; };
 		58B83826135C99DD1FD6863D /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 58B8375E2BB56B251C41D208 /* Storyboard.storyboard */; };
 		58B8382E3A1CB1A5712FF6B8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 58B83618F22C64385173B9EA /* InfoPlist.strings */; };
-		58B838BB3E8079798B1A15D4 /* PPPinPadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B8395B5511C49EAAC08C8E /* PPPinPadViewController.m */; };
 		58B838C3BDAA8E7AE47D602A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 58B8378C8D476349F1C104FE /* InfoPlist.strings */; };
 		58B8393BE879FEF8D93B877C /* NavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B83A9418945E6EA148E8DE /* NavigationController.m */; };
-		58B839714EB6C30E9FFD532D /* PPPinCircleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B831F5DD2E69378007A2A5 /* PPPinCircleView.m */; };
-		58B839948094A71DE3BB1616 /* pinViewImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 58B8308F3D86BC63CCC0E0D6 /* pinViewImage.png */; };
 		58B83A911089E4BD78ED11C5 /* CustomAssetsGroupView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 58B839E75FDF198CEB355ABC /* CustomAssetsGroupView.xib */; };
 		58B83B2F53560DCE64B3C6C1 /* UIViewController+BackButtonHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B836D8D0C9D4A3EF5AF4D3 /* UIViewController+BackButtonHandler.m */; };
 		58B83BECC5DDA627909D0EA2 /* UIAlertView+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B837C60C75B33C820CECC0 /* UIAlertView+Blocks.m */; };
@@ -83,12 +76,7 @@
 		403CDE5B1C48E04D00806269 /* nocontent@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nocontent@2x.png"; sourceTree = "<group>"; };
 		569D6C800BE5F3E8E279073B /* Pods-PickerDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PickerDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PickerDemo/Pods-PickerDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		58B8301EF3BD3EA3EA22F1BE /* UIActionSheet+Blocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIActionSheet+Blocks.m"; path = "Classes/Extend/UIActionSheet+Blocks.m"; sourceTree = "<group>"; };
-		58B83026D2B67973C13078E0 /* PPCircleButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PPCircleButton.h; path = Classes/PinPad/PPCircleButton.h; sourceTree = "<group>"; };
-		58B8308F3D86BC63CCC0E0D6 /* pinViewImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pinViewImage.png; path = Classes/PinPad/pinViewImage.png; sourceTree = "<group>"; };
-		58B8316238167AC83DE34F43 /* xxx.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = xxx.java; sourceTree = "<group>"; };
 		58B831B3E06E30F610E299C0 /* SelectAlbumViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectAlbumViewController.h; path = Classes/App/SelectAlbumViewController.h; sourceTree = "<group>"; };
-		58B831F5DD2E69378007A2A5 /* PPPinCircleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PPPinCircleView.m; path = Classes/PinPad/PPPinCircleView.m; sourceTree = "<group>"; };
-		58B832B77EFD13B0D1C8154A /* PPPinCircleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PPPinCircleView.h; path = Classes/PinPad/PPPinCircleView.h; sourceTree = "<group>"; };
 		58B8337405D458BC7C2F56C3 /* UINavigationController+FDFullscreenPopGesture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UINavigationController+FDFullscreenPopGesture.m"; path = "Classes/Extend/UINavigationController+FDFullscreenPopGesture.m"; sourceTree = "<group>"; };
 		58B8345374EC836A6BFBE3E5 /* UIViewController+BackButtonHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIViewController+BackButtonHandler.h"; path = "Classes/Extend/UIViewController+BackButtonHandler.h"; sourceTree = "<group>"; };
 		58B83465901980E07A05A61D /* SelectAlbumViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SelectAlbumViewController.m; path = Classes/App/SelectAlbumViewController.m; sourceTree = "<group>"; };
@@ -102,21 +90,14 @@
 		58B83762E1EF9A20FBC0EB0C /* frame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = frame.png; sourceTree = "<group>"; };
 		58B83771FC1EE8E40F76186F /* NavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NavigationController.h; path = Classes/App/NavigationController.h; sourceTree = "<group>"; };
 		58B837C60C75B33C820CECC0 /* UIAlertView+Blocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIAlertView+Blocks.m"; path = "Classes/Extend/UIAlertView+Blocks.m"; sourceTree = "<group>"; };
-		58B838D59C17AE84946536C7 /* CameraViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CameraViewController.m; path = Classes/App/CameraViewController.m; sourceTree = "<group>"; };
 		58B838F5708D6280E9F9159D /* AlbumViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AlbumViewController.m; path = Classes/App/AlbumViewController.m; sourceTree = "<group>"; };
-		58B8390FD367F808CCAA5D58 /* PPCircleButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PPCircleButton.m; path = Classes/PinPad/PPCircleButton.m; sourceTree = "<group>"; };
 		58B839496E0BDBC2C3C0BED8 /* CustomAssetThumbnailView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = CustomAssetThumbnailView.xib; path = Classes/App/CustomAssetThumbnailView.xib; sourceTree = "<group>"; };
-		58B83954C8832CE294A25AAD /* PPPinPadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PPPinPadViewController.h; path = Classes/PinPad/PPPinPadViewController.h; sourceTree = "<group>"; };
-		58B8395B5511C49EAAC08C8E /* PPPinPadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PPPinPadViewController.m; path = Classes/PinPad/PPPinPadViewController.m; sourceTree = "<group>"; };
 		58B839E75FDF198CEB355ABC /* CustomAssetsGroupView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = CustomAssetsGroupView.xib; path = Classes/App/CustomAssetsGroupView.xib; sourceTree = "<group>"; };
 		58B83A9418945E6EA148E8DE /* NavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NavigationController.m; path = Classes/App/NavigationController.m; sourceTree = "<group>"; };
 		58B83AF489358073351B1413 /* RIButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RIButtonItem.h; path = Classes/Extend/RIButtonItem.h; sourceTree = "<group>"; };
 		58B83B584B19CD6C12B722A4 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = InfoPlist.strings; sourceTree = "<group>"; };
 		58B83B8F92EAC43299892DC6 /* zh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = zh; path = InfoPlist.strings; sourceTree = "<group>"; };
-		58B83C8DE6269BF310D36A93 /* CameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CameraViewController.h; path = Classes/App/CameraViewController.h; sourceTree = "<group>"; };
 		58B83CE879D7DFD826A5DCDF /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		58B83CEA86EECCBB0612556B /* PPViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PPViewController.m; path = Classes/PinPad/PPViewController.m; sourceTree = "<group>"; };
-		58B83CF4C681DAD06C10C938 /* PPViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PPViewController.h; path = Classes/PinPad/PPViewController.h; sourceTree = "<group>"; };
 		58B83E14C8FA4BFC904CA5F5 /* RIButtonItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RIButtonItem.m; path = Classes/Extend/RIButtonItem.m; sourceTree = "<group>"; };
 		58B83E206802FD262CCFC443 /* VideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoViewController.h; path = Classes/App/VideoViewController.h; sourceTree = "<group>"; };
 		58B83F08EEA3429421421C95 /* UIAlertView+Blocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIAlertView+Blocks.h"; path = "Classes/Extend/UIAlertView+Blocks.h"; sourceTree = "<group>"; };
@@ -157,23 +138,6 @@
 			path = zh.lproj;
 			sourceTree = "<group>";
 		};
-		58B8327F9F59601217765ACB /* PinPad */ = {
-			isa = PBXGroup;
-			children = (
-				58B8308F3D86BC63CCC0E0D6 /* pinViewImage.png */,
-				58B83026D2B67973C13078E0 /* PPCircleButton.h */,
-				58B8390FD367F808CCAA5D58 /* PPCircleButton.m */,
-				58B832B77EFD13B0D1C8154A /* PPPinCircleView.h */,
-				58B831F5DD2E69378007A2A5 /* PPPinCircleView.m */,
-				58B83954C8832CE294A25AAD /* PPPinPadViewController.h */,
-				58B8395B5511C49EAAC08C8E /* PPPinPadViewController.m */,
-				58B83CF4C681DAD06C10C938 /* PPViewController.h */,
-				58B83CEA86EECCBB0612556B /* PPViewController.m */,
-			);
-			name = PinPad;
-			path = PickerDemo;
-			sourceTree = SOURCE_ROOT;
-		};
 		58B832FC34BA961F3D59AA72 /* Extend */ = {
 			isa = PBXGroup;
 			children = (
@@ -204,12 +168,10 @@
 			isa = PBXGroup;
 			children = (
 				58B83E002344E23F2DBE9967 /* App */,
-				58B8327F9F59601217765ACB /* PinPad */,
 				58B832FC34BA961F3D59AA72 /* Extend */,
 				18D1DD9E1FDE723E00D786FE /* Settings.bundle */,
 				58B83618406464FDDE6A5C60 /* AppDelegate.h */,
 				58B83CE879D7DFD826A5DCDF /* AppDelegate.m */,
-				58B8316238167AC83DE34F43 /* xxx.java */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -219,8 +181,6 @@
 			children = (
 				58B8375A816B67A304B1F28B /* AlbumViewController.h */,
 				58B838F5708D6280E9F9159D /* AlbumViewController.m */,
-				58B83C8DE6269BF310D36A93 /* CameraViewController.h */,
-				58B838D59C17AE84946536C7 /* CameraViewController.m */,
 				58B839E75FDF198CEB355ABC /* CustomAssetsGroupView.xib */,
 				58B839496E0BDBC2C3C0BED8 /* CustomAssetThumbnailView.xib */,
 				58B83771FC1EE8E40F76186F /* NavigationController.h */,
@@ -407,7 +367,6 @@
 				4039F30A1CE3386A0073F9E9 /* cameraButton@3x.png in Resources */,
 				188663671F3869EE002D38DC /* videoStop@2x.png in Resources */,
 				4039F3211CE33FE90073F9E9 /* camera_flash@2x.png in Resources */,
-				58B839948094A71DE3BB1616 /* pinViewImage.png in Resources */,
 				58B83A911089E4BD78ED11C5 /* CustomAssetsGroupView.xib in Resources */,
 				58B833AA7C668FEEC402A051 /* CustomAssetThumbnailView.xib in Resources */,
 				58B83826135C99DD1FD6863D /* Storyboard.storyboard in Resources */,
@@ -525,16 +484,10 @@
 				58B83BECC5DDA627909D0EA2 /* UIAlertView+Blocks.m in Sources */,
 				58B83C0092700DD5710E8CF1 /* UINavigationController+FDFullscreenPopGesture.m in Sources */,
 				58B83B2F53560DCE64B3C6C1 /* UIViewController+BackButtonHandler.m in Sources */,
-				58B836F41C589C2BA41A1284 /* PPCircleButton.m in Sources */,
-				58B839714EB6C30E9FFD532D /* PPPinCircleView.m in Sources */,
-				58B838BB3E8079798B1A15D4 /* PPPinPadViewController.m in Sources */,
-				58B830089F23CD882BC3359A /* PPViewController.m in Sources */,
 				58B8329821E8D0662C5D15F4 /* AlbumViewController.m in Sources */,
-				58B833DF640694C11F561BDC /* CameraViewController.m in Sources */,
 				58B8393BE879FEF8D93B877C /* NavigationController.m in Sources */,
 				58B8347F633808CBE061823E /* SelectAlbumViewController.m in Sources */,
 				58B8354DAE6B11690B7B4A66 /* VideoViewController.m in Sources */,
-				58B836084CDD24599600048B /* xxx.java in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

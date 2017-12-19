@@ -7,11 +7,21 @@
 //
 
 #import "VideoViewController.h"
+#import "AlbumViewController.h"
 
 @implementation VideoViewController {
     CGRect _cameraFrame;
+    BOOL _prefersStatusBarHidden;//是否隐藏状态栏
     UISwipeGestureRecognizer *_leftGestureRecognizer;
     UISwipeGestureRecognizer *_rightGestureRecognizer;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        _prefersStatusBarHidden = NO;//进入页面时不隐藏状态栏
+    }
+    return self;
 }
 
 - (void)viewDidLoad {
@@ -19,24 +29,23 @@
 
     //获取SettingsBundle信息
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-
+    self.takesPicturesWithVolumeButtons = [userDefaults boolForKey:@"voice_to_shoot"];// 音量键拍摄,默认NO
     self.cameraView.fixedFocusPoint = [userDefaults boolForKey:@"fixed_focus"];// 是否固定对焦位置,默认YES
     self.cameraView.fixedExposurePoint = [userDefaults boolForKey:@"fixed_exposure"];// 是否固定曝光位置,默认YES
     self.cameraView.shootAfterFocus = [userDefaults boolForKey:@"shoot_after_focus"];// 是否对焦后拍摄,默认NO
     self.cameraView.showPreviewLayer = [userDefaults boolForKey:@"show_preview"];// 是否显示预览图层,默认默认YES
     self.cameraView.targetResolution = CGSizeMake(40000, 30000);// 图像尺寸
     self.cameraView.savePicturesToLibrary = YES;// 保存到系统相册
-    self.cameraView.targetLibraryAlbumName = @"test";// 系统相册名称
+    self.cameraView.targetLibraryAlbumName = @"HEIC";// 系统相册名称
     self.cameraView.animateLastPictureImageView = YES;// 拍照完成后图片有放入相册的动画效果
     self.cameraView.keepFrontCameraPicturesMirrored = YES;// 前置摄像头预览是否为镜像
-    self.takesPicturesWithVolumeButtons = [userDefaults boolForKey:@"voice_to_shoot"];// 音量键拍摄,默认NO
 
     // 设置视频保存目录
-    NSURL *_targetMovieFolder = [NSURL fileURLWithPath:[[NBUAssetUtils documentsDirectory] stringByAppendingPathComponent:@"Video"]];
+    NSURL *_targetMovieFolder = [NSURL fileURLWithPath:[[NBUAssetUtils documentsDirectory] stringByAppendingPathComponent:NBUAssetUtils.VideoDirectory]];
     self.cameraView.targetMovieFolder = _targetMovieFolder;
     self.cameraView.captureMovieResultBlock = ^(NSURL *movieURL, NSError *error) {
         UIImage *Image = [NBUAssetUtils getScreenShotImageFromVideoPath:movieURL.path];
-        [NBUAssetUtils saveVideo:Image toAlubm:@"Video" fileName:movieURL.lastPathComponent];
+        [NBUAssetUtils saveVideo:Image toAlubm:NBUAssetUtils.VideoDirectory fileName:movieURL.lastPathComponent encodeType:0];
         NBULogInfo(@"保存到路径:%@", movieURL);
     };
 
@@ -56,6 +65,10 @@
         }
     };
 
+    // 左下角图片点击事件
+    [self.cameraView.lastPictureImageView setUserInteractionEnabled:YES];
+    [self.cameraView.lastPictureImageView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(openAlbum:)]];
+
     // 切换手势
     _rightGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeFrom:)];
     [_rightGestureRecognizer setDirection:(UISwipeGestureRecognizerDirectionRight)];
@@ -64,6 +77,25 @@
     _leftGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeFrom:)];
     [_leftGestureRecognizer setDirection:(UISwipeGestureRecognizerDirectionLeft)];
     [self.view addGestureRecognizer:_leftGestureRecognizer];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    // 隐藏状态栏和标题栏
+    [self changeStatusBarHidden:YES];
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
+    // 启用拍摄按钮 Enable shootButton
+    _shootButton.userInteractionEnabled = YES;
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    [self changeStatusBarHidden:NO];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    // 禁用拍摄按钮 Disable shootButton
+    _shootButton.userInteractionEnabled = NO;
 }
 
 - (void)viewWillLayoutSubviews {
@@ -83,10 +115,32 @@
     }
 }
 
+#pragma mark 打开相册
+
+- (void)openAlbum:(UITapGestureRecognizer *)sender {
+    AlbumViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"AlbumViewController"];
+    controller.onlyLoadDocument = NO;
+    [self.navigationController pushViewController:controller animated:YES];
+}
+
+#pragma mark - 状态栏相关
 #pragma mark 必须重载这个才能隐藏状态栏
 
 - (BOOL)prefersStatusBarHidden {
-    return YES;
+    return _prefersStatusBarHidden;
+}
+
+#pragma mark 是否隐藏状态栏
+
+- (void)changeStatusBarHidden:(BOOL)hidden {
+    _prefersStatusBarHidden = hidden;
+    [self setNeedsStatusBarAppearanceUpdate];
+}
+
+#pragma mark 状态栏文字样式
+
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
 }
 
 #pragma mark 计算当前目标分辨率对应的预览图布局属性

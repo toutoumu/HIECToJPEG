@@ -1604,7 +1604,8 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [self cancelControlHiding];
 
     // Animations & positions
-    CGFloat animationOffset = 20;
+    CGFloat animationOffset = 0;
+    //CGFloat animationOffset = 20;
     CGFloat animationDuration = (animated ? 0.35f : 0);
 
     // 状态栏 Status bar
@@ -1650,7 +1651,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
                          // Toolbar
                          if (_gridShow) {//如果网格列表显示,那么隐藏 [底部栏]
                              _toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
-                             // _toolbar.frame = CGRectOffset(_toolbar.frame, 0, animationOffset);
+                             _toolbar.frame = CGRectOffset(_toolbar.frame, 0, animationOffset);
                              _toolbar.alpha = 0;
                          } else {
                              _toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];

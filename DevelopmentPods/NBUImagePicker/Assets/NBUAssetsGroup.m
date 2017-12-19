@@ -29,12 +29,12 @@
 #import "RNEncryptor.h"
 
 // Private classes
-/// 8.x以上系统使用
-@interface NBUPHAssetsGroup : NBUAssetsGroup <PHPhotoLibraryChangeObserver>
+/// 8.x以上系统使用 原来是作为私有类使用,现在提取出来放在NBUAssetsGroup.h中作为公有类使用
+/*@interface NBUPHAssetsGroup : NBUAssetsGroup <PHPhotoLibraryChangeObserver>
 
 - (instancetype)initWithPHAssetCollection:(PHAssetCollection *)PHAssetCollection;
 
-@end
+@end*/
 
 // 沙盒相册,原来是作为私有类使用,现在提取出来放在NBUAssetsGroup.h中作为公有类使用
 /*@interface NBUDirectoryAssetsGroup : NBUAssetsGroup
@@ -423,7 +423,7 @@
             // 修改为全部取缩略图
             posterFileURL = [[NSURL alloc] initFileURLWithPath:[[directoryURL.path stringByAppendingPathComponent:NBUFileAsset.thumbnailDir] stringByAppendingPathComponent:posterFileURL.path.lastPathComponent]];
             //}
-            if (![@"Decrypted" isEqualToString:name]) {//如果是需要解密的数据
+            if (![NBUAssetUtils.HEICDirectory isEqualToString:name]) {//如果是需要解密的数据
                 _posterImage = [NBUAssetUtils decryImageWithPath:posterFileURL.path];
             } else {
                 _posterImage = [[UIImage imageWithContentsOfFile:posterFileURL.path] thumbnailWithSize:[NBUAsset thumbnailSize]];

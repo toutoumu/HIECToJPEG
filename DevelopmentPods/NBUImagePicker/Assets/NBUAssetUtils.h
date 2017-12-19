@@ -26,6 +26,39 @@
 + (NSString *)documentsDirectory;
 
 /**
+ * HEIC文件目录
+ * @return
+ */
++ (NSString *)HEICDirectory;
+
+
+/**
+ * JPEG文件目录
+ * @return
+ */
++ (NSString *)JPEGDirectory;
+
+
+/**
+ * Deleted(回收站)文件目录
+ * @return
+ */
++ (NSString *)DeletedDirectory;
+
+/**
+ * (裁剪后)编辑后图片目录
+ * @return
+ */
++ (NSString *)CropDirectory;
+
+/**
+ * Video(视频)文件目录
+ * @return
+ */
++ (NSString *)VideoDirectory;
+
+
+/**
  *  在document目录下创建相册
  *  @param albumName 相册名称 eg:albumName
  *  @return 包含相册名称的路径 eg:/data/albumName
@@ -39,6 +72,20 @@
 + (NSString *)createFileName;
 
 /**
+ * 创建文件名称
+ * @param type 0:HEIC 1:JPEG
+ * @return
+ */
++ (NSString *)getFileName:(NSUInteger)type;
+
+/**
+ * 是否为HEIC
+ * @param asset
+ * @return
+ */
++ (BOOL)isHEIC:(PHAsset *)asset;
+
+/**
  *  获取所有相册名称
  *  @return 相册名称列表
  */
@@ -50,18 +97,20 @@
  *  @param data 图片数据 只有HEIF(HEIC)格式,这个值才会不为nil
  *  @param albumName 相册名称 eg:album
  *  @param fileName  文件名称 eg:abc.jpg
+ *  @param encodeType 0:HEIC 1:JPEG
  *  @return 保存是否成功
  */
-+ (BOOL)saveImage:(UIImage *)image imageData:(NSData *)data toAlubm:(NSString *)albumName withFileName:(NSString *)fileName;
++ (BOOL)saveImage:(UIImage *)image imageData:(NSData *)data toAlubm:(NSString *)albumName withFileName:(NSString *)fileName encodeType:(NSUInteger)encodeType;
 
 /**
  * 保存视频
  * @param image 视频图片
  * @param albumName  相册名称 eg:album
  * @param fileName 文件名称  eg:xxx.mp4
+ * @param encodeType 0:HEIC 1:JPEG
  * @return 是否成功
  */
-+ (BOOL)saveVideo:(UIImage *)image toAlubm:(NSString *)albumName fileName:(NSString *)fileName;
++ (BOOL)saveVideo:(UIImage *)image toAlubm:(NSString *)albumName fileName:(NSString *)fileName encodeType:(NSUInteger)encodeType;
 
 
 /**

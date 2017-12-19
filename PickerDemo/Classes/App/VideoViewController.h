@@ -27,6 +27,7 @@
 
 @property(assign, nonatomic) IBOutlet UILabel *picture;
 
+
 @end
 
 #endif /* VideoViewController_h */

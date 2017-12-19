@@ -99,6 +99,27 @@ NSData *UIImageHEICRepresentation(UIImage *const image, const CGFloat quality) {
     return _documentsDirectory;
 }
 
++ (NSString *)HEICDirectory {
+    return @"HEIC";
+}
+
++ (NSString *)JPEGDirectory {
+    return @"JPEG";
+}
+
++ (NSString *)DeletedDirectory {
+    return @"Deleted";
+}
+
++ (NSString *)VideoDirectory {
+    return @"Video";
+}
+
++ (NSString *)CropDirectory {
+    return @"Crop";
+}
+
+
 #pragma mark 生成文件名
 
 + (NSString *)createFileName {
@@ -107,6 +128,33 @@ NSData *UIImageHEICRepresentation(UIImage *const image, const CGFloat quality) {
         return [NSString stringWithFormat:@"%llu%@", recordTime, @".HEIC"];
     } else {
         return [NSString stringWithFormat:@"%llu%@", recordTime, @".jpg"];
+    }
+}
+
++ (NSString *)getFileName:(NSUInteger)type {
+    UInt64 recordTime = (UInt64) ([[NSDate date] timeIntervalSince1970] * 1000);
+    if (@available(iOS 11.0, *) && type == 0) {
+        return [NSString stringWithFormat:@"%llu%@", recordTime, @".HEIC"];
+    } else {
+        return [NSString stringWithFormat:@"%llu%@", recordTime, @".jpg"];
+    }
+}
+
++ (BOOL)isHEIC:(PHAsset *)asset {
+    if (@available(iOS 11.0, *)) {
+        __block BOOL isHEIF = NO;
+        NSArray *resourceList = [PHAssetResource assetResourcesForAsset:asset];
+        [resourceList enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+            PHAssetResource *resource = obj;
+            NSString *UTI = resource.uniformTypeIdentifier;
+            if ([UTI isEqualToString:AVFileTypeHEIF] || [UTI isEqualToString:AVFileTypeHEIC]) {
+                isHEIF = YES;
+                *stop = YES;
+            }
+        }];
+        return isHEIF;
+    } else {
+        return NO;
     }
 }
 
@@ -165,35 +213,35 @@ NSData *UIImageHEICRepresentation(UIImage *const image, const CGFloat quality) {
 
 #pragma mark 保存相片到指定相册
 
-+ (BOOL)saveImage:(UIImage *)image imageData:(NSData *)data toAlubm:(NSString *)albumName withFileName:(NSString *)fileName {
++ (BOOL)saveImage:(UIImage *)image imageData:(NSData *)data toAlubm:(NSString *)albumName withFileName:(NSString *)fileName encodeType:(NSUInteger)encodeType {
     NSString *albumPath = [_documentsDirectory stringByAppendingPathComponent:albumName];//相册路径
     NSString *fullName; //临时存储保存的文件全路径名称
     BOOL success;//是否成功
 
     //原图
     fullName = [albumPath stringByAppendingPathComponent:fileName];// 相册名+文件名
-    success = [self encryptImage:image imageData:data imageType:0 toPath:fullName withPwd:fileName];
+    success = [self encryptImage:image imageData:data imageType:0 toPath:fullName withPwd:fileName encodeType:encodeType];
     if (!success) {return success;}
 
     //预览图
     UIImage *fullScreenImage = [image imageDonwsizedToFit:[NBUFileAsset fullScreenSize]];//预览图图片对象
     NSString *fullScreenDir = [albumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];//预览图文件夹 相册名+预览图文件夹名称
     fullName = [fullScreenDir stringByAppendingPathComponent:fileName];//预览图全路径文件名
-    success = [self encryptImage:fullScreenImage imageData:nil imageType:1 toPath:fullName withPwd:fileName];
+    success = [self encryptImage:fullScreenImage imageData:nil imageType:1 toPath:fullName withPwd:fileName encodeType:encodeType];
     if (!success) {return success;}
 
     //缩略图,由于thumbnailWithSize需要的尺寸是point值所以传thumbnailSizeNoScale
     UIImage *thumbImage = [fullScreenImage thumbnailWithSize:[NBUFileAsset thumbnailSizeNoScale]];
     NSString *thumbPath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
     fullName = [thumbPath stringByAppendingPathComponent:fileName];
-    success = [self encryptImage:thumbImage imageData:nil imageType:2 toPath:fullName withPwd:fileName];
+    success = [self encryptImage:thumbImage imageData:nil imageType:2 toPath:fullName withPwd:fileName encodeType:encodeType];
     if (!success) {return success;}
     return YES;
 }
 
 #pragma mark 保存视频到相册
 
-+ (BOOL)saveVideo:(UIImage *)image toAlubm:(NSString *)albumName fileName:(NSString *)fileName; {
++ (BOOL)saveVideo:(UIImage *)image toAlubm:(NSString *)albumName fileName:(NSString *)fileName encodeType:(NSUInteger)encodeType; {
     NSString *albumPath = [_documentsDirectory stringByAppendingPathComponent:albumName];//相册路径
     NSString *fullName; //临时存储保存的文件全路径名称
     BOOL success;
@@ -201,14 +249,14 @@ NSData *UIImageHEICRepresentation(UIImage *const image, const CGFloat quality) {
     UIImage *fullScreenImage = [image imageDonwsizedToFit:[NBUFileAsset fullScreenSize]];//预览图图片对象
     NSString *fullScreenDir = [albumPath stringByAppendingPathComponent:[NBUFileAsset fullScreenDir]];//预览图文件夹 相册名+预览图文件夹名称
     fullName = [fullScreenDir stringByAppendingPathComponent:fileName];//预览图全路径文件名
-    success = [self encryptImage:fullScreenImage imageData:nil imageType:1 toPath:fullName withPwd:fileName];
+    success = [self encryptImage:fullScreenImage imageData:nil imageType:1 toPath:fullName withPwd:fileName encodeType:encodeType];
     if (!success) {return success;}
 
     //缩略图,由于thumbnailWithSize需要的尺寸是point值所以传thumbnailSizeNoScale
     UIImage *thumbImage = [fullScreenImage thumbnailWithSize:[NBUFileAsset thumbnailSizeNoScale]];
     NSString *thumbPath = [albumPath stringByAppendingPathComponent:[NBUFileAsset thumbnailDir]];
     fullName = [thumbPath stringByAppendingPathComponent:fileName];
-    success = [self encryptImage:thumbImage imageData:nil imageType:2 toPath:fullName withPwd:fileName];
+    success = [self encryptImage:thumbImage imageData:nil imageType:2 toPath:fullName withPwd:fileName encodeType:encodeType];
     if (!success) {return success;}
 
     return YES;
@@ -272,8 +320,10 @@ NSData *UIImageHEICRepresentation(UIImage *const image, const CGFloat quality) {
         NBULogError(@"Error: %@ %@", THIS_METHOD, @"文件不存在");
         return nil;
     }
+    return [UIImage imageWithContentsOfFile:path];
 
-    NSError *error;
+    // 下面是解密操作
+    /*NSError *error;
     NSString *pwd = path.lastPathComponent;
     NSData *inData = [NSData dataWithContentsOfFile:path];
     NSData *outData = [RNDecryptor decryptData:inData withSettings:kRNCryptorAES256Settings password:pwd error:&error];
@@ -282,7 +332,7 @@ NSData *UIImageHEICRepresentation(UIImage *const image, const CGFloat quality) {
         NBULogError(@"Error: %@ %@", THIS_METHOD, error);
         return nil;
     }
-    return [UIImage imageWithData:outData];
+    return [UIImage imageWithData:outData];*/
 }
 
 
@@ -372,14 +422,12 @@ NSData *UIImageHEICRepresentation(UIImage *const image, const CGFloat quality) {
  *  @param type 0:原图 1:全屏图片 2:缩略图
  *  @param path  保存路径 /data/images/xxx.jpg
  *  @param pwd   密码
+ *  @param encodeType 0:HEIC 1:JPEG
  *
  *  @return 是否成功
  */
-+ (BOOL)encryptImage:(UIImage *)image imageData:(NSData *)data imageType:(NSInteger)type toPath:(NSString *)path withPwd:(NSString *)pwd {
-    //    NSDate* tmpStartData = [NSDate date];
-    //    NBULogInfo(@"执行时间 = %f",  [[NSDate date] timeIntervalSinceDate:tmpStartData]);
-
-    if (@available(iOS 11.0, *)) {
++ (BOOL)encryptImage:(UIImage *)image imageData:(NSData *)data imageType:(NSInteger)type toPath:(NSString *)path withPwd:(NSString *)pwd encodeType:(NSUInteger)encodeType {
+    if (@available(iOS 11.0, *) && encodeType == 0) {
         if (data == nil || data.length == 0) {
             data = UIImageHEICRepresentation(image, (CGFloat) (0.8 - type * 0.3));
             if (data == nil || data.length == 0) {// 如果设备不支持 HEIF(HEIC) 格式
@@ -390,7 +438,13 @@ NSData *UIImageHEICRepresentation(UIImage *const image, const CGFloat quality) {
         data = UIImageJPEGRepresentation(image, (CGFloat) (0.8 - type * 0.3));
     }
 
-    NSError *error;
+    if (data) {
+        return [data writeToFile:path atomically:YES];
+    }
+
+    return NO;
+    // 如果数据需要加密请使用下面方法
+    /*NSError *error;
     NSData *encryptedData = [RNEncryptor encryptData:data withSettings:kRNCryptorAES256Settings password:pwd error:&error];
 
     if (error != nil) {
@@ -398,7 +452,7 @@ NSData *UIImageHEICRepresentation(UIImage *const image, const CGFloat quality) {
         return NO;
     }
 
-    return [encryptedData writeToFile:path atomically:true];
+    return [encryptedData writeToFile:path atomically:true];*/
 }
 
 

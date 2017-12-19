@@ -110,6 +110,14 @@
 
 @end
 
+/**
+ * 8.x以上系统使用 原来是作为私有类使用,现在提取出来放在NBUAssetsGroup.h中作为公有类使用
+ */
+@interface NBUPHAssetsGroup : NBUAssetsGroup <PHPhotoLibraryChangeObserver>
+
+- (instancetype)initWithPHAssetCollection:(PHAssetCollection *)PHAssetCollection;
+
+@end
 
 /**
  * 沙盒相册,原来是放在NBUAssetsGroup.m文件中作为私有类使用,现在提取出来作为公有类使用
