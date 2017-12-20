@@ -71,18 +71,6 @@
 #pragma mark 退到后台, 按下home键
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
-    // 应用程序退到后台, 如果当前还是启动应用程序时候的密码输入界面,或者是已经输入密码进入了相机页面,那么堆栈不需要清空.
-    UIViewController *controller = self.navController.viewControllers.lastObject;
-    if (controller == nil) return;
-    if ([controller isMemberOfClass:[VideoViewController class]]) {
-        return;//这些页面退到后台不关闭
-    }
-    // 如果有弹出窗体关闭掉
-    if ([controller presentedViewController] != nil) {
-        [controller dismissViewControllerAnimated:NO completion:nil];
-    }
-    // 如果不是密码页面,或者是拍摄页面,清空堆栈
-    [self.navController popToRootViewControllerAnimated:NO];
 }
 
 #pragma mark 程序从后台回到前台进入前台 打开应用, 从其他应用切换到该应用

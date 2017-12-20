@@ -102,13 +102,13 @@
 		58B83E206802FD262CCFC443 /* VideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoViewController.h; path = Classes/App/VideoViewController.h; sourceTree = "<group>"; };
 		58B83F08EEA3429421421C95 /* UIAlertView+Blocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIAlertView+Blocks.h"; path = "Classes/Extend/UIAlertView+Blocks.h"; sourceTree = "<group>"; };
 		8077FEE0B936D6CD5149EC11 /* Pods-PickerDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PickerDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-PickerDemo/Pods-PickerDemo.release.xcconfig"; sourceTree = "<group>"; };
-		E58DA581184339C100D60BBC /* PickerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PickerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E58DA581184339C100D60BBC /* CameraDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CameraDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E58DA584184339C100D60BBC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		E58DA586184339C100D60BBC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		E58DA588184339C100D60BBC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		E58DA58C184339C100D60BBC /* PickerDemo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PickerDemo-Info.plist"; sourceTree = "<group>"; };
+		E58DA58C184339C100D60BBC /* CameraDemo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CameraDemo-Info.plist"; sourceTree = "<group>"; };
 		E58DA590184339C100D60BBC /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		E58DA592184339C100D60BBC /* PickerDemo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PickerDemo-Prefix.pch"; sourceTree = "<group>"; };
+		E58DA592184339C100D60BBC /* CameraDemo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CameraDemo-Prefix.pch"; sourceTree = "<group>"; };
 		E58DA5A2184339C100D60BBC /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		E58DA5A9184339C100D60BBC /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
@@ -244,7 +244,7 @@
 		E58DA582184339C100D60BBC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E58DA581184339C100D60BBC /* PickerDemo.app */,
+				E58DA581184339C100D60BBC /* CameraDemo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -278,9 +278,9 @@
 		E58DA58B184339C100D60BBC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				E58DA58C184339C100D60BBC /* PickerDemo-Info.plist */,
+				E58DA58C184339C100D60BBC /* CameraDemo-Info.plist */,
 				E58DA590184339C100D60BBC /* main.m */,
-				E58DA592184339C100D60BBC /* PickerDemo-Prefix.pch */,
+				E58DA592184339C100D60BBC /* CameraDemo-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -288,9 +288,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		E58DA580184339C100D60BBC /* PickerDemo */ = {
+		E58DA580184339C100D60BBC /* CameraDemo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E58DA5B9184339C100D60BBC /* Build configuration list for PBXNativeTarget "PickerDemo" */;
+			buildConfigurationList = E58DA5B9184339C100D60BBC /* Build configuration list for PBXNativeTarget "CameraDemo" */;
 			buildPhases = (
 				B966AAE665DD13DCEDBA5FA9 /* [CP] Check Pods Manifest.lock */,
 				E58DA57D184339C100D60BBC /* Sources */,
@@ -303,9 +303,9 @@
 			);
 			dependencies = (
 			);
-			name = PickerDemo;
+			name = CameraDemo;
 			productName = PickerDemo;
-			productReference = E58DA581184339C100D60BBC /* PickerDemo.app */;
+			productReference = E58DA581184339C100D60BBC /* CameraDemo.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -324,7 +324,7 @@
 					};
 				};
 			};
-			buildConfigurationList = E58DA57C184339C100D60BBC /* Build configuration list for PBXProject "PickerDemo" */;
+			buildConfigurationList = E58DA57C184339C100D60BBC /* Build configuration list for PBXProject "CameraDemo" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -338,7 +338,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E58DA580184339C100D60BBC /* PickerDemo */,
+				E58DA580184339C100D60BBC /* CameraDemo */,
 			);
 		};
 /* End PBXProject section */
@@ -624,16 +624,16 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = U6N4EJ8787;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "PickerDemo/PickerDemo-Prefix.pch";
+				GCC_PREFIX_HEADER = "PickerDemo/CameraDemo-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"DEBUG=1",
 				);
-				INFOPLIST_FILE = "PickerDemo/PickerDemo-Info.plist";
+				INFOPLIST_FILE = "PickerDemo/CameraDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = jp.co.cyberagent.nbu.PickerDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.toutoumu.camera.heic.jpeg.convert;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -657,16 +657,16 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = U6N4EJ8787;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "PickerDemo/PickerDemo-Prefix.pch";
+				GCC_PREFIX_HEADER = "PickerDemo/CameraDemo-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"TESTING=1",
 				);
-				INFOPLIST_FILE = "PickerDemo/PickerDemo-Info.plist";
+				INFOPLIST_FILE = "PickerDemo/CameraDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = jp.co.cyberagent.nbu.PickerDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.toutoumu.camera.heic.jpeg.convert;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -679,7 +679,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E58DA57C184339C100D60BBC /* Build configuration list for PBXProject "PickerDemo" */ = {
+		E58DA57C184339C100D60BBC /* Build configuration list for PBXProject "CameraDemo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E58DA5B7184339C100D60BBC /* Debug */,
@@ -688,7 +688,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E58DA5B9184339C100D60BBC /* Build configuration list for PBXNativeTarget "PickerDemo" */ = {
+		E58DA5B9184339C100D60BBC /* Build configuration list for PBXNativeTarget "CameraDemo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E58DA5BA184339C100D60BBC /* Debug */,

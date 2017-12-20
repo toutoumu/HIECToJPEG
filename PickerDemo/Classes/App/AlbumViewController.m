@@ -17,7 +17,7 @@
     NBUAssetsGroup *_group;// 当前相册引用
     NSMutableArray *_asses;// 图片数据集合
     NSMutableArray *_selections;// 与图片数据集合一一对应,是否选中
-    MWPhotoBrowser *browser;
+    MWPhotoBrowser *_browser;
 }
 
 // 类初始化
@@ -45,9 +45,6 @@
     return self;
 }
 
-#pragma mark - -
-#pragma mark - -------生命周期方法
-
 /**
  * 状态栏样式
  * @return
@@ -55,6 +52,9 @@
 - (UIStatusBarStyle)preferredStatusBarStyle {//
     return UIStatusBarStyleLightContent;
 }
+
+#pragma mark - -
+#pragma mark - -------生命周期方法
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -77,49 +77,21 @@
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             _group = group;
             // 初始化图片浏览器
-            browser = [[MWPhotoBrowser alloc] initWithDelegate:weakSelf];
-            browser.displayActionButton = YES;//分享按钮
-            browser.displayNavArrows = YES;//翻页箭头
-            browser.displaySelectionButtons = NO;//是否显示选择按钮
-            browser.alwaysShowControls = NO;//是否总是显示底部工具条
-            browser.zoomPhotosToFill = NO;//图片是否拉伸填充屏幕
-            browser.enableGrid = YES;//启用网格列表
-            browser.startOnGrid = YES;//从网格列表显示
-            browser.enableSwipeToDismiss = YES;
-            browser.autoPlayOnAppear = NO;//显示时播放
-            browser.currentAlbumName = group.name;//当前相册名称
-            [browser setCurrentPhotoIndex:0];
+            _browser = [[MWPhotoBrowser alloc] initWithDelegate:weakSelf];
+            _browser.displayActionButton = YES;//分享按钮
+            _browser.displayNavArrows = YES;//翻页箭头
+            _browser.displaySelectionButtons = NO;//是否显示选择按钮
+            _browser.alwaysShowControls = NO;//是否总是显示底部工具条
+            _browser.zoomPhotosToFill = NO;//图片是否拉伸填充屏幕
+            _browser.enableGrid = YES;//启用网格列表
+            _browser.startOnGrid = YES;//从网格列表显示
+            _browser.enableSwipeToDismiss = YES;
+            _browser.autoPlayOnAppear = NO;//显示时播放
+            _browser.currentAlbumName = group.name;//当前相册名称
+            [_browser setCurrentPhotoIndex:0];
             //图片列表页面右上角按钮点击事件block
-            browser.optionButtonClickBlock = ^(MWPhotoBrowser *photoBrowser) {
-                [[[UIActionSheet alloc]
-                        initWithTitle:@"选择操作"
-                     cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{}]
-                destructiveButtonItem:
-                        [RIButtonItem itemWithLabel:@"删除选中项" action:^{
-                            [photoBrowser.delegate deleteSelected:photoBrowser];
-                        }]
-                     otherButtonItems:
-                             [RIButtonItem itemWithLabel:@"全选" action:^{
-                                 [photoBrowser.delegate photoBrowser:photoBrowser toggleSelect:YES];
-                             }],
-                             [RIButtonItem itemWithLabel:@"全不选" action:^{
-                                 [photoBrowser.delegate photoBrowser:photoBrowser toggleSelect:NO];
-                             }],
-                             [RIButtonItem itemWithLabel:@"选择模式" action:^{
-                                 [photoBrowser.delegate photoBrowser:photoBrowser toggleSelectModel:YES];
-                             }],
-                             [RIButtonItem itemWithLabel:@"浏览模式" action:^{
-                                 [photoBrowser.delegate photoBrowser:photoBrowser toggleSelectModel:NO];
-                             }],
-                             [RIButtonItem itemWithLabel:[photoBrowser.currentAlbumName isEqualToString:NBUAssetUtils.HEICDirectory] ? @"导出选中项" : @"转换选中项" action:^{//导出或解密选择项
-                                 [photoBrowser.delegate exportSelected:photoBrowser];
-                             }],
-                                [_group isMemberOfClass:[NBUDirectoryAssetsGroup class]] && ![_group.name isEqualToString:NBUAssetUtils.HEICDirectory] ?
-                                        [RIButtonItem itemWithLabel:@"移动选择项到" action:^{
-                                            // 1:移动选中项 2: 移动指定索引
-                                            [photoBrowser.delegate showMove:photoBrowser action:1];
-                                        }] : nil, nil
-                ] showInView:photoBrowser.view];
+            _browser.optionButtonClickBlock = ^(MWPhotoBrowser *photoBrowser) {
+                [weakSelf showOptionActionSheet];
             };
 
             // 加载数据
@@ -133,7 +105,7 @@
                                if (error) return;
                                _asses = (NSMutableArray *) assets;
                                // 跳转到相片列表页面
-                               [weakSelf.navigationController pushViewController:browser animated:YES];
+                               [weakSelf.navigationController pushViewController:_browser animated:YES];
                                // 重置选中集合 Reset selections
                                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                                    if (finished) {//数据已经全部加载完成
@@ -419,87 +391,142 @@
  *  @param photoBrowser 图片浏览器引用
  */
 - (void)exportSelected:(MWPhotoBrowser *)photoBrowser {
-    NSString *message = @"解密";
-    if ([_group.name isEqualToString:NBUAssetUtils.HEICDirectory]) {
-        message = @"导出";
-    }
     // 不是沙盒文件夹文件不能执行操作
     if (![_group isMemberOfClass:[NBUDirectoryAssetsGroup class]]) {
         [photoBrowser showProgressHUDWithMessage:@""];
-        [photoBrowser showProgressHUDCompleteMessage:[NSString stringWithFormat:@"该相册文件不能%@", message]];
+        [photoBrowser showProgressHUDCompleteMessage:@"该相册文件不能导出"];
         return;
     }
     // 判断是否选择了文件
     if (![self hasSelectedItem]) {
         [photoBrowser showProgressHUDWithMessage:@""];
-        [photoBrowser showProgressHUDCompleteMessage:[NSString stringWithFormat:@"请选择要%@的文件", message]];
+        [photoBrowser showProgressHUDCompleteMessage:@"请选择要导出的文件"];
         return;
     }
     void (^exportBlock)() = ^() {// 导出或解密操作
-        [photoBrowser showProgressHUDWithMessage:message];
+        [photoBrowser showProgressHUDWithMessage:@"正在导出..."];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             // 获取选择的文件
             NSMutableArray *selectedAssets = [[NSMutableArray alloc] init];
             if (_selections != nil && _selections.count > 0) {
                 for (NSUInteger i = 0; i < _selections.count; i++) {
                     if ([_selections[i] boolValue]) {
-                        NBUAsset *asset = _asses[i];
-                        [selectedAssets addObject:asset];
+                        [selectedAssets addObject:_asses[i]];
                     }
                 }
             }
 
-            if ([_group.name isEqualToString:NBUAssetUtils.HEICDirectory]) {//解密相册文件,导出到系统相册
-                [NBUAssetsLibrary addAll:selectedAssets toAlbum:@"HEIC" withBlock:^(NSError *error, BOOL finish, int index) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        if (index == selectedAssets.count) {
-                            [photoBrowser setProgressMessage:@"正在保存请稍后..."];
-                        } else {
-                            NSString *messageResult = [NSString stringWithFormat:@"%d/%lu", index, (unsigned long) selectedAssets.count];
-                            [photoBrowser setProgressMessage:messageResult];
-                        }
-                        if (finish) {// 如果已经执行完成
-                            _isUpdated = true;// 由于有可能显示了系统相册所以需要更新数据
-                            if (error) {// 执行完成但是出错了
-                                [photoBrowser showProgressHUDCompleteMessage:@"部分导出成功"];
-                                [self showAlertWithTitle:@"警告" message:@"导出失败"];
-                            } else {// 正确执行完成
-                                [photoBrowser showProgressHUDCompleteMessage:@"导出成功"];
-                            }
-                        }
-                    });
-                }];
-            } else {//加密相册文件,解密文件
-                int i = 0;
-                for (NBUFileAsset *asset in selectedAssets) {
-                    i++;
-                    NSString *fileName = asset.fullResolutionImagePath.lastPathComponent;
-                    BOOL isSuccess = [NBUAssetUtils saveImage:asset.fullResolutionImage imageData:nil toAlubm:NBUAssetUtils.HEICDirectory withFileName:fileName encodeType:0];
-                    NSString *messageResult = [NSString stringWithFormat:@"%d/%lu", i, (unsigned long) selectedAssets.count];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [photoBrowser setProgressMessage:messageResult];
-                        if (!isSuccess) {//解密失败
-                            [photoBrowser showProgressHUDCompleteMessage:@"部分转换HEIC成功"];
-                            [self showAlertWithTitle:@"警告" message:@"部分转换HEIC成功"];
-                        }
-                        if (i == selectedAssets.count) {//解密成功
-                            [photoBrowser showProgressHUDCompleteMessage:@"转换HEIC成功"];
-                        }
-                    });
-                    if (isSuccess) {
-                        _isUpdated = YES;
-                    }
-                    if (!isSuccess) {
-                        return;
-                    }
-                }
+            //导出到系统相册
+            [NBUAssetsLibrary addAll:selectedAssets toAlbum:@"HEIC" withBlock:^(NSError *error, BOOL finish, int index) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [photoBrowser showProgressHUDCompleteMessage:[NSString stringWithFormat:@"%@成功", message]];
+                    if (index == selectedAssets.count) {
+                        [photoBrowser setProgressMessage:@"正在保存请稍后..."];
+                    } else {
+                        NSString *messageResult = [NSString stringWithFormat:@"%d/%lu", index, (unsigned long) selectedAssets.count];
+                        [photoBrowser setProgressMessage:messageResult];
+                    }
+                    if (finish) {// 如果已经执行完成
+                        _isUpdated = true;// 由于有可能显示了系统相册所以需要更新数据
+                        if (error) {// 执行完成但是出错了
+                            [photoBrowser showProgressHUDCompleteMessage:@"部分导出成功"];
+                            [self showAlertWithTitle:@"警告" message:@"部分文件导出成功"];
+                        } else {// 正确执行完成
+                            [photoBrowser showProgressHUDCompleteMessage:@"导出成功"];
+                        }
+                    }
                 });
-            }//end of 解密文件
+            }];
         });
     };
-    [self showAlertWithTitle:@"警告" message:[NSString stringWithFormat:@"确定要%@?", message] okTitle:[NSString stringWithFormat:@"%@", message] action:exportBlock];
+    [self showAlertWithTitle:@"警告" message:@"确定要导出?" okTitle:[NSString stringWithFormat:@"%@", @"导出"] action:exportBlock];
+}
+
+#pragma[转换] 选择的文件
+
+- (void)convertSelected:(MWPhotoBrowser *)photoBrowser {
+    // 获取选择的文件
+    NSMutableArray *selectedAssets = [[NSMutableArray alloc] init];
+    if (_selections != nil && _selections.count > 0) {
+        for (NSUInteger i = 0; i < _selections.count; i++) {
+            if ([_selections[i] boolValue]) {
+                NBUAsset *asset = _asses[i];
+                if(asset.type == NBUAssetTypeVideo){
+                    continue;
+                }
+                [selectedAssets addObject:asset];
+            }
+        }
+    }
+    if (selectedAssets.count == 0) {
+        [photoBrowser showProgressHUDWithMessage:@""];
+        [photoBrowser showProgressHUDCompleteMessage:@"请选择文件"];
+        return;
+    }
+    [photoBrowser showProgressHUDWithMessage:@"转换中"];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        if ([_group isMemberOfClass:[NBUPHAssetsGroup class]]) {// 系统相册
+            for (NSUInteger i = 0; i < selectedAssets.count; i++) {
+                NBUAsset *asset = selectedAssets[i];
+                if (asset == nil) {
+                    [photoBrowser showProgressHUDCompleteMessage:@"数据有误"];
+                    return;
+                }
+                NSUInteger type = [NBUAssetUtils isHEIC:asset.PHAsset] ? 1 : 0;// 0:HEIC 1:JPEG
+                NSString *albumName = type == 0 ? NBUAssetUtils.HEICDirectory : NBUAssetUtils.JPEGDirectory;
+                [NBUAssetUtils saveImage:asset.fullResolutionImage
+                               imageData:nil
+                                 toAlubm:albumName
+                            withFileName:[NBUAssetUtils getFileName:type]
+                              encodeType:type];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSString *messageResult = [NSString stringWithFormat:@"%lu/%lu", (unsigned long)i, (unsigned long) selectedAssets.count];
+                    [photoBrowser setProgressMessage:messageResult];
+                });
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                _isUpdated = YES;
+                [photoBrowser showProgressHUDCompleteMessage:@"转换成功"];
+            });
+        } else if ([_group.name isEqualToString:NBUAssetUtils.HEICDirectory] || [_group.name isEqualToString:NBUAssetUtils.CropDirectory]) {
+            for (NSUInteger i = 0; i < selectedAssets.count; i++) {
+                NBUAsset *asset = selectedAssets[i];
+                if (asset == nil) {
+                    [photoBrowser showProgressHUDCompleteMessage:@"数据有误"];
+                    return;
+                }
+                [NBUAssetUtils saveImage:asset.fullResolutionImage
+                               imageData:nil
+                                 toAlubm:NBUAssetUtils.JPEGDirectory
+                            withFileName:[NBUAssetUtils getFileName:1]
+                              encodeType:1];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    _isUpdated = YES;
+                    [photoBrowser showProgressHUDCompleteMessage:@"转换成功"];
+                });
+            }
+        } else if ([_group.name isEqualToString:NBUAssetUtils.JPEGDirectory]) {
+            for (NSUInteger i = 0; i < selectedAssets.count; i++) {
+                NBUAsset *asset = selectedAssets[i];
+                if (asset == nil) {
+                    [photoBrowser showProgressHUDCompleteMessage:@"数据有误"];
+                    return;
+                }
+                [NBUAssetUtils saveImage:asset.fullResolutionImage
+                               imageData:nil
+                                 toAlubm:NBUAssetUtils.HEICDirectory
+                            withFileName:[NBUAssetUtils getFileName:0]
+                              encodeType:0];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    _isUpdated = YES;
+                    [photoBrowser showProgressHUDCompleteMessage:@"转换成功"];
+                });
+            }
+        } else if ([_group.name isEqualToString:NBUAssetUtils.DeletedDirectory]) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [photoBrowser showProgressHUDCompleteMessage:@"该目录文件不能转换"];
+            });
+        }
+    });
 }
 
 #pragma mark[移动] 选择的文件
@@ -576,8 +603,7 @@
 
     // 如果是沙盒文件,且不是 [Deleted] 或 [HEIC] 相册的文件直接移动到 [Deleted]
     if ([_group isMemberOfClass:[NBUDirectoryAssetsGroup class]] &&//是沙盒
-            ![_group.name isEqualToString:NBUAssetUtils.DeletedDirectory] &&//不是回收站
-            ![_group.name isEqualToString:NBUAssetUtils.HEICDirectory]) {//不是解密文件夹
+            ![_group.name isEqualToString:NBUAssetUtils.DeletedDirectory]) {//不是回收站
         // 执行文件移动操作
         [self photoBrowser:photoBrowser moveSelectedToAlbum:NBUAssetUtils.DeletedDirectory];
         return;
@@ -663,8 +689,14 @@
 
 #pragma mark[移动文件] 对话框
 
+/**
+ * [移动文件] 对话框
+ * @param photoBrowser
+ * @param action  1:移动选中项 2: 移动指定索引
+ */
 - (void)showMove:(MWPhotoBrowser *)photoBrowser action:(int)action {
-    if (![_group isMemberOfClass:[NBUDirectoryAssetsGroup class]] || [_group.name isEqualToString:NBUAssetUtils.HEICDirectory]) {
+    // 系统相册不允许移动
+    if ([_group isMemberOfClass:[NBUPHAssetsGroup class]]) {
         [photoBrowser showProgressHUDWithMessage:@""];
         [photoBrowser showProgressHUDCompleteMessage:@"该相册文件不能移动"];
         return;
@@ -687,7 +719,7 @@
     controller.excludeAlbumNames = [[NSMutableArray alloc] init];
     [controller.excludeAlbumNames addObject:_group.name];
     [controller.excludeAlbumNames addObject:NBUAssetUtils.DeletedDirectory];
-    [controller.excludeAlbumNames addObject:NBUAssetUtils.HEICDirectory];
+    //[controller.excludeAlbumNames addObject:NBUAssetUtils.HEICDirectory];
     // 设置选择相册页面返回按钮文字
     photoBrowser.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
                                                                                      style:UIBarButtonItemStylePlain
@@ -731,7 +763,7 @@
     //cropController.cancelButtonTitle = @"Title";// 取消按钮文字
 
     cropController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    [browser presentViewController:cropController animated:YES completion:nil];
+    [_browser presentViewController:cropController animated:YES completion:nil];
     //[self.navigationController pushViewController:cropController animated:YES];
 }
 
@@ -788,18 +820,17 @@
  * @return
  */
 - (BOOL)photoBrowser:(MWPhotoBrowser *)photoBrowser convertAtIndex:(NSUInteger)index option:(NSUInteger)option {
+    NBUAsset *asset = _asses[index];
+    if(asset.type == NBUAssetTypeVideo){
+        [photoBrowser showProgressHUDCompleteMessage:@"视频文件无法转换"];
+        return NO;
+    }
     NSString *message = option == 0 ? @"转换为HEIC" : @"转换为JPEG";
     NSString *albumName = option == 0 ? NBUAssetUtils.HEICDirectory : NBUAssetUtils.JPEGDirectory;
     void (^optionBlock)() = ^() {
         [photoBrowser showProgressHUDWithMessage:[NSString stringWithFormat:@"正在%@", message]];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            NBUAsset *asset = _asses[index];
-            NSString *fileName;
-            if ([asset isMemberOfClass:[NBUFileAsset class]]) {//沙盒文件使用原来的文件名
-                fileName = ((NBUFileAsset *) asset).fullResolutionImagePath.lastPathComponent;
-            } else {//系统相册使用新的文件名
-                fileName = [NBUAssetUtils getFileName:option];
-            }
+            NSString *fileName = [NBUAssetUtils getFileName:option];
             BOOL success = [NBUAssetUtils saveImage:asset.fullResolutionImage imageData:nil toAlubm:albumName withFileName:fileName encodeType:option];
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (success) {
@@ -824,14 +855,13 @@
         // 检查数据
         if (_asses == nil || _asses.count == 0 || _asses[index] == nil) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [photoBrowser showProgressHUDWithMessage:@"数据异常,删除失败"];
-                [photoBrowser showProgressHUDCompleteMessage:@"数据异常,删除失败"];
+                [photoBrowser showProgressHUDWithMessage:@"数据异常,移动失败"];
+                [photoBrowser showProgressHUDCompleteMessage:@"数据异常,移动失败"];
             });
             return;
         }
 
-        NBUAsset *asset = _asses[index];
-        if (![asset isMemberOfClass:[NBUFileAsset class]]) {
+        if ([_group isMemberOfClass:[NBUPHAssetsGroup class]]) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [photoBrowser showProgressHUDWithMessage:@""];
                 [photoBrowser showProgressHUDCompleteMessage:@"该相册不能移动"];
@@ -841,7 +871,7 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             [photoBrowser showProgressHUDWithMessage:@"正在移动..."];
         });
-        NBUFileAsset *temp = (NBUFileAsset *) asset;
+        NBUFileAsset *temp = (NBUFileAsset *) _asses[index];
         BOOL success = [NBUAssetUtils moveFile:temp from:_group.name toAlbum:destAlbumName];
         dispatch_async(dispatch_get_main_queue(), ^{
             if (success) {
@@ -873,21 +903,22 @@
  *  @return 是否删除成功
  */
 - (BOOL)photoBrowser:(MWPhotoBrowser *)photoBrowser deleteAtIndex:(NSUInteger)index {
-    void (^moveToDeleteBlock)()=^() {// 移动到 Deleted 相册
+
+    void (^moveToDeleteBlock)()=^() {// 移动到回收站
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             if (_asses == nil || _asses.count == 0 || _asses[index] == nil) {// 如果没有数据
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [photoBrowser showProgressHUDWithMessage:@"数据异常,删除失败"];
-                    [photoBrowser showProgressHUDCompleteMessage:@"数据异常,删除失败"];
+                    [photoBrowser showProgressHUDWithMessage:@"数据异常,移动到回收站失败"];
+                    [photoBrowser showProgressHUDCompleteMessage:@"数据异常,移动到回收站失败"];
                 });
                 return;
             }
 
             NBUAsset *asset = _asses[index];
             dispatch_async(dispatch_get_main_queue(), ^{
-                [photoBrowser showProgressHUDWithMessage:@"删除..."];
+                [photoBrowser showProgressHUDWithMessage:@"移动到回收站..."];
                 if (!asset.isEditable) {
-                    [photoBrowser showProgressHUDCompleteMessage:@"不能删除"];
+                    [photoBrowser showProgressHUDCompleteMessage:@"不能移动到回收站"];
                 }
             });
 
@@ -903,10 +934,10 @@
                     //if (_asses.count == 0) {//全部移动完成才刷新这个否则会有bug
                     [photoBrowser reloadGridData];
                     //}
-                    [photoBrowser showProgressHUDCompleteMessage:@"删除成功"];
+                    [photoBrowser showProgressHUDCompleteMessage:@"移动到回收站成功"];
                 } else {//移动文件失败
-                    [photoBrowser showProgressHUDCompleteMessage:@"删除失败"];
-                    [self showAlertWithTitle:@"警告" message:@"删除失败"];
+                    [photoBrowser showProgressHUDCompleteMessage:@"移动到回收站失败"];
+                    [self showAlertWithTitle:@"警告" message:@"移动到回收站失败"];
                 }
             });
         });
@@ -952,15 +983,15 @@
         });
     };
 
-    if ([_group isMemberOfClass:[NBUDirectoryAssetsGroup class]]) {
-        if ([_group.name isEqualToString:NBUAssetUtils.DeletedDirectory] || [_group.name isEqualToString:NBUAssetUtils.HEICDirectory]) {
-            // 如果是 Deleted ,或者 HEIC 相册,删除文件
+    if ([_group isMemberOfClass:[NBUPHAssetsGroup class]]) {//系统相册直接删除
+        deleteBlock();
+    } else if ([_group isMemberOfClass:[NBUDirectoryAssetsGroup class]]) {
+        if ([_group.name isEqualToString:NBUAssetUtils.DeletedDirectory]) {
+            // 如果是 回收站文件,删除文件
             [self showAlertWithTitle:@"警告" message:@"确定要删除,删除后文件将不可恢复?" okTitle:@"删除" action:deleteBlock];
-        } else {// 移动到 Deleted 相册
+        } else {// 移动到回收站
             moveToDeleteBlock();
         }
-    } else {//系统相册
-        deleteBlock();
     }
     return YES;
 }
@@ -983,6 +1014,10 @@
         [photoBrowser.delegate photoBrowser:photoBrowser exportAtIndex:index];
     };
 
+    void (^editBlock)() = ^() {// 编辑
+        [self photoBrowser:photoBrowser showCrop:((NBUAsset *) _asses[index]).fullResolutionImage];
+    };
+
     void (^convertHEICBlock)() = ^() {// 转换为HEIC
         [photoBrowser.delegate photoBrowser:photoBrowser convertAtIndex:index option:0];
     };
@@ -995,74 +1030,146 @@
         [photoBrowser.delegate showMove:photoBrowser action:2];
     };
 
-    void (^editBlock)() = ^() {//剪切,编辑
-        // 开始剪切
-        [self photoBrowser:photoBrowser showCrop:((NBUAsset *) _asses[index]).fullResolutionImage];
+    void (^putBack)()=^() {// 回收站文件,放回原处
+        if (![_group.name isEqualToString:NBUAssetUtils.DeletedDirectory]) {
+            [photoBrowser showProgressHUDWithMessage:@""];
+            [photoBrowser showProgressHUDCompleteMessage:@"该文件不能执行此操作"];
+            return;
+        }
+        NBUFileAsset *asset = _asses[index];
+        if (asset == nil) {
+            [photoBrowser showProgressHUDWithMessage:@""];
+            [photoBrowser showProgressHUDCompleteMessage:@"数据有误"];
+            return;
+        }
+        [photoBrowser showProgressHUDWithMessage:@"正在放回原处..."];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            Boolean success;
+            if ([[asset.fullResolutionImagePath lowercaseString] hasSuffix:@".heic"]) {
+                success=[NBUAssetUtils moveFile:asset from:_group.name toAlbum:NBUAssetUtils.HEICDirectory];
+            } else {
+               success = [NBUAssetUtils moveFile:asset from:_group.name toAlbum:NBUAssetUtils.JPEGDirectory];
+            }
+            if (success) {
+                _isUpdated = YES;
+                [_asses removeObject:asset];
+                // 重置选中项数据
+                NSUInteger count = [self numberOfPhotosInPhotoBrowser:photoBrowser];
+                [_selections removeAllObjects];
+                for (int i = 0; i < count; i++) {
+                    [_selections addObject:@NO];
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{// 刷新数据
+                    [photoBrowser reloadData];
+                    [photoBrowser reloadGridData];
+                    [photoBrowser showProgressHUDCompleteMessage:@"文件已经放回原处"];
+                });
+            }else{
+                dispatch_async(dispatch_get_main_queue(), ^{// 刷新数据
+                    [photoBrowser showProgressHUDCompleteMessage:@"操作失败"];
+                });
+            }
+        });
     };
 
+    if (@available(ios 11.0, *)) {
+        // 系统相册图片根据实际类型进行转换
+        if ([_group isMemberOfClass:[NBUPHAssetsGroup class]]) {
+            NBUAsset *asset = _asses[index];
+            bool isHEIC = [NBUAssetUtils isHEIC:asset.PHAsset];
+            [[[UIActionSheet alloc]
+                    initWithTitle:@"选择对该图片的操作"
+                 cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{
+                 }]
+            destructiveButtonItem:[RIButtonItem itemWithLabel:@"删除" action:deleteBlock]
+                 otherButtonItems:
+                         [RIButtonItem itemWithLabel:isHEIC ? @"转换JPEG" : @"转换为HEIC" action:isHEIC ? convertJPEGBlock : convertHEICBlock],
+                         [RIButtonItem itemWithLabel:@"编辑" action:editBlock], nil]
+                    showInView:photoBrowser.view];
+            return;
+        }
 
-    // 系统相册图片根据实际类型进行转换
-    if ([_group isMemberOfClass:[NBUPHAssetsGroup class]]) {
-        NBUAsset *asset = _asses[index];
-        bool isHEIC = [NBUAssetUtils isHEIC:asset.PHAsset];
-        [[[UIActionSheet alloc]
-                initWithTitle:@"选择对该图片的操作"
-             cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{
-             }]
-        destructiveButtonItem:[RIButtonItem itemWithLabel:@"删除" action:deleteBlock]
-             otherButtonItems:
-                     [RIButtonItem itemWithLabel:isHEIC ? @"转换JPEG" : @"转换为HEIC" action:isHEIC ? convertJPEGBlock : convertHEICBlock],
-                     [RIButtonItem itemWithLabel:@"编辑" action:editBlock], nil]
-                showInView:photoBrowser.view];
-        return;
-    }
+        // Crop和HEIC文件夹的文件,已经是HEIC格式
+        if ([_group.name isEqualToString:NBUAssetUtils.CropDirectory] ||
+                [_group.name isEqualToString:NBUAssetUtils.HEICDirectory]) {
+            [[[UIActionSheet alloc]
+                    initWithTitle:@"选择对该图片的操作"
+                 cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{
+                 }]
+            destructiveButtonItem:[RIButtonItem itemWithLabel:@"移动到回收站" action:deleteBlock]
+                 otherButtonItems:
+                         [RIButtonItem itemWithLabel:@"转换为JPEG" action:convertJPEGBlock],
+                         [RIButtonItem itemWithLabel:@"编辑" action:editBlock],
+                         [RIButtonItem itemWithLabel:@"导出" action:exportBlock], nil]
+                    showInView:photoBrowser.view];
+            return;
+        }
+        // JPEG文件夹的文件为JPEG类型
+        if ([_group.name isEqualToString:NBUAssetUtils.JPEGDirectory]) {
+            [[[UIActionSheet alloc]
+                    initWithTitle:@"选择对该图片的操作"
+                 cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{
+                 }]
+            destructiveButtonItem:[RIButtonItem itemWithLabel:@"移动到回收站" action:deleteBlock]
+                 otherButtonItems:
+                         [RIButtonItem itemWithLabel:@"转换为HEIC" action:convertHEICBlock],
+                         [RIButtonItem itemWithLabel:@"编辑" action:editBlock],
+                         [RIButtonItem itemWithLabel:@"导出" action:exportBlock], nil]
+                    showInView:photoBrowser.view];
+            return;
+        }
 
-    // Crop和HEIC文件夹的文件,已经是HEIC格式
-    if ([_group.name isEqualToString:NBUAssetUtils.CropDirectory] ||
-            [_group.name isEqualToString:NBUAssetUtils.HEICDirectory]) {
-        [[[UIActionSheet alloc]
-                initWithTitle:@"选择对该图片的操作"
-             cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{
-             }]
-        destructiveButtonItem:[RIButtonItem itemWithLabel:@"删除" action:deleteBlock]
-             otherButtonItems:
-                     [RIButtonItem itemWithLabel:@"转换为JPEG" action:convertJPEGBlock],
-                     [RIButtonItem itemWithLabel:@"编辑" action:editBlock],
-                     [RIButtonItem itemWithLabel:@"导出" action:exportBlock], nil]
-                showInView:photoBrowser.view];
-        return;
+        // 回收站的文件不清楚文件类型
+        if ([_group.name isEqualToString:NBUAssetUtils.DeletedDirectory]) {
+            [[[UIActionSheet alloc]
+                    initWithTitle:@"选择对该图片的操作"
+                 cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{
+                 }]
+            destructiveButtonItem:[RIButtonItem itemWithLabel:@"删除" action:deleteBlock]
+                 otherButtonItems:
+                         [RIButtonItem itemWithLabel:@"放回原处" action:putBack],
+                         [RIButtonItem itemWithLabel:@"编辑" action:editBlock],
+                         [RIButtonItem itemWithLabel:@"导出" action:exportBlock], nil]
+                    showInView:photoBrowser.view];
+            return;
+        }
+    } else {// IOS 11以下系统
+        if ([_group isMemberOfClass:[NBUPHAssetsGroup class]]) {// 系统相册
+            NBUAsset *asset = _asses[index];
+            [[[UIActionSheet alloc]
+                    initWithTitle:@"选择对该图片的操作"
+                 cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{
+                 }]
+            destructiveButtonItem:[RIButtonItem itemWithLabel:@"删除" action:deleteBlock]
+                 otherButtonItems:
+                         [RIButtonItem itemWithLabel:@"编辑" action:editBlock], nil]
+                    showInView:photoBrowser.view];
+        } else if ([_group.name isEqualToString:NBUAssetUtils.DeletedDirectory]) {// 回收站的文件
+            [[[UIActionSheet alloc]
+                    initWithTitle:@"选择对该图片的操作"
+                 cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{
+                 }]
+            destructiveButtonItem:[RIButtonItem itemWithLabel:@"删除" action:deleteBlock]
+                 otherButtonItems:
+                         [RIButtonItem itemWithLabel:@"编辑" action:editBlock],
+                         [RIButtonItem itemWithLabel:@"移动" action:moveBlock],
+                         [RIButtonItem itemWithLabel:@"导出" action:exportBlock], nil]
+                    showInView:photoBrowser.view];
+            return;
+        } else {// 其他文件目录
+            [[[UIActionSheet alloc]
+                    initWithTitle:@"选择对该图片的操作"
+                 cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{
+                 }]
+            destructiveButtonItem:[RIButtonItem itemWithLabel:@"移动到回收站" action:deleteBlock]
+                 otherButtonItems:
+                         [RIButtonItem itemWithLabel:@"编辑" action:editBlock],
+                         [RIButtonItem itemWithLabel:@"移动" action:moveBlock],
+                         [RIButtonItem itemWithLabel:@"导出" action:exportBlock], nil]
+                    showInView:photoBrowser.view];
+            return;
+        }
     }
-    // JPEG文件夹的文件为JPEG类型
-    if ([_group.name isEqualToString:NBUAssetUtils.JPEGDirectory]) {
-        [[[UIActionSheet alloc]
-                initWithTitle:@"选择对该图片的操作"
-             cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{
-             }]
-        destructiveButtonItem:[RIButtonItem itemWithLabel:@"删除" action:deleteBlock]
-             otherButtonItems:
-                     [RIButtonItem itemWithLabel:@"转换为HEIC" action:convertHEICBlock],
-                     [RIButtonItem itemWithLabel:@"编辑" action:editBlock],
-                     [RIButtonItem itemWithLabel:@"导出" action:exportBlock], nil]
-                showInView:photoBrowser.view];
-        return;
-    }
-
-    // 回收站的文件不清楚文件类型
-    if ([_group.name isEqualToString:NBUAssetUtils.DeletedDirectory]) {
-        [[[UIActionSheet alloc]
-                initWithTitle:@"选择对该图片的操作"
-             cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{
-             }]
-        destructiveButtonItem:[RIButtonItem itemWithLabel:@"删除" action:deleteBlock]
-             otherButtonItems:
-                     [RIButtonItem itemWithLabel:@"转换为HEIC" action:convertHEICBlock],
-                     [RIButtonItem itemWithLabel:@"转换为JPEG" action:convertJPEGBlock],
-                     [RIButtonItem itemWithLabel:@"编辑" action:editBlock],
-                     [RIButtonItem itemWithLabel:@"导出" action:exportBlock], nil]
-                showInView:photoBrowser.view];
-        return;
-    }
-
 }
 
 #pragma mark - -
@@ -1217,8 +1324,8 @@
 #pragma mark 裁剪成长方形图片回调
 
 - (void)cropViewController:(TOCropViewController *)cropViewController didCropToImage:(UIImage *)image withRect:(CGRect)cropRect angle:(NSInteger)angle {
-    [browser dismissViewControllerAnimated:YES completion:^{
-        [browser showProgressHUDWithMessage:@"保存中..."];
+    [_browser dismissViewControllerAnimated:YES completion:^{
+        [_browser showProgressHUDWithMessage:@"保存中..."];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             // 保存到Crop目录
             BOOL success = [NBUAssetUtils saveImage:image imageData:nil
@@ -1227,9 +1334,10 @@
                                          encodeType:0];
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (success) {
-                    [browser showProgressHUDCompleteMessage:@"保存成功"];
+                    _isUpdated = YES;
+                    [_browser showProgressHUDCompleteMessage:@"保存成功"];
                 } else {
-                    [browser showProgressHUDCompleteMessage:@"保存失败"];
+                    [_browser showProgressHUDCompleteMessage:@"保存失败"];
                 }
             });
         });
@@ -1251,6 +1359,249 @@
  */
 UIImage *(^decryptBlock)(NSString *) = ^UIImage *(NSString *path) {
     return [NBUAssetUtils decryImageWithPath:path];
+};
+
+
+#pragma mark --
+#pragma mark 图片列表页面右上角按钮点击事件, 调用的方法
+
+- (void)showOptionActionSheet {
+    if (_browser == nil || _group == nil) {
+        return;
+    }
+
+    void (^putBack)()=^() {// 放回原处
+        if (![_group.name isEqualToString:NBUAssetUtils.DeletedDirectory]) {
+            [_browser showProgressHUDWithMessage:@""];
+            [_browser showProgressHUDCompleteMessage:@"该文件不能执行此操作"];
+            return;
+        }
+        // 获取选择的文件
+        NSMutableArray *selectedAssets = [[NSMutableArray alloc] init];
+        if (_selections != nil && _selections.count > 0) {
+            for (NSUInteger i = 0; i < _selections.count; i++) {
+                if ([_selections[i] boolValue]) {
+                    [selectedAssets addObject:_asses[i]];
+                }
+            }
+        }
+        if (selectedAssets.count == 0) {
+            [_browser showProgressHUDWithMessage:@""];
+            [_browser showProgressHUDCompleteMessage:@"请选择文件"];
+            return;
+        }
+        
+        [_browser showProgressHUDWithMessage:@"正在放回原处..."];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            for (NSUInteger i = 0; i < selectedAssets.count; i++) {
+                NBUFileAsset *asset = selectedAssets[i];
+                if (asset == nil) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [_browser showProgressHUDWithMessage:@""];
+                        [_browser showProgressHUDCompleteMessage:@"数据有误"];
+                    });
+                    return;
+                }
+                
+                if ([[asset.fullResolutionImagePath lowercaseString] hasSuffix:@".heic"]) {
+                    [NBUAssetUtils moveFile:asset from:_group.name toAlbum:NBUAssetUtils.HEICDirectory];
+                } else {
+                    [NBUAssetUtils moveFile:asset from:_group.name toAlbum:NBUAssetUtils.JPEGDirectory];
+                }
+                [_asses removeObject:asset];
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                // 重置选中项数据
+                NSUInteger count = [self numberOfPhotosInPhotoBrowser:_browser];
+                [_selections removeAllObjects];
+                for (int i = 0; i < count; i++) {
+                    [_selections addObject:@NO];
+                }
+                
+                // 刷新数据
+                _isUpdated = YES;
+                [_browser reloadData];
+                [_browser reloadGridData];
+                [_browser showProgressHUDCompleteMessage:@"文件已经放回原处"];
+            });
+        });
+    };
+
+    if (@available(iOS 11.0, *)) {
+        if ([_group isMemberOfClass:[NBUPHAssetsGroup class]]) {// 系统相册
+            [[[UIActionSheet alloc]
+                    initWithTitle:@"选择操作"
+                 cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{}]
+            destructiveButtonItem:
+                    [RIButtonItem itemWithLabel:@"删除选中项" action:^{
+                        [_browser.delegate deleteSelected:_browser];
+                    }]
+                 otherButtonItems:
+                         [RIButtonItem itemWithLabel:@"全选" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelect:YES];
+                         }],
+                         [RIButtonItem itemWithLabel:@"全不选" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelect:NO];
+                         }],
+                         [RIButtonItem itemWithLabel:@"选择模式" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelectModel:YES];
+                         }],
+                         [RIButtonItem itemWithLabel:@"浏览模式" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelectModel:NO];
+                         }],
+                         [RIButtonItem itemWithLabel:@"转换选中项" action:^{// 转换选择项
+                            [self showAlertWithTitle:@"提示" message:@"确定要转换?" okTitle:@"转换" action:^(){
+                                [_browser.delegate convertSelected:_browser];
+                            }];
+                        }] , nil
+            ] showInView:_browser.view];
+        } else if ([_group.name isEqualToString:NBUAssetUtils.HEICDirectory] ||
+                [_group.name isEqualToString:NBUAssetUtils.JPEGDirectory] ||
+                [_group.name isEqualToString:NBUAssetUtils.CropDirectory]) {
+            [[[UIActionSheet alloc]
+                    initWithTitle:@"选择操作"
+                 cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{}]
+            destructiveButtonItem:
+                    [RIButtonItem itemWithLabel:@"移动到回收站" action:^{
+                        [_browser.delegate deleteSelected:_browser];
+                    }]
+                 otherButtonItems:
+                         [RIButtonItem itemWithLabel:@"全选" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelect:YES];
+                         }],
+                         [RIButtonItem itemWithLabel:@"全不选" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelect:NO];
+                         }],
+                         [RIButtonItem itemWithLabel:@"选择模式" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelectModel:YES];
+                         }],
+                         [RIButtonItem itemWithLabel:@"浏览模式" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelectModel:NO];
+                         }],
+                         [RIButtonItem itemWithLabel:@"转换选中项" action:^{// 转换选择项
+                                [self showAlertWithTitle:@"提示" message:@"确定要转换?" okTitle:@"转换" action:^(){
+                                    [_browser.delegate convertSelected:_browser];
+                                }];
+                         }],
+                         [RIButtonItem itemWithLabel:@"导出选中项" action:^{//导出选择项
+                             [_browser.delegate exportSelected:_browser];
+                         }], nil
+            ] showInView:_browser.view];
+        } else if ([_group.name isEqualToString:NBUAssetUtils.DeletedDirectory]) {
+            [[[UIActionSheet alloc]
+                    initWithTitle:@"选择操作"
+                 cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{}]
+            destructiveButtonItem:
+                    [RIButtonItem itemWithLabel:@"删除" action:^{
+                        [_browser.delegate deleteSelected:_browser];
+                    }]
+                 otherButtonItems:
+                         [RIButtonItem itemWithLabel:@"全选" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelect:YES];
+                         }],
+                         [RIButtonItem itemWithLabel:@"全不选" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelect:NO];
+                         }],
+                         [RIButtonItem itemWithLabel:@"选择模式" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelectModel:YES];
+                         }],
+                         [RIButtonItem itemWithLabel:@"浏览模式" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelectModel:NO];
+                         }],
+                         [RIButtonItem itemWithLabel:@"放回原处" action:putBack],
+                         [RIButtonItem itemWithLabel:@"转换选中项" action:^{// 转换选择项
+                             [self showAlertWithTitle:@"提示" message:@"确定要转换?" okTitle:@"转换" action:^(){
+                                 [_browser.delegate convertSelected:_browser];
+                             }];
+                         }],
+                         [RIButtonItem itemWithLabel:@"导出选中项" action:^{//导出选择项
+                             [_browser.delegate exportSelected:_browser];
+                         }], nil
+            ] showInView:_browser.view];
+        }
+    } else {// IOS 11以下系统
+        if ([_group isMemberOfClass:[NBUPHAssetsGroup class]]) {// 系统相册
+            [[[UIActionSheet alloc]
+                    initWithTitle:@"选择操作"
+                 cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{}]
+            destructiveButtonItem:
+                    [RIButtonItem itemWithLabel:@"删除选中项" action:^{
+                        [_browser.delegate deleteSelected:_browser];
+                    }]
+                 otherButtonItems:
+                         [RIButtonItem itemWithLabel:@"全选" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelect:YES];
+                         }],
+                         [RIButtonItem itemWithLabel:@"全不选" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelect:NO];
+                         }],
+                         [RIButtonItem itemWithLabel:@"选择模式" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelectModel:YES];
+                         }],
+                         [RIButtonItem itemWithLabel:@"浏览模式" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelectModel:NO];
+                         }], nil
+            ] showInView:_browser.view];
+        } else if ([_group.name isEqualToString:NBUAssetUtils.HEICDirectory] ||
+                [_group.name isEqualToString:NBUAssetUtils.JPEGDirectory] ||
+                [_group.name isEqualToString:NBUAssetUtils.CropDirectory]) {
+            [[[UIActionSheet alloc]
+                    initWithTitle:@"选择操作"
+                 cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{}]
+            destructiveButtonItem:
+                    [RIButtonItem itemWithLabel:@"移动到回收站" action:^{
+                        [_browser.delegate deleteSelected:_browser];
+                    }]
+                 otherButtonItems:
+                         [RIButtonItem itemWithLabel:@"全选" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelect:YES];
+                         }],
+                         [RIButtonItem itemWithLabel:@"全不选" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelect:NO];
+                         }],
+                         [RIButtonItem itemWithLabel:@"选择模式" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelectModel:YES];
+                         }],
+                         [RIButtonItem itemWithLabel:@"浏览模式" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelectModel:NO];
+                         }],
+                         [RIButtonItem itemWithLabel:@"移动选择项" action:^{// 移动选择项
+                             [_browser.delegate showMove:_browser action:1];
+                         }],
+                         [RIButtonItem itemWithLabel:@"导出选中项" action:^{//导出选择项
+                             [_browser.delegate exportSelected:_browser];
+                         }], nil
+            ] showInView:_browser.view];
+        } else if ([_group.name isEqualToString:NBUAssetUtils.DeletedDirectory]) {
+            [[[UIActionSheet alloc]
+                    initWithTitle:@"选择操作"
+                 cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{}]
+            destructiveButtonItem:
+                    [RIButtonItem itemWithLabel:@"删除" action:^{
+                        [_browser.delegate deleteSelected:_browser];
+                    }]
+                 otherButtonItems:
+                         [RIButtonItem itemWithLabel:@"全选" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelect:YES];
+                         }],
+                         [RIButtonItem itemWithLabel:@"全不选" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelect:NO];
+                         }],
+                         [RIButtonItem itemWithLabel:@"选择模式" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelectModel:YES];
+                         }],
+                         [RIButtonItem itemWithLabel:@"浏览模式" action:^{
+                             [_browser.delegate photoBrowser:_browser toggleSelectModel:NO];
+                         }],
+                         [RIButtonItem itemWithLabel:@"移动选择项" action:^{// 移动选择项
+                             [_browser.delegate showMove:_browser action:1];
+                         }],
+                         [RIButtonItem itemWithLabel:@"导出选中项" action:^{//导出选择项
+                             [_browser.delegate exportSelected:_browser];
+                         }], nil
+            ] showInView:_browser.view];
+        }
+    }
 };
 
 #pragma mark - ------

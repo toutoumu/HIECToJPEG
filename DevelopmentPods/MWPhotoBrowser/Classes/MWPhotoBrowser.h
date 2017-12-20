@@ -73,6 +73,12 @@
 - (void)exportSelected:(MWPhotoBrowser *)photoBrowser;
 
 /**
+ * 转换选中的图片
+ * @param photoBrowser
+ */
+- (void)convertSelected:(MWPhotoBrowser *)photoBrowser;
+
+/**
  *  导出指定索引的图片
  *
  *  @param photoBrowser 图片浏览器引用
@@ -109,7 +115,7 @@
  */
 - (void)deleteSelected:(MWPhotoBrowser *)photoBrowser;
 
-#pragma mark 弹出移动文件对话框, 1:导出选中项 2: 导出指定索引
+#pragma mark 弹出移动文件对话框, 1:移动选中项 2: 移动指定索引
 
 - (void)showMove:(MWPhotoBrowser *)photoBrowser action:(int)action;
 

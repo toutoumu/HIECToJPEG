@@ -74,6 +74,7 @@ NSData *UIImageHEICRepresentation(UIImage *const image, const CGFloat quality) {
             if (destination) {
                 NSDictionary *options = @{(__bridge NSString *) kCGImageDestinationLossyCompressionQuality: @(quality)};
                 CGImageDestinationAddImage(destination, image.CGImage, (__bridge CFDictionaryRef) options);
+                // todo 这里有个异常未解决 https://stackoverflow.com/questions/33705103/crash-upon-cgimagedestinationfinalize
                 CGImageDestinationFinalize(destination);
                 imageData = destinationData;
                 CFRelease(destination);
@@ -100,7 +101,7 @@ NSData *UIImageHEICRepresentation(UIImage *const image, const CGFloat quality) {
 }
 
 + (NSString *)HEICDirectory {
-    return @"HEIC";
+    return @"HEIF";
 }
 
 + (NSString *)JPEGDirectory {
@@ -156,6 +157,24 @@ NSData *UIImageHEICRepresentation(UIImage *const image, const CGFloat quality) {
     } else {
         return NO;
     }
+}
+
+/**
+ * 判断文件类型
+ * http://blog.csdn.net/snowbueaty/article/details/14225627
+ * @param path
+ * @return
+ */
++ (NSString *)fileType:(NSString *)path {
+    NSData *data = [NSData dataWithContentsOfFile:path];
+    if (data.length < 2) {
+        return @"NOT FILE";
+    }
+    int char1 = 0, char2 = 0; //必须这样初始化
+    [data getBytes:&char1 range:NSMakeRange(0, 1)];
+    [data getBytes:&char2 range:NSMakeRange(1, 1)];
+    NSLog(@"%d%d", char1, char2);
+    return [NSString stringWithFormat:@"%i%i", char1, char2];
 }
 
 #pragma mark 创建相册

@@ -217,22 +217,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "DevelopmentPods/NBUImagePicker/Assets/NBUAssetUtils.m"
-            timestampString = "534250288.923246"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "335"
-            endingLineNumber = "335"
-            landmarkName = "+decryImage:toAlubm:withPwd:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
             timestampString = "535343005.198919"
             startingColumnNumber = "9223372036854775807"
@@ -247,45 +231,45 @@
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "__62-[NBUCameraView captureOutput:didFinishProcessingPhoto:error:]_block_invoke_2"
-                  moduleName = "PickerDemo"
+                  moduleName = "CameraDemo"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/apple/Desktop/JPEGToHEIC/JPEGToHEIC/DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
-                  timestampString = "535343005.297073"
+                  timestampString = "535456197.193062"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "922"
                   endingLineNumber = "922"
-                  offsetFromSymbolStart = "236">
+                  offsetFromSymbolStart = "328">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "__copy_helper_block_.433"
-                  moduleName = "PickerDemo"
+                  moduleName = "CameraDemo"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/apple/Desktop/JPEGToHEIC/JPEGToHEIC/DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
-                  timestampString = "535343005.298394"
+                  timestampString = "535456197.194498"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "922"
                   endingLineNumber = "922"
-                  offsetFromSymbolStart = "102">
+                  offsetFromSymbolStart = "160">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "__destroy_helper_block_.434"
-                  moduleName = "PickerDemo"
+                  moduleName = "CameraDemo"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/apple/Desktop/JPEGToHEIC/JPEGToHEIC/DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
-                  timestampString = "535343005.299877"
+                  timestampString = "535456197.195836"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "922"
                   endingLineNumber = "922"
-                  offsetFromSymbolStart = "52">
+                  offsetFromSymbolStart = "84">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -310,30 +294,30 @@
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "__62-[NBUCameraView captureOutput:didFinishProcessingPhoto:error:]_block_invoke_2"
-                  moduleName = "PickerDemo"
+                  moduleName = "CameraDemo"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/apple/Desktop/JPEGToHEIC/JPEGToHEIC/DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
-                  timestampString = "535343005.303773"
+                  timestampString = "535456197.199891"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "919"
                   endingLineNumber = "919"
-                  offsetFromSymbolStart = "64">
+                  offsetFromSymbolStart = "100">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "__62-[NBUCameraView captureOutput:didFinishProcessingPhoto:error:]_block_invoke_3"
-                  moduleName = "PickerDemo"
+                  moduleName = "CameraDemo"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/apple/Desktop/JPEGToHEIC/JPEGToHEIC/DevelopmentPods/NBUImagePicker/Camera/NBUCameraView.m"
-                  timestampString = "535343005.305128"
+                  timestampString = "535456197.201208"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "919"
                   endingLineNumber = "919"
-                  offsetFromSymbolStart = "20">
+                  offsetFromSymbolStart = "24">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -345,12 +329,92 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DevelopmentPods/NBUImagePicker/Assets/NBUAssetUtils.m"
-            timestampString = "534250288.92356"
+            timestampString = "535456197.104666"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "398"
             endingLineNumber = "398"
-            landmarkName = "+encryptImage:imageData:imageType:toPath:withPwd:"
+            landmarkName = "+decryImage:toAlubm:withPwd:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PickerDemo/Classes/App/AlbumViewController.m"
+            timestampString = "535456197.105027"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1034"
+            endingLineNumber = "1034"
+            landmarkName = "-photoBrowser:actionButtonPressedForPhotoAtIndex:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PickerDemo/Classes/App/AlbumViewController.m"
+            timestampString = "535456197.105087"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "525"
+            endingLineNumber = "525"
+            landmarkName = "-convertSelected:"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__39-[AlbumViewController convertSelected:]_block_invoke"
+                  moduleName = "CameraDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/apple/Desktop/JPEGToHEIC/JPEGToHEIC/PickerDemo/Classes/App/AlbumViewController.m"
+                  timestampString = "535456197.210014"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "525"
+                  endingLineNumber = "525"
+                  offsetFromSymbolStart = "3392">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__39-[AlbumViewController convertSelected:]_block_invoke.295"
+                  moduleName = "CameraDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/apple/Desktop/JPEGToHEIC/JPEGToHEIC/PickerDemo/Classes/App/AlbumViewController.m"
+                  timestampString = "535456197.21176"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "525"
+                  endingLineNumber = "525"
+                  offsetFromSymbolStart = "32">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "DevelopmentPods/MWPhotoBrowser/Classes/MWPhoto.m"
+            timestampString = "535456547.059192"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "343"
+            endingLineNumber = "343"
+            landmarkName = "-_performLoadUnderlyingImageAndNotifyWithAsset:targetSize:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
