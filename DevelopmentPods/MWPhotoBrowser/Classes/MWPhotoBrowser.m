@@ -1881,7 +1881,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         if (self.progressHUD.isHidden) [self.progressHUD showAnimated:YES];
         self.progressHUD.label.text = message;
         self.progressHUD.mode = MBProgressHUDModeCustomView;
-        [self.progressHUD hideAnimated:YES afterDelay:0.4];
+        [self.progressHUD hideAnimated:YES afterDelay:0.6];
     } else {
         [self.progressHUD hideAnimated:YES];
     }
