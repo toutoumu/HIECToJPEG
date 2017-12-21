@@ -519,7 +519,7 @@
                 _isUpdated = YES;
                 [_asses removeObject:asset];
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    NSString *progressMessage = [NSString stringWithFormat:@"%lu/%lu", (unsigned long) i, (unsigned long) selectedAssets.count];
+                    NSString *progressMessage = [NSString stringWithFormat:@"%lu/%lu", (unsigned long) i, (unsigned long) movedArray.count];
                     [photoBrowser setProgressMessage:progressMessage];
                 });
             } else { // 部分删除失败
@@ -934,7 +934,7 @@
     };
 
     void (^editBlock)() = ^() {// 编辑
-        [self photoBrowser:photoBrowser showCrop:((NBUAsset *) _asses[index]).fullResolutionImage];
+        [self photoBrowser:photoBrowser showCrop:_asses[index].fullResolutionImage];
     };
 
     void (^convertHEICBlock)() = ^() {// 转换为HEIC
@@ -955,7 +955,7 @@
             [photoBrowser showProgressHUDCompleteMessage:@"该文件不能执行此操作"];
             return;
         }
-        NBUFileAsset *asset = _asses[index];
+        NBUFileAsset *asset = (NBUFileAsset *) _asses[index];
         if (asset == nil) {
             [photoBrowser showProgressHUDWithMessage:@""];
             [photoBrowser showProgressHUDCompleteMessage:@"数据有误"];
@@ -1054,7 +1054,6 @@
         }
     } else {// IOS 11以下系统
         if ([_group isMemberOfClass:[NBUPHAssetsGroup class]]) {// 系统相册
-            NBUAsset *asset = _asses[index];
             [[[UIActionSheet alloc]
                     initWithTitle:@"选择对该图片的操作"
                  cancelButtonItem:[RIButtonItem itemWithLabel:@"取消" action:^{
