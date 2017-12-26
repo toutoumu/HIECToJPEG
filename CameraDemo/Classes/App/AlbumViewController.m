@@ -1,5 +1,5 @@
 // 相册列表,图片列表,图片浏览
-#import <NBUKit/NBUAdditions.h>
+#import "NBUAdditions.h"
 #import "AlbumViewController.h"
 #import "SelectAlbumViewController.h"
 #import "UINavigationController+FDFullscreenPopGesture.h"
