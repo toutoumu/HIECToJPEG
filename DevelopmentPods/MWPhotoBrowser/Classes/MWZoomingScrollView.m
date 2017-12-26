@@ -35,7 +35,7 @@
 /**
  *
  * @param browser
- * @param parentView 当前View的父视图
+ * @param parentView 当前View的父视图 _pagingScrollView
  * @param container parentView 的父视图
  * @return
  */
@@ -355,6 +355,7 @@
  */
 - (CGRect)imageFrame {
     if (_photoImageView.image != nil) {
+        [self layoutSubviews];
         return _photoImageView.frame;
     }
     // 图片未加载返回视图frame
@@ -439,10 +440,16 @@
         maxScale = 4;
     }
 
+    //如果图片不能够填充满一个屏幕,显示原来的大小
     // Image is smaller than screen so no zooming!
-    if (xScale >= 1 && yScale >= 1) {
-        minScale = 1.0;
-    }
+    //if (xScale >= 1 && yScale >= 1) {
+    //    minScale = 1.0;
+    //}
+
+    // 修改 [如果图片不能够填充满一个屏幕,显示原来的大小] 为宽度或高度填充满屏幕
+    maxScale = MAX(minScale, maxScale);
+    minScale = MIN(minScale, maxScale);
+
 
     // Set min/max zoom
     self.maximumZoomScale = maxScale;

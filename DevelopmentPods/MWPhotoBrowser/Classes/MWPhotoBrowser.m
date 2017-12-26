@@ -1484,11 +1484,16 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         return;
     }
 
+    // 由于已经修改了图片小于屏幕大小, 宽度或高度填充屏幕,所以缩小时只需要从填充状态回来即可
+    /*
     // 当前需要显示的图片
     MWZoomingScrollView *currentPage = [self pageDisplayedAtIndex:_currentPageIndex];
-    // 用于动画的遮罩层
     _coverImage.frame = currentPage.imageFrame;
-    _coverImage.image = [self imageForPhoto:currentPage.photo];
+    */
+
+    // 用于动画的遮罩层
+    _coverImage.frame = self.view.bounds;
+    _coverImage.image = [self imageForPhoto:[self photoAtIndex:_currentPageIndex]];
     _coverImage.contentMode = UIViewContentModeScaleToFill;
     if (_coverImage.image == nil) {
         _coverImage.tag = _currentPageIndex;//设置tag让大图加载完成之后能够找到对应的图片加载
@@ -1513,7 +1518,6 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
                          }
                      }
                      completion:^(BOOL finished) {
-                         //_coverImage.frame = newPagingFrame;
                          _coverImage.hidden = YES;
                          _backGroundView.hidden = YES;
                          _pagingScrollView.hidden = NO;
@@ -1551,13 +1555,12 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     // Animate, hide grid and show paging scroll view
     _pagingScrollView.frame = [self frameForPagingScrollView];
 
-    // 当前需要显示的图片
-    MWZoomingScrollView *currentPage = [self pageDisplayedAtIndex:_currentPageIndex];
     // 用于动画的遮罩层
     //cell 在 self.view 的位置及大小
     _coverImage.frame = [cell convertRect:cell.bounds toCoordinateSpace:self.view];
-    _coverImage.image = [self imageForPhoto:currentPage.photo];
-    _coverImage.contentMode = UIViewContentModeScaleToFill;
+    _coverImage.image = [self imageForPhoto:[self photoAtIndex:_currentPageIndex]];
+    _coverImage.contentMode = UIViewContentModeScaleAspectFit;
+
     if (_coverImage.image == nil) {
         _coverImage.tag = _currentPageIndex;//设置tag让大图加载完成之后能够找到对应的图片加载
         //如果大图没有加载,先加载缩略图,当图片加载完成之后替换为大图,见方法 handleMWPhotoLoadingDidEndNotification
@@ -1573,7 +1576,13 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [UIView animateWithDuration:0.3
                      animations:^{
                          _backGroundView.alpha = 1.0f;
+                         _coverImage.frame = self.view.bounds;
+                         // 由于已经修改了图片小于屏幕大小, 宽度或高度填充屏幕,所以放大时只需要从cell位置放大到填充状态即可
+                         /*
+                         // 当前需要显示的图片
+                         MWZoomingScrollView *currentPage = [self pageDisplayedAtIndex:_currentPageIndex];
                          _coverImage.frame = currentPage.imageFrame;
+                         */
                      }
                      completion:^(BOOL finished) {
                          _coverImage.hidden = YES;
@@ -1604,7 +1613,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [self cancelControlHiding];
 
     // Animations & positions
-    CGFloat animationOffset = 0;
+    CGFloat animationOffset = 44;
     //CGFloat animationOffset = 20;
     CGFloat animationDuration = (animated ? 0.35f : 0);
 
@@ -1643,6 +1652,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
         }
 
     }
+
     [UIView animateWithDuration:animationDuration
                      animations:^(void) {
                          CGFloat alpha = hidden ? 0 : 1;
@@ -1654,8 +1664,11 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
                              _toolbar.frame = CGRectOffset(_toolbar.frame, 0, animationOffset);
                              _toolbar.alpha = 0;
                          } else {
-                             _toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
-                             if (hidden) _toolbar.frame = CGRectOffset(_toolbar.frame, 0, animationOffset);
+                             if (hidden) {
+                                 _toolbar.frame = CGRectOffset(_toolbar.frame, 0, animationOffset);
+                             } else {
+                                 _toolbar.frame = [self frameForToolbarAtOrientation:self.interfaceOrientation];
+                             }
                              _toolbar.alpha = alpha;
                          }
 
@@ -1690,7 +1703,7 @@ static void *MWVideoPlayerObservation = &MWVideoPlayerObservation;
     // Control hiding timer
     // Will cancel existing timer but only begin hiding if
     // they are visible
-    if (!permanent) [self hideControlsAfterDelay];
+    //if (!permanent) [self hideControlsAfterDelay];
 
 }
 
